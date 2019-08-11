@@ -1,6 +1,10 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
+#include <chrono>
+#include <iostream>
+#include <ratio>
+
 #if __cplusplus
 extern "C" {
 #endif
@@ -8,7 +12,7 @@ extern "C" {
 #include <stdarg.h>
 #include <stdio.h>
 
-#define LOG(LEVEL, ...) logger(LEVEL, __FILE__, __LINE__, __VA_ARGS__)
+#define LOG(LEVEL, ...) logger(LEVEL, __FILE__, __LINE__, __VA_ARGS__);
 
 // define constant color hex
 const char RED[] = "\x1b[0;31m";
@@ -50,5 +54,44 @@ void logger(level_t level, const char *file, int line, const char *fmt, ...) {
 #if __cplusplus
 }
 #endif
+
+class TimeMeter {
+ public:
+  explicit TimeMeter() {}
+
+  inline void start() { m_start = std::chrono::high_resolution_clock::now(); }
+
+  inline void stop() { m_stop = std::chrono::high_resolution_clock::now(); }
+
+  void getPartialElapsed() {
+    m_partial_elapsed = m_stop - m_start;
+    std::cout << "Partial time elapsed: " << m_partial_elapsed.count()
+              << " [us] ";
+    std::cout << "(" << m_partial_elapsed.count() * 0.001 << "[ms])"
+              << "\n";
+  }
+
+  void getTotalElapsed() {
+    m_partial_elapsed = m_stop - m_start;
+    m_total_elapsed += m_partial_elapsed;
+    std::cout << "Total time elapsed: " << m_total_elapsed.count() << " [us] ";
+    std::cout << "(" << m_total_elapsed.count() * 0.001 << "[ms])"
+              << "\n";
+  }
+
+  ~TimeMeter() {
+    LOG(FATAL, "Call Dtor time meter")
+    m_total_elapsed = m_stop - m_start;
+    std::cout << "Total time elapsed: " << m_total_elapsed.count() << " [us] ";
+    std::cout << "(" << m_total_elapsed.count() * 0.001 << " [ms])"
+              << "\n";
+  }
+
+ private:
+  std::chrono::time_point<std::chrono::high_resolution_clock> m_start;
+  std::chrono::time_point<std::chrono::high_resolution_clock> m_stop;
+  std::chrono::duration<double, std::micro> m_partial_elapsed;
+  std::chrono::duration<double, std::micro> m_total_elapsed;
+};
 
 #endif  // LOGGER_H
