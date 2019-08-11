@@ -1,54 +1,44 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.7)
+project(LibLeptonSDK)# DESCRIPTION "The internal library for breakout board interface and Raspberry Pi GPIO")
 
-# Project name
-project(leptonSDK)
+# LeptonSDK
+set(PROJECT_NAME LeptonSDK)
+set(LIBRARY_TARGET_NAME ${PROJECT_NAME})
+file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.c)
+file(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 
-# General flags
-add_definitions(-DRELEASE)
+# Lists of sources and headers
+set(${LIBRARY_TARGET_NAME}_SRC ${SOURCES})
+set(${LIBRARY_TARGET_NAME}_HDR ${HEADERS})
+add_library(${LIBRARY_TARGET_NAME} SHARED ${${LIBRARY_TARGET_NAME}_SRC} ${${LIBRARY_TARGET_NAME}_HDR})
+target_include_directories(${LIBRARY_TARGET_NAME}
+    PUBLIC
+        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+target_compile_options(${LIBRARY_TARGET_NAME} PUBLIC
+    -fpic
+    -O2
+)
 
-# Dependencies
-set(DEPENDENCIES )
-list(LENGTH DEPENDENCIES num_dependencies)
-if(num_dependencies)
-	foreach(lib_name ${DEPENDENCIES})
-		#message(STATUS "${${lib_name}_INCLUDE_DIRS}")
-		#message(STATUS "${${lib_name}_LIBRARIES}")
-        list(APPEND MY_INCLUDES ${${lib_name}_INCLUDE_DIR})
-        list(APPEND MY_INCLUDES ${${lib_name}_INCLUDE_DIRS})
-        list(APPEND MY_LIBRARIES ${${lib_name}_LIBRARY})
-        list(APPEND MY_LIBRARIES ${${lib_name}_LIBRARIES})
-    endforeach()
-    list(LENGTH MY_INCLUDES includes)
-	if (includes)
-		list(REMOVE_DUPLICATES MY_INCLUDES)
-	endif()
-    list(LENGTH MY_LIBRARIES libraries)
-	if (libraries)
-		list(REMOVE_DUPLICATES MY_LIBRARIES)
-	endif()
-    set(${PROJECT_NAME}_INCLUDE_DIRS ${MY_INCLUDES})
-    set(${PROJECT_NAME}_LIBRARIES ${MY_LIBRARIES})
-endif()
-list(APPEND ${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)
+install(TARGETS
+        ${PROJECT_NAME}
+    EXPORT ${PROJECT_NAME}Config
+    ARCHIVE DESTINATION lib/static
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
+)
+export(TARGETS
+    ${PROJECT_NAME}
+    NAMESPACE ${PROJECT_NAME}::
+    FILE "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+)
+install(EXPORT
+    ${PROJECT_NAME}Config
+    DESTINATION "${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}/cmake"
+    NAMESPACE ${PROJECT_NAME}::
+)
 
-# Library Sources and Headers
-file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c)
-file(GLOB HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/${PROJECT_NAME}/*.h)
-set( ${PROJECT_NAME}_TARGET_SRCS ${SOURCES} ${HEADERS})
-
-# Create library
-add_library (${PROJECT_NAME} ${${PROJECT_NAME}_TARGET_SRCS})
-include_directories(${${PROJECT_NAME}_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} ${${PROJECT_NAME}_LIBRARIES})
-
-# Expose library
-set(${PROJECT_NAME}_LIBRARY ${PROJECT_NAME}
-	CACHE INTERNAL "${PROJECT_NAME}: Project Library" FORCE)
-set(${PROJECT_NAME}_LIBRARIES ${${PROJECT_NAME}_LIBRARIES}
-	CACHE INTERNAL "${PROJECT_NAME}: Project Libraries" FORCE)
-set(${PROJECT_NAME}_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include
-	CACHE INTERNAL "${PROJECT_NAME}: Include Directory" FORCE)
-set(${PROJECT_NAME}_INCLUDE_DIRS ${${PROJECT_NAME}_INCLUDE_DIRS}
-	CACHE INTERNAL "${PROJECT_NAME}: Include Directories" FORCE)
-set (${PROJECT_NAME}_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}"
-	CACHE INTERNAL "${PROJECT_NAME}: Source Directory" FORCE)
+message(STATUS "Created target ${LIBRARY_TARGET_NAME} for export ${PROJECT_NAME}.")

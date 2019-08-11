@@ -181,8 +181,6 @@ LEP_RESULT LEP_GetSysCustSerialNumber(LEP_CAMERA_PORT_DESC_T_PTR portDescPtr,
                              (LEP_COMMAND_ID)LEP_CID_SYS_CUST_SERIAL_NUMBER,
                              (LEP_ATTRIBUTE_T_PTR)sysCustSNPtr,
                              attributeWordLength);
-
-   return( result );
 }
 #endif
 LEP_RESULT LEP_GetSysCameraUpTime( LEP_CAMERA_PORT_DESC_T_PTR portDescPtr,
@@ -222,7 +220,7 @@ LEP_RESULT LEP_GetSysAuxTemperatureCelcius( LEP_CAMERA_PORT_DESC_T_PTR portDescP
    }
 
    result = LEP_GetSysAuxTemperatureKelvin( portDescPtr, &unitsKelvin );
-   *auxTemperaturePtr = ( LEP_SYS_AUX_TEMPERATURE_CELCIUS_T )( ( (float)( unitsKelvin / 100 ) + ( (float)( unitsKelvin % 100 ) * 0.01f ) ) - 273.15f );
+   *auxTemperaturePtr = ( LEP_SYS_AUX_TEMPERATURE_CELCIUS_T )( ( ( unitsKelvin / 100 ) + ( ( unitsKelvin % 100 ) * .01 ) ) - 273.15 );
 
    return( result );
 }
@@ -242,7 +240,7 @@ LEP_RESULT LEP_GetSysFpaTemperatureCelcius( LEP_CAMERA_PORT_DESC_T_PTR portDescP
    }
 
    result = LEP_GetSysFpaTemperatureKelvin( portDescPtr, &unitsKelvin );
-   *fpaTemperaturePtr = ( LEP_SYS_FPA_TEMPERATURE_CELCIUS_T )( ( (float)( unitsKelvin / 100 ) + ( (float)( unitsKelvin % 100 ) * 0.01f ) ) - 273.15f );
+   *fpaTemperaturePtr = ( LEP_SYS_FPA_TEMPERATURE_CELCIUS_T )( ( ( unitsKelvin / 100 ) + ( ( unitsKelvin % 100 ) * .01 ) ) - 273.15 );
 
    return( result );
 }
