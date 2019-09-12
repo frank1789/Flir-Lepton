@@ -118,6 +118,7 @@ bool LeptonSensor::reset_SPI_connection() {
 
 // Reboot sensor and reset connection
 bool LeptonSensor::reboot_sensor() {
+  leptonI2C_Reboot();
   bool result_close = close_connection();
   usleep(LeptonRebootTime);
   bool result_open = open_connection();
@@ -125,49 +126,50 @@ bool LeptonSensor::reboot_sensor() {
 }
 
 // Lepton convert frame from sensor to IR imageU8
-void LeptonSensor::LeptonUnpackFrame8(uint8_t *frame) {
-  // Prepare buffer pointers
-  const uint32_t frame_size{m_config.segments_per_frame *
-                            m_config.segment_size_uint16};
-  auto frame_u8 = reinterpret_cast<uint8_t *>(m_frame_buffer.data());
+void LeptonSensor::LeptonUnpackFrame8 (uint8_t *frame) {
 
-  // Compute min and max
-  uint16_t minValue = 65535;
-  uint16_t maxValue = 0;
-  for (uint32_t i = 0; i < frame_size; i++) {
-    // Skip the first 2 uint16_t's of every packet, they're 4 bytes header
-    if (i % m_config.packet_size_uint16 < 2) {
-      continue;
+    // Prepare buffer pointers
+    const uint32_t frame_size{m_config.segments_per_frame*m_config.segment_size_uint16};
+    auto frame_u8 = reinterpret_cast<uint8_t *>(m_frame_buffer.data());
+
+    // Compute min and max
+    uint16_t minValue = 65535;
+    uint16_t maxValue = 0;
+    for(uint32_t i = 0; i < frame_size; i++) {
+
+        // Skip the first 2 uint16_t's of every packet, they're 4 bytes header
+        if(i % m_config.packet_size_uint16 < 2) {
+            continue;
+        }
+
+        // Flip the MSB and LSB at the last second
+        uint8_t temp = frame_u8[i*2];
+        frame_u8[i*2] = frame_u8[i*2+1];
+        frame_u8[i*2+1] = temp;
+
+        // Check min/max value
+        uint16_t value = m_frame_buffer[i];
+        if(value > maxValue) {
+            maxValue = value;
+        }
+        if(value < minValue) {
+            minValue = value;
+        }
     }
 
-    // Flip the MSB and LSB at the last second
-    uint8_t temp = frame_u8[i * 2];
-    frame_u8[i * 2] = frame_u8[i * 2 + 1];
-    frame_u8[i * 2 + 1] = temp;
+    // Scale frame range
+    auto diff = static_cast<float>(maxValue - minValue);
+    float scale = 255.f / diff;
+    int idx = 0;
+    for(uint32_t i = 0; i < frame_size; i++) {
 
-    // Check min/max value
-    uint16_t value = m_frame_buffer[i];
-    if (value > maxValue) {
-      maxValue = value;
-    }
-    if (value < minValue) {
-      minValue = value;
-    }
-  }
+        // Skip the first 2 uint16_t's of every packet, they're 4 bytes header
+        if(i % config_.packet_size_uint16 < 2) {
+            continue;
+        }
 
-  // Scale frame range
-  auto diff = static_cast<float>(maxValue - minValue);
-  float scale = 255.f / diff;
-  int idx = 0;
-  for (uint32_t i = 0; i < frame_size; i++) {
-    // Skip the first 2 uint16_t's of every packet, they're 4 bytes header
-    if (i % m_config.packet_size_uint16 < 2) {
-      continue;
+        frame[idx++] = static_cast<uint8_t>((frame_buffer_[i] - minValue) * scale);
     }
-
-    frame[idx++] = static_cast<uint8_t>((m_frame_buffer[i] - minValue) *
-                                        static_cast<int>(scale));
-  }
 }
 
 // Lepton convert frame from sensor to IR imageU16
