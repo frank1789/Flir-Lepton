@@ -6,12 +6,12 @@
 #include <map>
 #include <vector>
 
-enum class LeptonSensor_t { UNKNOWN, LEPTON2, LEPTON3 };
+enum class LeptonSensorType { UNKNOWN, LEPTON2, LEPTON3 };
 
-const std::map<int, LeptonSensor_t> MapLepton{{2, LeptonSensor_t::LEPTON2},
-                                              {3, LeptonSensor_t::LEPTON3}};
+const std::map<unsigned int, LeptonSensorType> MapLepton{{2, LeptonSensorType::LEPTON2},
+                                              {3, LeptonSensorType::LEPTON3}};
 
-enum class LeptonFrame_t { FRAME_U8, FRAME_U16 };
+enum class LeptonFrameType { FRAME_U8, FRAME_U16 };
 
 // Lepton I2C commands
 enum class LeptonI2CCmd {
@@ -50,7 +50,7 @@ struct LeptonCameraConfig {
   uint16_t height;     // Frame height
 
   LeptonCameraConfig() = default;
-  explicit LeptonCameraConfig(LeptonSensor_t lp);
+  explicit LeptonCameraConfig(LeptonSensorType lp);
 };
 
 class LeptonSensor {
@@ -66,9 +66,9 @@ class LeptonSensor {
   bool reset_SPI_connection();
   bool reboot_sensor();
   bool send_command(LeptonI2CCmd cmd, void *buffer);
-  bool getFrame(void *frame, LeptonFrame_t type);
-  LeptonSensor_t getInfo_sensor();
-  friend std::ostream &operator<<(std::ostream &os, const LeptonSensor_t &lp);
+  bool getFrame(void *frame, LeptonFrameType type);
+  LeptonSensorType getInfo_sensor();
+  friend std::ostream &operator<<(std::ostream &os, const LeptonSensor &lp);
 
  protected:
   /**
@@ -109,6 +109,6 @@ class LeptonSensor {
   std::atomic<bool> m_force_reboot;
 };
 
-std::ostream &operator<<(std::ostream &os, const LeptonSensor_t &lp);
+std::ostream &operator<<(std::ostream &os, const LeptonSensor &lp);
 
 #endif  // LEPTON_SENSOR_H

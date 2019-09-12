@@ -5,7 +5,7 @@
 #include "leptonsensor.h"
 #include "leptonutils.h"
 
-LeptonCameraConfig::LeptonCameraConfig(LeptonSensor_t lp) {
+LeptonCameraConfig::LeptonCameraConfig(LeptonSensorType lp) {
   packet_size = 164;
   packet_size_uint16 = packet_size / 2;
   packets_per_segment = 60;
@@ -15,7 +15,7 @@ LeptonCameraConfig::LeptonCameraConfig(LeptonSensor_t lp) {
   segment_size_uint16 = packet_size_uint16 * packets_per_segment;
 
   switch (lp) {
-    case LeptonSensor_t::LEPTON2:
+    case LeptonSensorType::LEPTON2:
       segments_per_frame = 1;
       segment_number_packet_index = 0;
       reset_wait_time = 1000;
@@ -24,7 +24,7 @@ LeptonCameraConfig::LeptonCameraConfig(LeptonSensor_t lp) {
       height = 60;
       break;
 
-    case LeptonSensor_t::LEPTON3:
+    case LeptonSensorType::LEPTON3:
       segments_per_frame = 4;
       segment_number_packet_index = 20;
       reset_wait_time = 1000;
@@ -104,9 +104,7 @@ bool LeptonSensor::reset_SPI_connection() {
               << std::endl;
     return false;
   }
-
   usleep(LeptonResetTime);
-
   // Open spi port
   try {
     leptonSPI_OpenPort(m_spi_port, m_config.spi_speed);
@@ -120,9 +118,6 @@ bool LeptonSensor::reset_SPI_connection() {
 
 // Reboot sensor and reset connection
 bool LeptonSensor::reboot_sensor() {
-  leptonI2C_Reboot();  // This function can return a false value even when
-                       // reboot succeed, due to the I2C read after reboot,
-                       // avoid using the returned value for now
   bool result_close = close_connection();
   usleep(LeptonRebootTime);
   bool result_open = open_connection();
@@ -318,7 +313,7 @@ void LeptonSensor::LeptonResync(uint16_t &resetsToReboot) {
 }
 
 // Lepton get IR frame from sensor
-bool LeptonSensor::getFrame(void *frame, LeptonFrame_t type) {
+bool LeptonSensor::getFrame(void *frame, LeptonFrameType type) {
   // Force reboot if user signaled one
   if (m_force_reboot == true) {
     if (!reboot_sensor()) {
@@ -333,10 +328,10 @@ bool LeptonSensor::getFrame(void *frame, LeptonFrame_t type) {
 
   // Convert Lepton frame to IR frame
   switch (type) {
-    case LeptonFrame_t::FRAME_U8:
+    case LeptonFrameType::FRAME_U8:
       LeptonUnpackFrame8(static_cast<uint8_t *>(frame));
       break;
-    case LeptonFrame_t::FRAME_U16:
+    case LeptonFrameType::FRAME_U16:
       LeptonUnpackFrame16(static_cast<uint16_t *>(frame));
       break;
     default:
@@ -344,7 +339,6 @@ bool LeptonSensor::getFrame(void *frame, LeptonFrame_t type) {
       return false;
   }
   m_count++;
-
   return true;
 }
 
@@ -391,11 +385,10 @@ bool LeptonSensor::send_command(LeptonI2CCmd cmd, void *buffer) {
 }
 
 // Get lepton version
-LeptonSensor_t LeptonSensor::getInfo_sensor() {
+LeptonSensorType LeptonSensor::getInfo_sensor() {
   auto it = MapLepton.find(leptonI2C_SensorNumber());
   if (it != MapLepton.end()) {
     return it->second;
   }
-
-  return LeptonSensor_t::UNKNOWN;
+  return LeptonSensorType::UNKNOWN;
 }
