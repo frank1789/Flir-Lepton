@@ -392,3 +392,20 @@ LeptonSensorType LeptonSensor::getInfo_sensor() {
   }
   return LeptonSensorType::UNKNOWN;
 }
+
+std::ostream &operator<<(std::ostream &os, const LeptonSensorType &lp) {
+  switch (lp) {
+    case LeptonSensorType::UNKNOWN:
+      os << "UNKNOW";
+      break;
+    case LeptonSensorType::LEPTON2:
+      os << "LEPTON2";
+      break;
+    case LeptonSensorType::LEPTON3:
+      os << "LEPTON3";
+      break;
+    default:
+      os.setstate(std::ios_base::failbit);
+  }
+  return os;
+}
