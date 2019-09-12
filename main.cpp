@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
   // create a thread to gather SPI data
   // when the thread emits updateImage, the label should update its image
   // accordingly
-  QPointer<LeptonThread> thread = new LeptonThread();
+  QPointer<LeptonCamera> thread = new LeptonCamera();
   bool success = QObject::connect(thread, &LeptonThread::updateImage, &myLabel,
                                   &Image::setImage);
   Q_ASSERT(success);
