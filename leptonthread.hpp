@@ -2,11 +2,25 @@
 #define LEPTONTHREAD_HPP
 
 #include <QObject>
+#include <QThread>
+#include "leptoncamera.h"
+#include "thermalimage.h"
 
-class leptonthread
+class LeptonThread : public QThread
 {
+    Q_OBJECT
 public:
-    leptonthread();
+    LeptonThread();
+    ~LeptonThread();
+
+    void run();
+
+signals:
+    void updateImage(QImage);
+
+private:
+    LeptonCamera m_camera;
+    ThermalImage m_image;
 };
 
 #endif // LEPTONTHREAD_HPP
