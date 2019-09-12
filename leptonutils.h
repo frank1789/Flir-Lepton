@@ -30,15 +30,6 @@
 
 #include <LeptonSDKEmb32PUB/LEPTON_Types.h>
 
-#include <fcntl.h>
-#include <getopt.h>
-#include <linux/spi/spidev.h>
-#include <linux/types.h>
-#include <stdint.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
-#include <string>
-
 //------------------------------- SPI ----------------------------------------//
 // SPI Config
 extern int spi_fd;
@@ -60,9 +51,13 @@ void leptonSPI_ClosePort(int spi_device);
 
 //------------------------------- I2C ----------------------------------------//
 // I2C config
-constexpr LEP_UINT16 kI2CPortID{1};
-constexpr LEP_UINT16 kI2CPortBaudRate{400};
-constexpr LEP_CAMERA_PORT_E kI2CPortType{LEP_CCI_TWI};
+constexpr LEP_UINT16 I2CPortID{1};
+constexpr LEP_UINT16 I2CPortBaudRate{400};
+constexpr LEP_CAMERA_PORT_E I2CPortType{LEP_CCI_TWI};
+constexpr double KELVINCELSIUS{273.15};
+
+extern bool _connected;
+extern LEP_CAMERA_PORT_DESC_T _port;
 
 /**
  * @brief Open I2C communication with Lepton sensor
