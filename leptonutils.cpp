@@ -131,8 +131,6 @@ bool leptonI2C_ShutterClose() {
 
 // Get lepton type
 unsigned int leptonI2C_SensorNumber() {
-  // LEP_SYS_FLIR_SERIAL_NUMBER_T sysSerialNumberBuf;
-  // LEP_GetSysFlirSerialNumber(&_port, &sysSerialNumberBuf);
   LEP_SYS_VIDEO_ROI_T sceneRoi;
   LEP_GetSysSceneRoi(&_port, &sceneRoi);
   if (sceneRoi.endCol == 79 && sceneRoi.endRow == 59) {
