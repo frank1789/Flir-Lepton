@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
-#include <cstdint>
 #include <iostream>
 #include <string>
 #include "logger.h"
@@ -55,10 +54,10 @@ unsigned int leptonI2C_InternalTemp() {
     LEP_RESULT result =
         LEP_GetSysFpaTemperatureKelvin(&_port, &fpa_temp_kelvin);
 #if LOGGER
-    LOG(DEBUG, "FPA temp kelvin: %i, code %i\n", fpa_temp_kelvin, result)
+    LOG(DEBUG, "FPA temp kelvin: %i, code %i", fpa_temp_kelvin, result)
 #endif
   }
-  return static_cast<unsigned int>((fpa_temp_kelvin / 1000));
+  return static_cast<unsigned int>((fpa_temp_kelvin));
 }
 
 double raw2Celsius(double raw) {
