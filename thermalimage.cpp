@@ -3,6 +3,7 @@
 #include <QImage>
 #include <QPainter>
 #include <QPixmap>
+#include "thermalimage.h"
 #include "leptoncamera.h"
 #include "logger.h"
 #include "palettes.h"
