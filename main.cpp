@@ -39,13 +39,13 @@ void loop_sensor() {
     cam.getFrameU16(imgU16);
     // if (cam.hasFrame())
     // {
-    image.setImage(imgU8);
+//    image.setImage(imgU8);
     //      image.save_raw_file();
-    image.save_pgm_file();
-#if LOGGER
-    LOG(INFO, "camera has frame")
-    LOG(INFO, "save on file")
-#endif
+//    image.save_pgm_file();
+//#if LOGGER
+//    LOG(INFO, "camera has frame")
+//    LOG(INFO, "save on file")
+//#endif
   }
 
   //         if (req_msg.req_cmd == CMD_FRAME_U8) {
@@ -89,10 +89,10 @@ void loop_sensor() {
 }
 
 int main(int argc, char* argv[]) {
-  //    QApplication a(argc, argv);
-  //    MainWindow w;
-  //    w.show();
-  //    return a.exec();
+    QApplication a(argc, argv);
+    MainWindow w;
+    w.show();
+  //
   std::thread t(loop_sensor);  // Separate thread for loop.
 
   // Wait for input character (this will suspend the main thread, but the loop
@@ -104,6 +104,5 @@ int main(int argc, char* argv[]) {
   stop = true;
 
   t.join();
-
-  return 0;
+  return a.exec();
 }
