@@ -1,9 +1,7 @@
-#include <unistd.h>
 #include <QApplication>
 #include <QObject>
-#include <cstdint>
-#include <iostream>
-#include <memory>
+#include <QPointer>
+
 #include "image.hpp"
 #include "leptoncamera.h"
 #include "leptonthread.hpp"
@@ -97,7 +95,7 @@ int main(int argc, char *argv[]) {
   int ImageWidth = 320 * 2;
   int ImageHeight = 240 * 2;
   QApplication a(argc, argv);
-  QWidget *w = new QWidget();
+  QPointer<QWidget> w = new QWidget();
   w->setGeometry(400, 300, WindowWidth, WindowHeight);
 
   // create an image placeholder for myLabel
@@ -112,7 +110,7 @@ int main(int argc, char *argv[]) {
   // create a thread to gather SPI data
   // when the thread emits updateImage, the label should update its image
   // accordingly
-  LeptonThread *thread = new LeptonThread();
+  QPointer<LeptonThread> thread = new LeptonThread();
   bool success = QObject::connect(thread, &LeptonThread::updateImage, &myLabel,
                                   &Image::setImage);
   Q_ASSERT(success);
