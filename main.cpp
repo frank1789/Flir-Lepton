@@ -39,14 +39,14 @@ void loop_sensor() {
     cam.getFrameU16(imgU16);
     // if (cam.hasFrame())
     // {
-        image.setImage(imgU8);
-//      image.save_raw_file();
-        image.save_pgm_file();
+    image.setImage(imgU8);
+    //      image.save_raw_file();
+    image.save_pgm_file();
 #if LOGGER
-        LOG(INFO, "camera has frame")
-        LOG(INFO, "save on file")
+    LOG(INFO, "camera has frame")
+    LOG(INFO, "save on file")
 #endif
-     }
+  }
 
   //         if (req_msg.req_cmd == CMD_FRAME_U8) {
   //             lePi.getFrameU8(imgU8);

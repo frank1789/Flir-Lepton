@@ -20,22 +20,25 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-ThermalImage::ThermalImage(const LeptonCamera &camera) : m_index_image(0), rgbImage(camera.width(), camera.height(), QImage::Format_RGB888) {
+ThermalImage::ThermalImage(const LeptonCamera &camera)
+    : m_index_image(0),
+      rgbImage(camera.width(), camera.height(), QImage::Format_RGB888) {
 #if LOGGER
-    LOG(INFO, "ctor ThermalImage")
-    LOG(DEBUG,"initialize image index %d", m_index_image)
+  LOG(INFO, "ctor ThermalImage")
+  LOG(DEBUG, "initialize image index %d", m_index_image)
 #endif
-    m_frame_width = camera.width();
-    m_frame_height = camera.height();
-    rawMax = 0;
-    rawMin = 0;
+  m_frame_width = camera.width();
+  m_frame_height = camera.height();
+  rawMax = 0;
+  rawMin = 0;
 
-    bool success = connect(&camera, &LeptonCamera::updateImageValue, this, &ThermalImage::updateImageValue);
-    Q_ASSERT(success);
+  bool success = connect(&camera, &LeptonCamera::updateImageValue, this,
+                         &ThermalImage::updateImageValue);
+  Q_ASSERT(success);
 }
 
 void ThermalImage::setImage(const std::vector<uint8_t> &imgU8) {
-    rawdataU8 = QVector<uint8_t>::fromStdVector(imgU8);
+  rawdataU8 = QVector<uint8_t>::fromStdVector(imgU8);
 #if LOGGER
   LOG(INFO, "fill QVector uint8_t mode")
 #endif
@@ -80,41 +83,46 @@ void ThermalImage::updateImageValue(uint16_t max, uint16_t min) {
 #endif
 }
 
-
 // Map "rawData" to rgb values in "rgbImage" via the colormap
 void ThermalImage::map_raw_data_to_rgb() {
-    auto diff = rawMax - rawMin + 1;
-    for (uint32_t y = 0; y < m_frame_height; ++y) {
-        for (uint32_t x = 0; x < m_frame_width; ++x) {
-            auto baseValue = rawdataU8[m_frame_width * y + x]; // take input value in [0, 65536)
-            auto scaledValue = 256 * (baseValue - rawMin) / diff; // map value to interval [0, 256), and set the pixel to its color value above
-            rgbImage.setPixel(x, y, qRgb(colormap::grayscale[3*scaledValue], colormap::grayscale[3*scaledValue+1], colormap::grayscale[3*scaledValue+2]));
+  auto diff = rawMax - rawMin + 1;
+  for (uint32_t y = 0; y < m_frame_height; ++y) {
+    for (uint32_t x = 0; x < m_frame_width; ++x) {
+      auto baseValue =
+          rawdataU8[m_frame_width * y + x];  // take input value in [0, 65536)
+      auto scaledValue = 256 * (baseValue - rawMin) /
+                         diff;  // map value to interval [0, 256), and set the
+                                // pixel to its color value above
+      rgbImage.setPixel(x, y,
+                        qRgb(colormap::grayscale[3 * scaledValue],
+                             colormap::grayscale[3 * scaledValue + 1],
+                             colormap::grayscale[3 * scaledValue + 2]));
     }
-    }
+  }
 }
 
 void ThermalImage::save_pgm_file() {
-//   int i;
-//   int j;
-//   unsigned int maxval = 0;
-//   unsigned int minval = UINT_MAX;
-   char image_name[32];
+  //   int i;
+  //   int j;
+  //   unsigned int maxval = 0;
+  //   unsigned int minval = UINT_MAX;
+  char image_name[32];
 
-   do {
-     sprintf(image_name, "IMG_%.4lu.pgm", m_index_image);
-     ++m_index_image;
-     if (m_index_image > 99999) {
-       m_index_image = 0;
-       break;
-     }
+  do {
+    sprintf(image_name, "IMG_%.4lu.pgm", m_index_image);
+    ++m_index_image;
+    if (m_index_image > 99999) {
+      m_index_image = 0;
+      break;
+    }
 
-   } while (access(image_name, F_OK) == 0);
+  } while (access(image_name, F_OK) == 0);
 
-   FILE *f = fopen(image_name, "w");
-   if (f == nullptr) {
-     std::cerr << "Error opening file! << \n";
-     exit(1);
-   }
+  FILE *f = fopen(image_name, "w");
+  if (f == nullptr) {
+    std::cerr << "Error opening file! << \n";
+    exit(1);
+  }
 
 //   printf("Calculating min/max values for proper scaling...\n");
 //   for (i = 0; i < 60; i++) {
@@ -128,27 +136,28 @@ void ThermalImage::save_pgm_file() {
 //     }
 //   }
 #if LOGGER
-   LOG(TRACE, "maxval = %u", rawMax)
-   LOG(TRACE, "minval = %u", rawMin)
+  LOG(TRACE, "maxval = %u", rawMax)
+  LOG(TRACE, "minval = %u", rawMin)
 #endif
-   fprintf(f, "P2\n80 60\n%u\n", rawMax - rawMin);
-   for (uint32_t y = 0; y < m_frame_height; ++y) {
-       for (uint32_t x = 0; x < m_frame_width; ++x) {
+  fprintf(f, "P2\n80 60\n%u\n", rawMax - rawMin);
+  for (uint32_t y = 0; y < m_frame_height; ++y) {
+    for (uint32_t x = 0; x < m_frame_width; ++x) {
 #if LOGGER
-           LOG(DEBUG, "raw data in photo %d", rawdataU8[m_frame_width * y + x])
-//           LOG(WARN, "diff raw data in photo %d", (rawdataU8[m_frame_width * y + x] - rawMin))
+      LOG(DEBUG, "raw data in photo %d", rawdataU8[m_frame_width * y + x])
+//           LOG(WARN, "diff raw data in photo %d", (rawdataU8[m_frame_width * y
+//           + x] - rawMin))
 #endif
-           fprintf(f, "%d", rawdataU8[m_frame_width * y + x]);
-//           fprintf(f, "%d", rawdataU8[m_frame_width * y + x] - rawMin);
-       }
+      fprintf(f, "%d", rawdataU8[m_frame_width * y + x]);
+      //           fprintf(f, "%d", rawdataU8[m_frame_width * y + x] - rawMin);
+    }
 
-//   for (i = 0; i < 60; i++) {
-//     for (j = 0; j < 80; j++) {
-//       fprintf(f, "%d ", lepton_image[i][j] - minval);
-//     }
-     fprintf(f, "\n");
-   }
-   fprintf(f, "\n\n");
+    //   for (i = 0; i < 60; i++) {
+    //     for (j = 0; j < 80; j++) {
+    //       fprintf(f, "%d ", lepton_image[i][j] - minval);
+    //     }
+    fprintf(f, "\n");
+  }
+  fprintf(f, "\n\n");
 
-   fclose(f);
- }
+  fclose(f);
+}

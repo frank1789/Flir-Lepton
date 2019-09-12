@@ -42,7 +42,8 @@ typedef enum level { TRACE, DEBUG, INFO, WARN, ERROR, FATAL } level_t;
 
 /*
  */
-extern void logger(level_t level, const char *file, int line, const char *fmt, ...);
+extern void logger(level_t level, const char *file, int line, const char *fmt,
+                   ...);
 
 #if __cplusplus
 }

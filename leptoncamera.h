@@ -1,14 +1,13 @@
 #ifndef LEPTONCAMERA_H
 #define LEPTONCAMERA_H
 
+#include <QObject>
 #include <mutex>
 #include <thread>
 #include <vector>
-#include <QObject>
 #include "leptonsensor.h"
 
 class LeptonCamera : public QObject {
-
   Q_OBJECT
  public:
   LeptonCamera();
@@ -52,7 +51,7 @@ class LeptonCamera : public QObject {
   inline uint32_t height() const { return m_lepton_config.height; }
   friend std::ostream &operator<<(std::ostream &os, const LeptonSensor_t &lp);
 
-  signals:
+ signals:
   void updateImageValue(const uint16_t max, const uint16_t min);
 
  private:
@@ -78,6 +77,5 @@ class LeptonCamera : public QObject {
 };
 
 std::ostream &operator<<(std::ostream &os, const LeptonSensor_t &lp);
-
 
 #endif  // LEPTONCAMERA_H

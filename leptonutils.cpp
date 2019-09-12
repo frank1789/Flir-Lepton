@@ -1,4 +1,4 @@
-#include "LeptonUtils.h"
+#include "leptonutils.h"
 #include <LeptonSDKEmb32PUB/LEPTON_OEM.h>
 #include <LeptonSDKEmb32PUB/LEPTON_SDK.h>
 #include <LeptonSDKEmb32PUB/LEPTON_SYS.h>

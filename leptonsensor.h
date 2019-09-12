@@ -6,8 +6,6 @@
 #include <map>
 #include <vector>
 
-
-
 enum class LeptonSensor_t { UNKNOWN, LEPTON2, LEPTON3 };
 
 const std::map<int, LeptonSensor_t> MapLepton{{2, LeptonSensor_t::LEPTON2},
@@ -112,7 +110,5 @@ class LeptonSensor {
 };
 
 std::ostream &operator<<(std::ostream &os, const LeptonSensor_t &lp);
-
-
 
 #endif  // LEPTON_SENSOR_H

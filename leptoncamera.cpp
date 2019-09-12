@@ -1,8 +1,7 @@
 #include "leptoncamera.h"
 #include <iostream>
-#include "LeptonUtils.h"
+#include "leptonutils.h"
 #include "logger.h"
-
 
 LeptonCamera::LeptonCamera()
     : m_sensor(),
@@ -188,4 +187,3 @@ std::ostream& operator<<(std::ostream& os, const LeptonSensor_t& lp) {
   }
   return os;
 }
-

@@ -2,9 +2,8 @@
 #include <ctime>
 #include <iostream>
 
-#include "LeptonUtils.h"
 #include "leptonsensor.h"
-
+#include "leptonutils.h"
 
 LeptonCameraConfig::LeptonCameraConfig(LeptonSensor_t lp) {
   packet_size = 164;
@@ -354,7 +353,7 @@ bool LeptonSensor::send_command(LeptonI2CCmd cmd, void *buffer) {
   // Run FFC
   bool result{false};
   switch (cmd) {
-  case LeptonI2CCmd::RESET: {
+    case LeptonI2CCmd::RESET: {
       result = reset_connection();
       break;
     }
@@ -400,5 +399,3 @@ LeptonSensor_t LeptonSensor::getInfo_sensor() {
 
   return LeptonSensor_t::UNKNOWN;
 }
-
-

@@ -3,8 +3,8 @@
 
 #include <QFile>
 #include <QImage>
-#include <QVector>
 #include <QObject>
+#include <QVector>
 #include "leptoncamera.h"
 
 class ThermalImage : public QObject {
@@ -20,11 +20,9 @@ class ThermalImage : public QObject {
   void save_raw_file();
   void save_pgm_file();
 
-
-
   void map_raw_data_to_rgb();
-public slots:
-    void updateImageValue(uint16_t max, uint16_t min);
+ public slots:
+  void updateImageValue(uint16_t max, uint16_t min);
 
  private:
   unsigned long m_index_image;
