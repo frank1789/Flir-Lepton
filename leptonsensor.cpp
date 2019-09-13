@@ -164,11 +164,11 @@ void LeptonSensor::LeptonUnpackFrame8 (uint8_t *frame) {
     for(uint32_t i = 0; i < frame_size; i++) {
 
         // Skip the first 2 uint16_t's of every packet, they're 4 bytes header
-        if(i % config_.packet_size_uint16 < 2) {
+        if(i % m_config.packet_size_uint16 < 2) {
             continue;
         }
 
-        frame[idx++] = static_cast<uint8_t>((frame_buffer_[i] - minValue) * scale);
+        frame[idx++] = static_cast<uint8_t>((m_frame_buffer[i] - minValue) * scale);
     }
 }
 
