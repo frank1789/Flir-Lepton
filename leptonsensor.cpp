@@ -34,8 +34,8 @@ LeptonCameraConfig::LeptonCameraConfig(LeptonSensorType lp) {
       break;
 
     case LeptonSensorType::UNKNOWN:
-        std::cerr << "Error: Unknown Lepton version.";
-        throw std::runtime_error("Unknown Lepton version.");
+      std::cerr << "Error: Unknown Lepton version.";
+      throw std::runtime_error("Unknown Lepton version.");
 
     default:
       std::cerr << "Error: Unknown Lepton version.";
@@ -130,51 +130,49 @@ bool LeptonSensor::reboot_sensor() {
 }
 
 // Lepton convert frame from sensor to IR imageU8
-void LeptonSensor::LeptonUnpackFrame8 (uint8_t *frame) {
+void LeptonSensor::LeptonUnpackFrame8(uint8_t *frame) {
+  // Prepare buffer pointers
+  const uint32_t frame_size{m_config.segments_per_frame *
+                            m_config.segment_size_uint16};
+  auto frame_u8 = reinterpret_cast<uint8_t *>(m_frame_buffer.data());
 
-    // Prepare buffer pointers
-    const uint32_t frame_size{m_config.segments_per_frame*m_config.segment_size_uint16};
-    auto frame_u8 = reinterpret_cast<uint8_t *>(m_frame_buffer.data());
-
-    // Compute min and max
-    uint16_t minValue = 65535;
-    uint16_t maxValue = 0;
-    for(uint32_t i = 0; i < frame_size; i++) {
-
-        // Skip the first 2 uint16_t's of every packet, they're 4 bytes header
-        if(i % m_config.packet_size_uint16 < 2) {
-            continue;
-        }
-
-        // Flip the MSB and LSB at the last second
-        uint8_t temp = frame_u8[i*2];
-        frame_u8[i*2] = frame_u8[i*2+1];
-        frame_u8[i*2+1] = temp;
-
-        // Check min/max value
-        uint16_t value = m_frame_buffer[i];
-        if(value > maxValue) {
-            maxValue = value;
-        }
-        if(value < minValue) {
-            minValue = value;
-        }
+  // Compute min and max
+  uint16_t minValue = 65535;
+  uint16_t maxValue = 0;
+  for (uint32_t i = 0; i < frame_size; i++) {
+    // Skip the first 2 uint16_t's of every packet, they're 4 bytes header
+    if (i % m_config.packet_size_uint16 < 2) {
+      continue;
     }
 
-    // Scale frame range
-    auto diff = static_cast<double>(maxValue - minValue);
-    double scale = 255.0 / diff;
-    int idx = 0;
-    for(uint32_t i = 0; i < frame_size; i++) {
+    // Flip the MSB and LSB at the last second
+    uint8_t temp = frame_u8[i * 2];
+    frame_u8[i * 2] = frame_u8[i * 2 + 1];
+    frame_u8[i * 2 + 1] = temp;
 
-        // Skip the first 2 uint16_t's of every packet, they're 4 bytes header
-        if(i % m_config.packet_size_uint16 < 2) {
-            continue;
-        }
-        auto int_scale = static_cast<int>(scale);
-        auto frame_computed = (m_frame_buffer[i] - minValue) * int_scale;
-        frame[idx++] = static_cast<uint8_t>(frame_computed);
+    // Check min/max value
+    uint16_t value = m_frame_buffer[i];
+    if (value > maxValue) {
+      maxValue = value;
     }
+    if (value < minValue) {
+      minValue = value;
+    }
+  }
+
+  // Scale frame range
+  auto diff = static_cast<double>(maxValue - minValue);
+  double scale = 255.0 / diff;
+  int idx = 0;
+  for (uint32_t i = 0; i < frame_size; i++) {
+    // Skip the first 2 uint16_t's of every packet, they're 4 bytes header
+    if (i % m_config.packet_size_uint16 < 2) {
+      continue;
+    }
+    auto int_scale = static_cast<int>(scale);
+    auto frame_computed = (m_frame_buffer[i] - minValue) * int_scale;
+    frame[idx++] = static_cast<uint8_t>(frame_computed);
+  }
 }
 
 // Lepton convert frame from sensor to IR imageU16
@@ -382,8 +380,9 @@ bool LeptonSensor::send_command(LeptonI2CCmd cmd, void *buffer) {
       break;
     }
 
-    case LeptonI2CCmd::VOID:{
-        std::cerr << "No I2C command." << std::endl;
+    case LeptonI2CCmd::VOID: {
+      std::cerr << "No I2C command." << std::endl;
+      break;
     }
 
     default: {

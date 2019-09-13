@@ -8,8 +8,8 @@
 
 enum class LeptonSensorType { UNKNOWN, LEPTON2, LEPTON3 };
 
-const std::map<unsigned int, LeptonSensorType> MapLepton{{2, LeptonSensorType::LEPTON2},
-                                              {3, LeptonSensorType::LEPTON3}};
+const std::map<unsigned int, LeptonSensorType> MapLepton{
+    {2, LeptonSensorType::LEPTON2}, {3, LeptonSensorType::LEPTON3}};
 
 enum class LeptonFrameType { FRAME_U8, FRAME_U16 };
 
@@ -99,7 +99,7 @@ class LeptonSensor {
    * @brief Unpack latest received frame, and scale IR range to [0, 255], using
    *        frame's min and max IR values
    */
-  void LeptonUnpackFrame8 (uint8_t *frame);
+  void LeptonUnpackFrame8(uint8_t *frame);
 
  private:
   LeptonCameraConfig m_config;
