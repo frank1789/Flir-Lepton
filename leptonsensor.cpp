@@ -33,6 +33,10 @@ LeptonCameraConfig::LeptonCameraConfig(LeptonSensorType lp) {
       height = 120;
       break;
 
+    case LeptonSensorType::UNKNOWN:
+        std::cerr << "Error: Unknown Lepton version.";
+        throw std::runtime_error("Unknown Lepton version.");
+
     default:
       std::cerr << "Error: Unknown Lepton version.";
       throw std::runtime_error("Unknown Lepton version.");
@@ -158,8 +162,8 @@ void LeptonSensor::LeptonUnpackFrame8 (uint8_t *frame) {
     }
 
     // Scale frame range
-    auto diff = static_cast<float>(maxValue - minValue);
-    float scale = 255.f / diff;
+    auto diff = static_cast<double>(maxValue - minValue);
+    double scale = 255.0 / diff;
     int idx = 0;
     for(uint32_t i = 0; i < frame_size; i++) {
 
@@ -167,8 +171,9 @@ void LeptonSensor::LeptonUnpackFrame8 (uint8_t *frame) {
         if(i % m_config.packet_size_uint16 < 2) {
             continue;
         }
-
-        frame[idx++] = static_cast<uint8_t>((m_frame_buffer[i] - minValue) * scale);
+        auto int_scale = static_cast<int>(scale);
+        auto frame_computed = (m_frame_buffer[i] - minValue) * int_scale;
+        frame[idx++] = static_cast<uint8_t>(frame_computed);
     }
 }
 
@@ -376,6 +381,11 @@ bool LeptonSensor::send_command(LeptonI2CCmd cmd, void *buffer) {
       result = leptonI2C_ShutterClose();
       break;
     }
+
+    case LeptonI2CCmd::VOID:{
+        std::cerr << "No I2C command." << std::endl;
+    }
+
     default: {
       std::cerr << "Unknown I2C command." << std::endl;
       result = false;

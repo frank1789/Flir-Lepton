@@ -34,7 +34,7 @@ LeptonCamera::LeptonCamera()
   m_config = LeptonCameraConfig(m_lepton_type);
   m_frame_read.resize(m_config.width * m_config.height);
   m_frame_write.resize(m_config.width * m_config.height);
-};
+}
 
 LeptonCamera::~LeptonCamera() {
 // Stop thread
@@ -48,7 +48,7 @@ LeptonCamera::~LeptonCamera() {
 #endif
     std::cerr << "Unable to close communication with the sensor" << std::endl;
   }
-};
+}
 
 void LeptonCamera::start() {
     // Avoid starting the thread if already runs
