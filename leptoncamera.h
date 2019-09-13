@@ -6,13 +6,16 @@
 #include <thread>
 #include <atomic>
 #include <mutex>
+
+#include <QObject>
+
 #include "leptonsensor.h"
 
 /**
  * @brief Lepton parallel camera interface based on a grabber thread that
  *        ensures that all frames are read from the sensors
  */
-class LeptonCamera {
+class LeptonCamera : public QObject {
 public:
 
     /**
@@ -21,7 +24,7 @@ public:
      */
     LeptonCamera();
     // Delete copy constructor and copy operator
-    LeptonCamera(LeptonCamera const&) = delete;
+//    LeptonCamera(LeptonCamera const&) = delete;
     virtual ~LeptonCamera();
 
     /**
@@ -80,3 +83,5 @@ private:
     LeptonCameraConfig m_config;
     double m_temperature;
 };
+
+#endif // LEPTONCAMERA_H

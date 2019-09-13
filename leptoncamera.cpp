@@ -75,13 +75,10 @@ void LeptonCamera::run() {
 #endif
     // Get new frame
     try {
+        m_temperature = leptonI2C_InternalTemp();
 #if LOGGER
       LOG(INFO, "try, get new frame")
-#endif
-      m_temperature = leptonI2C_InternalTemp();
-#if LOGGER
-      LOG(DEBUG, "sensor temperature: %lf", m_temperature)
-      LOG(DEBUG, "sensor temperature: %lf", (m_temperature /100))
+      LOG(DEBUG, "sensor temperature: %3.2lf K", (m_temperature /100))
 #endif
       if (!m_sensor.getFrame(m_frame_write.data(), LeptonFrameType::FRAME_U16)) {
         continue;
