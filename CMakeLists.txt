@@ -29,9 +29,10 @@ find_package(Qt5 COMPONENTS Widgets REQUIRED)
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 find_package(Threads REQUIRED)
 
+# add subdirectory LOG
+add_subdirectory(log)
 # add subdirectory SDK
 add_subdirectory(LeptonSDKEmb32PUB)
-
 
 # Check architecture
 EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
@@ -40,16 +41,15 @@ file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 file(GLOB HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h
     ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
 
-
-# Compile main program
+# compile Debug Mode
 add_executable(${LEPTONCAMERA} ${SOURCES})
-target_link_libraries(${LEPTONCAMERA} Qt5::Widgets LeptonSDK ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(${LEPTONCAMERA} Qt5::Widgets LeptonSDK LOG ${CMAKE_THREAD_LIBS_INIT})
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
 	message(STATUS "Compiling debug mode")
 	add_definitions(-DLOGGER)
         target_compile_options(${LEPTONCAMERA} PUBLIC -march=native -g -O0)
 endif ()
-
+# compile Release mode
 if( NOT CMAKE_BUILD_TYPE )
 	SET( CMAKE_BUILD_TYPE Release ... FORCE )
 	message(STATUS "Active release mode")
