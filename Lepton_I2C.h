@@ -24,6 +24,6 @@ void leptonI2C_disconnect();
 
 void lepton_perform_ffc();
 
-double leptonI2C_InternalTemp();
+unsigned int leptonI2C_InternalTemp();
 
 #endif  // LEPTON_I2C_H

@@ -39,17 +39,16 @@ void lepton_perform_ffc() {
 }
 
 // Get internal temperature
-double leptonI2C_InternalTemp() {
-  LEP_SYS_FPA_TEMPERATURE_KELVIN_T fpa_temp_kelvin{0};
-  if (_connected) {
-    LEP_RESULT result =
-        LEP_GetSysFpaTemperatureKelvin(&_port, &fpa_temp_kelvin);
-#if LOGGER
-    LOG(DEBUG, "FPA raw temperature: %i, code %i", fpa_temp_kelvin, result)
-    LOG(DEBUG, "temperature K: %i, code %i", fpa_temp_kelvin / 100, result)
-#endif
+unsigned int leptonI2C_InternalTemp() {
+  if (!_connected) {
+    lepton_connect();
   }
-  return static_cast<double>((fpa_temp_kelvin) / 100);
+  LEP_SYS_FPA_TEMPERATURE_KELVIN_T fpa_temp_kelvin{0};
+  LEP_RESULT result = LEP_GetSysFpaTemperatureKelvin(&_port, &fpa_temp_kelvin);
+#if LOGGER
+  LOG(DEBUG, "FPA raw temperature: %i, code %i", fpa_temp_kelvin, result)
+#endif
+return fpa_temp_kelvin;
 }
 
 // presumably more commands could go here if desired
