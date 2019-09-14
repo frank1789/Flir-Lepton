@@ -1,131 +1,88 @@
 #include <QApplication>
-#include <QObject>
-#include <QPointer>
+#include <QThread>
+#include <QMutex>
+#include <QMessageBox>
 
-#include "image.hpp"
-#include "leptoncamera.h"
+#include <QColor>
+#include <QLabel>
+#include <QtDebug>
+#include <QString>
+#include <QPushButton>
+
 #include "leptonthread.hpp"
-#include "logger.h"
-#include "mainwindow.hpp"
-#include "thermalimage.h"
+#include "MyLabel.h"
 
-// std::atomic_bool stop{false};
+int main( int argc, char **argv )
+{
+	//create the app
+	QApplication a( argc, argv );
+	
+	QWidget *myWidget = new QWidget;
+	myWidget->setGeometry(400, 300, 760, 480);
 
-// void loop_sensor() {
-//  LeptonCamera cam;
-//  ThermalImage image(cam);
-//  std::cout << "Detected camera: " << cam.LeptonVersion() << "\n";
-//  usleep(5e+6);
-//#if LOGGER
-//  LOG(INFO, "start lepton sensor")
-//  LOG(INFO, "allocate frame buffer")
-//  auto dimension = [](const uint32_t& a, const uint32_t& b) { return a * b; };
-//  LOG(DEBUG, "buffer size: %d", dimension(cam.width(), cam.height()))
-//#endif
-//  QVector<uint8_t> qimgU8(cam.width() * cam.height());
-//  QVector<uint16_t> qimgU16(cam.width() * cam.height());
-//  std::vector<uint8_t> imgU8(cam.width() * cam.height());
-//  std::vector<uint16_t> imgU16(cam.width() * cam.height());
+	//create an image placeholder for myLabel
+	//fill the top left corner with red, just bcuz
+	QImage myImage;
+	myImage = QImage(320, 240, QImage::Format_RGB888);
+	QRgb red = qRgb(255,0,0);
+	for(int i=0;i<80;i++) {
+		for(int j=0;j<60;j++) {
+			myImage.setPixel(i, j, red);
+		}
+	}
 
-//  // start cycle thread thermal cmaera
-//  cam.start();
+	//create a label, and set it's image to the placeholder
+	MyLabel myLabel(myWidget);
+	myLabel.setGeometry(10, 10, 640, 480);
+	myLabel.setPixmap(QPixmap::fromImage(myImage));
 
-//  while (!stop) {
-//    // long cycle
-//    auto temperature = cam.SensorTemperature();
-//#if LOGGER
-//    LOG(DEBUG, "temperature acquired: %lf", temperature)
-//#endif
-//    cam.getFrameU8(imgU8);
-//    cam.getFrameU16(imgU16);
-//    // if (cam.hasFrame())
-//    // {
-////    image.setImage(imgU8);
-//    //      image.save_raw_file();
-////    image.save_pgm_file();
-////#if LOGGER
-////    LOG(INFO, "camera has frame")
-////    LOG(INFO, "save on file")
-////#endif
-//  }
+	//create a FFC button
+	QPushButton *button1 = new QPushButton("Reset Cam", myWidget);
+	button1->setGeometry(660, 480/6, 100, 30);
 
-//  //         if (req_msg.req_cmd == CMD_FRAME_U8) {
-//  //             lePi.getFrameU8(imgU8);
-//  //             memcpy(resp_msg.frame, imgU8.data(), imgU8.size());
-//  //             resp_msg.bpp = 1;
-//  //         } else {
-//  //             lePi.getFrameU16(imgU16);
-//  //             memcpy(resp_msg.frame, imgU16.data(), imgU16.size() * 2);
-//  //             resp_msg.bpp = 2;
-//  //         }
-//  //         resp_msg.req_status = STATUS_FRAME_READY;
-//  //         resp_msg.height = lePi.height();
-//  //         resp_msg.width = lePi.width();
-//  //         break;
-//  //     }
-//  //     case REQUEST_I2C: {
-//  //         resp_msg.req_type = REQUEST_I2C;
-//  //         if (lePi.sendCommand(static_cast<LeptonI2CCmd>(req_msg.req_cmd),
-//  //                              resp_msg.frame)) {
-//  //             resp_msg.req_status = STATUS_I2C_SUCCEED;
-//  //         }
-//  //         else {
-//  //             resp_msg.req_status = STATUS_I2C_FAILED;
-//  //         }
-//  //         break;
-//  //     }
-//  //     case REQUEST_EXIT: {
-//  //         force_exit = true;
-//  //         break;
-//  //     }
-//  //     default : {
-//  //         resp_msg.req_type = REQUEST_UNKNOWN;
-//  //         resp_msg.req_status = STATUS_RESEND;
-//  //         break;
-//  //     }
-//  // }
+	//create a Snapshot button
+	QPushButton *button2 = new QPushButton("Capture", myWidget);
+	button2->setGeometry(660, 480/6*2, 100, 30);
 
-//  // stop thread thermal camera
-//  cam.stop();
-//}
+	//create a GrayScale button
+	QPushButton *button3 = new QPushButton("Black White", myWidget);
+	button3->setGeometry(660, 480/6*3, 100, 30);
 
-int main(int argc, char *argv[]) {
-  int WindowWidth = 340 * 2;
-  int WindowHeight = 290 * 2;
-  int ImageWidth = 320 * 2;
-  int ImageHeight = 240 * 2;
-  QApplication a(argc, argv);
-  QPointer<QWidget> w = new QWidget();
-  w->setGeometry(400, 300, WindowWidth, WindowHeight);
+	//create a Rainbow button
+	QPushButton *button4 = new QPushButton("Colorful", myWidget);
+	button4->setGeometry(660, 480/6*4, 100, 30);
 
-  // create an image placeholder for myLabel
-  // fill the top left corner with red, just bcuz
-  QImage myImage;
-  myImage = QImage(ImageWidth, ImageHeight, QImage::Format_RGB888);
+	//create a IronBlack button
+	QPushButton *button5 = new QPushButton("ResetColor", myWidget);
+	button5->setGeometry(660, 480/6*5, 100, 30);
 
-  // create a label, and set it's image to the placeholder
-  Image myLabel(w);
-  myLabel.setGeometry(10, 10, ImageWidth, ImageHeight);
-  myLabel.setPixmap(QPixmap::fromImage(myImage));
-  // create a thread to gather SPI data
-  // when the thread emits updateImage, the label should update its image
-  // accordingly
-  QPointer<LeptonCamera> thread = new LeptonCamera();
-  bool success = QObject::connect(thread, &LeptonThread::updateImage, &myLabel,
-                                  &Image::setImage);
-  Q_ASSERT(success);
-  // old way
-  //    std::thread t(loop_sensor);  // Separate thread for loop.
+	//create a thread to gather SPI data
+	//when the thread emits updateImage, the label should update its image accordingly
+	LeptonThread *thread = new LeptonThread();
+	QObject::connect(thread, SIGNAL(updateImage(QImage)), &myLabel, SLOT(setImage(QImage)));
+	
+	//connect ffc button to the thread's ffc action
+	QObject::connect(button1, SIGNAL(clicked()), thread, SLOT(performFFC()));
+	thread->start();
 
-  // Wait for input character (this will suspend the main thread, but the loop
-  // thread will keep running).
-  //  std::cin.get();
-  // Set the atomic boolean to true. The loop thread will exit from
-  // loop and terminate.
-  //  stop = true;
-  //  t.join();
-  thread->start();
-  w->show();
+	//connect snapshot button to the thread's snapshot action
+	QObject::connect(button2, SIGNAL(clicked()), thread, SLOT(snapImage()));
+	thread->start();
+	
+	//connect GrayScale button to the thread's snapshot action
+	QObject::connect(button3, SIGNAL(clicked()), thread, SLOT(greyMap()));
+	thread->start();
 
-  return a.exec();
+	//connect Rainbow button to the thread's snapshot action
+	QObject::connect(button4, SIGNAL(clicked()), thread, SLOT(rainMap()));
+	thread->start();
+
+	//connect IronBlack button to the thread's snapshot action
+	QObject::connect(button5, SIGNAL(clicked()), thread, SLOT(ironMap()));
+	thread->start();
+
+	myWidget->show();
+
+	return a.exec();
 }
+
