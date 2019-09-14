@@ -8,14 +8,13 @@
 #include "log/logger.h"
 #include "palettes.h"
 
-LeptonThread::LeptonThread() : QThread(), colorMap(colormap::ironblack) {
-  // create the initial image
-  myImage = QImage(80, 60, QImage::Format_RGB888);
-}
+LeptonThread::LeptonThread() : QThread(), colorMap(colormap::ironblack) {}
 
 LeptonThread::~LeptonThread() {}
 
 void LeptonThread::run() {
+  // generate initial image
+  myImage = QImage(80, 60, QImage::Format_RGB888);
   // open SPI port
   leptonSPI_OpenPort(0);
   while (true) {
