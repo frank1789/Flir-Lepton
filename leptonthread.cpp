@@ -8,15 +8,22 @@
 #include "log/logger.h"
 #include "palettes.h"
 
-LeptonThread::LeptonThread() : QThread(), colorMap(colormap::ironblack) {}
+LeptonThread::LeptonThread() : QThread(), colorMap(colormap::ironblack) {
+  m_temperature = new Temperature();
+}
 
-LeptonThread::~LeptonThread() {}
+LeptonThread::~LeptonThread() {
+  if(m_temperature){
+    delete m_temperature;
+  }
+}
 
 void LeptonThread::run() {
   // generate initial image
   myImage = QImage(80, 60, QImage::Format_RGB888);
   // open SPI port
   leptonSPI_OpenPort(0);
+  usleep(LeptonLoadTime);
   while (true) {
     // read data packets from lepton over SPI
     int resets = 0;
@@ -29,20 +36,21 @@ void LeptonThread::run() {
       if (packetNumber != j) {
         j = -1;
         resets += 1;
-        usleep(1000);
+        usleep(LeptonResetTime);
         if (resets == 750) {
           leptonSPI_ClosePort(0);
-          usleep(750000);
+          usleep(LeptonRebootTime);
           leptonSPI_OpenPort(0);
         }
       }
     }
 #if LOGGER
-    if (resets >= 30) {
+    if (resets >= kMaxResetsPerFrame) {
       LOG(DEBUG, "reading, resets: %d", resets)
     }
 #endif
-
+    // acquire temperature
+    m_temperature->read_from_sensor();
     frameBuffer = (uint16_t *)result;
     int row, column;
     uint16_t value;
@@ -84,13 +92,12 @@ void LeptonThread::run() {
       column = (i % PACKET_SIZE_UINT16) - 2;
       row = i / PACKET_SIZE_UINT16;
       myImage.setPixel(column, row, color);
+      // m_temperature->frame_to_temperature(maxValue, minValue);
     }
 
     // lets emit the signal for update
     emit updateImage(myImage);
   }
-
-  //  close SPI port
   leptonSPI_ClosePort(0);
 }
 void LeptonThread::snapImage() {
