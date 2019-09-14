@@ -13,7 +13,7 @@ LeptonThread::LeptonThread() : QThread(), colorMap(colormap::ironblack) {
 }
 
 LeptonThread::~LeptonThread() {
-  if(m_temperature){
+  if (m_temperature) {
     delete m_temperature;
   }
 }
@@ -37,7 +37,7 @@ void LeptonThread::run() {
         j = -1;
         resets += 1;
         usleep(LeptonResetTime);
-        if (resets == 750) {
+        if (resets == MaxResetsPerSegment) {
           leptonSPI_ClosePort(0);
           usleep(LeptonRebootTime);
           leptonSPI_OpenPort(0);
