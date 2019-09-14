@@ -8,8 +8,8 @@
 #include <stdlib.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
-#include <string>
 #include <iostream>
+#include <string>
 
 //============================================================================
 // Lepton SPI Communication
@@ -44,12 +44,12 @@ int leptonSPI_OpenPort(int spi_device) {
     throw std::runtime_error("Connection failed.");
   }
 
-  // Set SPI mode WR
-  // SPI_MODE_0 (0,0) CPOL=0 (Clock Idle low level),  CPHA=0 (SDO transmit/change edge active to idle)
-  // SPI_MODE_1 (0,1) CPOL=0 (Clock Idle low level),  CPHA=1 (SDO transmit/change edge idle to active)
-  // SPI_MODE_2 (1,0) CPOL=1 (Clock Idle high level), CPHA=0 (SDO transmit/change edge active to idle)
-  // SPI_MODE_3 (1,1) CPOL=1 (Clock Idle high level), CPHA=1
-  // (SDO transmit/change edge idle to active)
+  // Set SPI mode WR
+  // SPI_MODE_0 (0,0) CPOL=0 (Clock Idle low level),  CPHA=0 (SDO transmit/change edge active to idle)
+  // SPI_MODE_1 (0,1) CPOL=0 (Clock Idle low level),  CPHA=1 (SDO transmit/change edge idle to active)
+  // SPI_MODE_2 (1,0) CPOL=1 (Clock Idle high level), CPHA=0 (SDO transmit/change edge active to idle)
+  // SPI_MODE_3 (1,1) CPOL=1 (Clock Idle high level), CPHA=1
+  // (SDO transmit/change edge idle to active)
   status_value = ioctl(*spi_cs_fd, SPI_IOC_WR_MODE, &spi_mode);
   if (status_value < 0) {
     std::cerr << "Could not set SPIMode (WR)...ioctl fail" << std::endl;
@@ -95,28 +95,26 @@ int leptonSPI_OpenPort(int spi_device) {
 
   std::cout << "Open SPI port: " << spi_device << ", with address "
             << *spi_cs_fd << std::endl;
-  return(status_value);
+  return (status_value);
 }
 
 // Close SPI connection
-
-
 int leptonSPI_ClosePort(int spi_device) {
-    int status_value{-1};
-    int *spi_cs_fd{nullptr};
-    if (spi_device) {
-        spi_cs_fd = &spi_cs1_fd;
-    } else {
-        spi_cs_fd = &spi_cs0_fd;
-    }
+  int status_value{-1};
+  int *spi_cs_fd{nullptr};
+  if (spi_device) {
+    spi_cs_fd = &spi_cs1_fd;
+  } else {
+    spi_cs_fd = &spi_cs0_fd;
+  }
 
-    // Close connection
-    status_value = close(*spi_cs_fd);
-    if (status_value < 0) {
-        std::cerr << "Error - Could not close SPI device" << std::endl;
-        throw std::runtime_error("Closing connection failed.");
-    }
-    std::cout << "Close SPI port: " << spi_device << ", with address "
-              << *spi_cs_fd << std::endl;
-    return(status_value);
+  // Close connection
+  status_value = close(*spi_cs_fd);
+  if (status_value < 0) {
+    std::cerr << "Error - Could not close SPI device" << std::endl;
+    throw std::runtime_error("Closing connection failed.");
+  }
+  std::cout << "Close SPI port: " << spi_device << ", with address "
+            << *spi_cs_fd << std::endl;
+  return (status_value);
 }
