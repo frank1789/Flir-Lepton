@@ -43,13 +43,12 @@ int leptonSPI_OpenPort(int spi_device) {
     std::cerr << "Error - Could not open SPI device" << std::endl;
     throw std::runtime_error("Connection failed.");
   }
-
-  // Set SPI mode WR
-  // SPI_MODE_0 (0,0) CPOL=0 (Clock Idle low level),  CPHA=0 (SDO transmit/change edge active to idle)
-  // SPI_MODE_1 (0,1) CPOL=0 (Clock Idle low level),  CPHA=1 (SDO transmit/change edge idle to active)
-  // SPI_MODE_2 (1,0) CPOL=1 (Clock Idle high level), CPHA=0 (SDO transmit/change edge active to idle)
-  // SPI_MODE_3 (1,1) CPOL=1 (Clock Idle high level), CPHA=1
-  // (SDO transmit/change edge idle to active)
+  // Set SPI mode WR
+  // SPI_MODE_0 (0,0) CPOL=0 (Clock Idle low level),  CPHA=0 (SDO transmit/change edge active to idle)
+  // SPI_MODE_1 (0,1) CPOL=0 (Clock Idle low level),  CPHA=1 (SDO transmit/change edge idle to active)
+  // SPI_MODE_2 (1,0) CPOL=1 (Clock Idle high level), CPHA=0 (SDO transmit/change edge active to idle)
+  // SPI_MODE_3 (1,1) CPOL=1 (Clock Idle high level), CPHA=1
+  // (SDO transmit/change edge idle to active)
   status_value = ioctl(*spi_cs_fd, SPI_IOC_WR_MODE, &spi_mode);
   if (status_value < 0) {
     std::cerr << "Could not set SPIMode (WR)...ioctl fail" << std::endl;
