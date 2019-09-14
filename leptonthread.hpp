@@ -2,28 +2,44 @@
 #define LEPTONTHREAD_HPP
 
 #include <cstdint>
-#include <QVector>
-#include <QObject>
+#include <ctime>
+
+#include <QImage>
+#include <QPixmap>
 #include <QThread>
-#include "leptoncamera.h"
-#include "thermalimage.h"
+#include <QtCore>
 
-class LeptonThread : public QThread
-{
-    Q_OBJECT
-public:
-    LeptonThread();
-    ~LeptonThread();
+constexpr int PACKET_SIZE{164};
+constexpr int PACKET_SIZE_UINT16{PACKET_SIZE / 2};
+constexpr int PACKETS_PER_FRAME{60};
+constexpr int FRAME_SIZE_UINT16{PACKET_SIZE_UINT16 * PACKETS_PER_FRAME};
 
-    void run();
+class LeptonThread : public QThread {
+  Q_OBJECT;
 
-signals:
-    void updateImage(QImage);
+ public:
+  LeptonThread();
+  ~LeptonThread();
 
-private:
-    LeptonCamera m_camera;
-    ThermalImage m_image;
-    QVector<uint8_t> *m_frameU8;
+  void run();
+  const int* colorMap;
+ public slots:
+  void performFFC();
+  void rainMap();
+  void greyMap();
+  void ironMap();
+  void snapImage();
+
+ signals:
+  void updateText(QString);
+  void updateImage(QImage);
+
+ private:
+  // image
+  QImage myImage;
+  // buffer
+  uint8_t result[PACKET_SIZE * PACKETS_PER_FRAME];
+  uint16_t* frameBuffer;
 };
 
-#endif // LEPTONTHREAD_HPP
+#endif  // LEPTONTHREAD_HPP
