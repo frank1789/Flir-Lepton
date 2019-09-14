@@ -37,6 +37,9 @@ add_subdirectory(LeptonSDKEmb32PUB)
 EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
 message( STATUS "Architecture: ${ARCHITECTURE}" )
 file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+file(GLOB HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
+
 
 # Compile main program
 add_executable(${LEPTONCAMERA} ${SOURCES})
@@ -44,7 +47,7 @@ target_link_libraries(${LEPTONCAMERA} Qt5::Widgets LeptonSDK ${CMAKE_THREAD_LIBS
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
 	message(STATUS "Compiling debug mode")
 	add_definitions(-DLOGGER)
-	target_compile_options(${LEPTONCAMERA} PUBLIC -march=native -g -O0)
+        target_compile_options(${LEPTONCAMERA} PUBLIC -march=native -g -O0 -Wall -Werror -Wextra -Wpedantic -Wconversion -Wswitch-default -Wswitch-enum -Wunreachable-code -Wwrite-strings -Wcast-align -Wshadow)
 endif ()
 
 if( NOT CMAKE_BUILD_TYPE )

@@ -33,6 +33,10 @@ LeptonCameraConfig::LeptonCameraConfig(LeptonSensorType lp) {
       height = 120;
       break;
 
+    case LeptonSensorType::UNKNOWN:
+      std::cerr << "Error: Unknown Lepton version.";
+      throw std::runtime_error("Unknown Lepton version.");
+
     default:
       std::cerr << "Error: Unknown Lepton version.";
       throw std::runtime_error("Unknown Lepton version.");
@@ -118,6 +122,7 @@ bool LeptonSensor::reset_SPI_connection() {
 
 // Reboot sensor and reset connection
 bool LeptonSensor::reboot_sensor() {
+  leptonI2C_Reboot();
   bool result_close = close_connection();
   usleep(LeptonRebootTime);
   bool result_open = open_connection();
@@ -156,17 +161,17 @@ void LeptonSensor::LeptonUnpackFrame8(uint8_t *frame) {
   }
 
   // Scale frame range
-  auto diff = static_cast<float>(maxValue - minValue);
-  float scale = 255.f / diff;
+  auto diff = static_cast<double>(maxValue - minValue);
+  double scale = 255.0 / diff;
   int idx = 0;
   for (uint32_t i = 0; i < frame_size; i++) {
     // Skip the first 2 uint16_t's of every packet, they're 4 bytes header
     if (i % m_config.packet_size_uint16 < 2) {
       continue;
     }
-
-    frame[idx++] = static_cast<uint8_t>((m_frame_buffer[i] - minValue) *
-                                        static_cast<int>(scale));
+    auto int_scale = static_cast<int>(scale);
+    auto frame_computed = (m_frame_buffer[i] - minValue) * int_scale;
+    frame[idx++] = static_cast<uint8_t>(frame_computed);
   }
 }
 
@@ -374,6 +379,12 @@ bool LeptonSensor::send_command(LeptonI2CCmd cmd, void *buffer) {
       result = leptonI2C_ShutterClose();
       break;
     }
+
+    case LeptonI2CCmd::VOID: {
+      std::cerr << "No I2C command." << std::endl;
+      break;
+    }
+
     default: {
       std::cerr << "Unknown I2C command." << std::endl;
       result = false;
@@ -391,4 +402,21 @@ LeptonSensorType LeptonSensor::getInfo_sensor() {
     return it->second;
   }
   return LeptonSensorType::UNKNOWN;
+}
+
+std::ostream &operator<<(std::ostream &os, const LeptonSensorType &lp) {
+  switch (lp) {
+    case LeptonSensorType::UNKNOWN:
+      os << "UNKNOW";
+      break;
+    case LeptonSensorType::LEPTON2:
+      os << "LEPTON2";
+      break;
+    case LeptonSensorType::LEPTON3:
+      os << "LEPTON3";
+      break;
+    default:
+      os.setstate(std::ios_base::failbit);
+  }
+  return os;
 }

@@ -2,6 +2,7 @@
 #include <LeptonSDKEmb32PUB/LEPTON_SDK.h>
 #include <LeptonSDKEmb32PUB/LEPTON_SYS.h>
 #include <LeptonSDKEmb32PUB/LEPTON_Types.h>
+#include <LeptonSDKEmb32PUB/LEPTON_OEM.h>
 #include <fcntl.h>
 #include <getopt.h>
 #include <linux/spi/spidev.h>
@@ -119,14 +120,14 @@ bool leptonI2C_ShutterClose() {
   return false;
 }
 
-//// Reboot sensor
-// bool leptonI2C_Reboot() {
-//    if (_connected) {
-//        std::cout << "Reboot lepton sensor..." << std::endl;
-//        return LEP_RunOemReboot(&_port) == LEP_OK;
-//    }
-//    return false;
-//}
+// Reboot sensor
+ bool leptonI2C_Reboot() {
+    if (_connected) {
+        std::cout << "Reboot lepton sensor..." << std::endl;
+        return LEP_RunOemReboot(&_port) == LEP_OK;
+    }
+    return false;
+}
 
 // Get lepton type
 unsigned int leptonI2C_SensorNumber() {

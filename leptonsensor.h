@@ -8,8 +8,8 @@
 
 enum class LeptonSensorType { UNKNOWN, LEPTON2, LEPTON3 };
 
-const std::map<unsigned int, LeptonSensorType> MapLepton{{2, LeptonSensorType::LEPTON2},
-                                              {3, LeptonSensorType::LEPTON3}};
+const std::map<unsigned int, LeptonSensorType> MapLepton{
+    {2, LeptonSensorType::LEPTON2}, {3, LeptonSensorType::LEPTON3}};
 
 enum class LeptonFrameType { FRAME_U8, FRAME_U16 };
 
