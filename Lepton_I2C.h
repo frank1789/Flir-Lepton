@@ -10,9 +10,6 @@ constexpr LEP_UINT16 I2CPortID{1};
 constexpr LEP_UINT16 I2CPortBaudRate{400};
 constexpr LEP_CAMERA_PORT_E I2CPortType{LEP_CCI_TWI};
 
-// Kelvin constant
-constexpr double KELVINCELSIUS{273.15};
-
 // port connection
 extern bool _connected;
 extern LEP_CAMERA_PORT_DESC_T _port;
@@ -29,4 +26,4 @@ void lepton_perform_ffc();
 
 double leptonI2C_InternalTemp();
 
-#endif // LEPTON_I2C_H
+#endif  // LEPTON_I2C_H
