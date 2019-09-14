@@ -78,7 +78,8 @@ void LeptonThread::run() {
       column = i % PACKET_SIZE_UINT16 - 2;
       row = i / PACKET_SIZE_UINT16;
     }
-
+    // comute temperature
+    m_temperature->frame_to_temperature(maxValue, minValue);
     float diff = maxValue - minValue;
     float scale = 255 / diff;
     QRgb color;
@@ -92,9 +93,7 @@ void LeptonThread::run() {
       column = (i % PACKET_SIZE_UINT16) - 2;
       row = i / PACKET_SIZE_UINT16;
       myImage.setPixel(column, row, color);
-      // m_temperature->frame_to_temperature(maxValue, minValue);
     }
-
     // lets emit the signal for update
     emit updateImage(myImage);
   }

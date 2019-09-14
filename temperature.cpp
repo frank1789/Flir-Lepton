@@ -34,11 +34,11 @@ void Temperature::read_from_sensor() {
 // output frame. Therefore , if you use the Maximum and Minimum output on the
 // equation above, you can find the Maximum and Minimum temperature.
 double Temperature::find_max_min_temperature() {
-//   double sperimental = 25.0;
-//   double numerator = internal_temperature * (sperimental - internal_temperature);
-//   double denom = sperimental - internal_temperature;
-//   double temperature = internal_temperature - (numerator / denom);
-  return 0.0;
+  double sperimental = 25.0;
+  double numerator = internal_temperature * (sperimental - internal_temperature);
+  double denom = sperimental - internal_temperature;
+  double temperature = internal_temperature - (numerator / denom);
+  return temperature;
 }
 
 // Frame and Temperature Relationship[edit]
@@ -57,18 +57,8 @@ void Temperature::frame_to_temperature(const uint16_t &frame_max,
                                        const uint16_t &frame_min) {
 
 #if LOGGER
-LOG(FATAL, "ARRIVO QUI frame to temper")
-#endif
-    auto TempMax{0};
-    auto TempMin{0};
-
-
-  auto Frame = ((frame_max - frame_min) / (TempMax - TempMin)) *
-              (find_max_min_temperature() - TempMax) +
-          frame_max;
-#if LOGGER
-LOG(TRACE, "TempMax %d, TempMin %d", TempMax, TempMin)
-LOG(TRACE, "frameMax %d, frame min %d", frame_max, frame_min)
-LOG(TRACE, "frame %d", Frame)
+LOG(DEBUG, "slope %lf", this->find_max_min_temperature())
+LOG(DEBUG, "min temperature %lf", kelvin_to_celsius(static_cast<double>(frame_min)))
+LOG(DEBUG, "max temperature %lf", kelvin_to_celsius(static_cast<double>(frame_max)))
 #endif
 }

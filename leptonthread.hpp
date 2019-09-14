@@ -48,9 +48,11 @@ class LeptonThread : public QThread {
  private:
   // image
   QImage myImage;
+
   // buffer
   uint8_t result[PACKET_SIZE * PACKETS_PER_FRAME];
   uint16_t* frameBuffer;
+
   // temperature
   Temperature *m_temperature;
 };

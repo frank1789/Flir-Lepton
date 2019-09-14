@@ -30,8 +30,11 @@ class Temperature {
   Temperature();
   ~Temperature();
   void read_from_sensor();
-  double find_max_min_temperature();
+
   void frame_to_temperature(const uint16_t &frame_max, const uint16_t &frame_min);
+
+  protected:
+    inline double find_max_min_temperature();
 
 
  private:
