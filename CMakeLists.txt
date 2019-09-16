@@ -29,6 +29,10 @@ find_package(Qt5 COMPONENTS Widgets REQUIRED)
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 find_package(Threads REQUIRED)
 
+# Find raspicam library
+list(APPEND CMAKE_PREFIX_PATH "/usr/local/lib")
+find_package(raspicam REQUIRED )
+
 # add subdirectory LOG
 add_subdirectory(log)
 # add subdirectory SDK
