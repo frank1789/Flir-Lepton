@@ -85,9 +85,9 @@ signals:
      * is connected to the MainWindow::cameraFinished slot in
      * MainWindow::on_btnStart_clicked().
      */
-    void finished();
+    // void finished();
 
-public slots:
+// public slots:
     /*!
      * \brief start the camera begin grabbing frames.
      *
@@ -96,14 +96,14 @@ public slots:
      * Finally, force processing of events in this thread with
      * QApplication::proccessEvents() so that stopWork() is called if necessary.
      */
-    void doWork();
+    // void doWork();
 
     /*!
      * \brief stops this worker.
      *
      * Sets the cameraRunning flag to false.
      */
-    void stopWork();
+    // void stopWork();
 };
 
 #endif // CAMERAWORKER_H
