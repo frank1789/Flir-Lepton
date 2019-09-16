@@ -1,9 +1,9 @@
 #include <QApplication>
-#include <QThread>
-#include <QMutex>
-#include <QMessageBox>
+#include <QObject>
+#include <QPointer>
+#include "mainwindow.hpp"
 
-#include <QColor>
+#include "camerathread.hpp"
 #include <QLabel>
 #include <QtDebug>
 #include <QString>
@@ -14,25 +14,25 @@
 
 int main( int argc, char **argv )
 {
-	//create the app
-	QApplication a( argc, argv );
-	
-	QWidget *myWidget = new QWidget;
-	myWidget->setGeometry(400, 300, 760, 480);
-
-	//create an image placeholder for myLabel
-	//fill the top left corner with red, just bcuz
-	QImage myImage;
-	myImage = QImage(320, 240, QImage::Format_RGB888);
-	QRgb red = qRgb(255,0,0);
-	for(int i=0;i<80;i++) {
+	QApplication a(argc, argv);
+	MainWindow w;
+	// create Thread
+	QPointer<LeptonThread> lepton = new LeptonThread();
+	QPointer<CameraThread> raspicam = new CameraThread();
+	// connect signal
+  QObject::connect(lepton, &LeptonThread::updateImage, &w,
+                   &MainWindow::set_thermal_image);
+  QObject::connect(raspicam, &CameraThread::updateImage, &w,
+                   &MainWindow::set_rgb_image);
+	// open window
+  	w.show();
 		for(int j=0;j<60;j++) {
 			myImage.setPixel(i, j, red);
 		}
 	}
 
-	//create a label, and set it's image to the placeholder
-	MyLabel myLabel(myWidget);
+  	raspicam->start();
+  	lepton->start();
 	myLabel.setGeometry(10, 10, 640, 480);
 	myLabel.setPixmap(QPixmap::fromImage(myImage));
 
