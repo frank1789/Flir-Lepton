@@ -17,7 +17,6 @@ MainWindow::MainWindow(QWidget *parent)
       m_raspic_image->setPixel(i, j, qRgb(0, 255, 0));
     }
   }
-
   for (int i = 0; i < 640; i++) {
     for (int j = 0; j < 480; j++) {
       m_overlap_image->setPixel(i, j, qRgb(0, 0, 255));
