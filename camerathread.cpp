@@ -1,9 +1,8 @@
-#include "camerathread.hpp"
-
+#include <unistd.h>
 #include <fstream>
 #include <iostream>
 
-#include <unistd.h>
+#include "camerathread.hpp"
 
 CameraThread::CameraThread() : QThread(), cameraRunning(true) {
   qRegisterMetaType<QImage>("QImage&");
