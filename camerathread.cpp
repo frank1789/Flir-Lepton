@@ -16,30 +16,28 @@ CameraThread::CameraThread() : QThread(), cameraRunning(true) {
   } else {
     cameraRunning = true;
   }
-  // Wait for the camera
-  usleep(RaspicamLoadTime);
 }
 
 CameraThread::~CameraThread() {
   cameraRunning = false;
+  // close camera
   camera.release();
   delete[] m_buffer;
 }
 
 void CameraThread::run() {
-  // While the camera is on (the user has clicked the button), capture
+  // wait for the camera
+  usleep(RaspicamLoadTime);
+  // while the camera is on (the user has clicked the button), capture
   while (cameraRunning) {
     // Capture
     camera.grab();
     camera.retrieve(m_buffer, raspicam::RASPICAM_FORMAT_RGB);
 
-    // Convert the data and send to the caller to handle
+    // convert the data and send to the caller to handle
     QImage image = QImage(m_buffer, camera.getWidth(), camera.getHeight(),
                           QImage::Format_RGB888);
     emit updateImage(image);
-
-    // Make the app process stopWork() if necessary
-    // qApp->processEvents();
     usleep(RaspicamResetTime);
   }
 }
