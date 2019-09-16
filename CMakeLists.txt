@@ -47,7 +47,7 @@ file(GLOB HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h
 
 # compile Debug Mode
 add_executable(${LEPTONCAMERA} ${SOURCES})
-target_link_libraries(${LEPTONCAMERA} Qt5::Widgets LeptonSDK LOG ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(${LEPTONCAMERA} Qt5::Widgets LeptonSDK LOG ${CMAKE_THREAD_LIBS_INIT} ${raspicam_LIBS})
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
 	message(STATUS "Compiling debug mode")
 	add_definitions(-DLOGGER)
