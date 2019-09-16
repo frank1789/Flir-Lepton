@@ -9,13 +9,21 @@
 #include <QThread>
 #include <QtCore>
 
+// constant Lepton packet and frame
 constexpr int PACKET_SIZE{164};
 constexpr int PACKET_SIZE_UINT16{PACKET_SIZE / 2};
 constexpr int PACKETS_PER_FRAME{60};
 constexpr int FRAME_SIZE_UINT16{PACKET_SIZE_UINT16 * PACKETS_PER_FRAME};
 
+/**
+ * @brief Class to run Flir Lepton Camera 2.5
+ *
+ * This class is responsible for grabing data from IR sensor
+ * and converting it in to QImage displayed in Mainwindows
+ *
+ */
 class LeptonThread : public QThread {
-  Q_OBJECT;
+  Q_OBJECT
 
  public:
   LeptonThread();
