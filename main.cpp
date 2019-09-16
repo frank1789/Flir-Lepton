@@ -4,13 +4,7 @@
 #include "mainwindow.hpp"
 
 #include "camerathread.hpp"
-#include <QLabel>
-#include <QtDebug>
-#include <QString>
-#include <QPushButton>
-
 #include "leptonthread.hpp"
-#include "MyLabel.h"
 
 int main( int argc, char **argv )
 {
@@ -26,15 +20,9 @@ int main( int argc, char **argv )
                    &MainWindow::set_rgb_image);
 	// open window
   	w.show();
-		for(int j=0;j<60;j++) {
-			myImage.setPixel(i, j, red);
-		}
-	}
 
   	raspicam->start();
   	lepton->start();
-	myLabel.setGeometry(10, 10, 640, 480);
-	myLabel.setPixmap(QPixmap::fromImage(myImage));
 
 	//create a FFC button
 	QPushButton *button1 = new QPushButton("Reset Cam", myWidget);
