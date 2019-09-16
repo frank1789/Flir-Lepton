@@ -2,6 +2,9 @@
 #define MAINWINDOW_HPP
 
 #include <QMainWindow>
+#include <QImage>
+
+#include "MyLabel.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -15,7 +18,24 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+public slots:
+ void set_thermal_image(QImage img);
+ void set_rgb_image(QImage img);
+
+signals:
+    void update_thermal_image(QImage);
+    void update_rgb_image(QImage);
+
 private:
     Ui::MainWindow *ui;
+    // image placeholder
+    QImage *m_lepton_image;
+    QImage *m_raspic_image;
+    QImage *m_overlap_image;
+
+    // label's placeholder
+    MyLabel *m_lepton_label;
+    MyLabel *m_raspic_label;
+    MyLabel *m_overlap_label;
 };
 #endif // MAINWINDOW_HPP
