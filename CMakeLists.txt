@@ -24,6 +24,11 @@ if(APPLE AND EXISTS /usr/local/opt/qt5)
 	list(APPEND CMAKE_PREFIX_PATH "/usr/local/opt/qt5")
 endif()
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
+IF (${Qt5_FOUND})
+   MESSAGE(STATUS "Found Qt 5")
+ELSE (${Qt5_FOUND})
+   MESSAGE(FATAL_ERROR "Could not locate Qt.")
+ENDIF (${Qt5_FOUND})
 
 # Find Thread Library
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
@@ -31,7 +36,12 @@ find_package(Threads REQUIRED)
 
 # Find raspicam library
 list(APPEND CMAKE_PREFIX_PATH "/usr/local/lib")
-find_package(raspicam REQUIRED )
+find_package(raspicam REQUIRED)
+IF (${raspicam_FOUND})
+   MESSAGE(STATUS "Found raspicam")
+ELSE (${raspicam_FOUND})
+   MESSAGE(FATAL_ERROR "Could not locate raspicam")
+ENDIF (${raspicam_FOUND})
 
 # add subdirectory LOG
 add_subdirectory(log)
