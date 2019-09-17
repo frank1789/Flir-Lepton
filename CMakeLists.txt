@@ -40,7 +40,7 @@ find_package(raspicam REQUIRED)
 IF (${raspicam_FOUND})
    MESSAGE(STATUS "Found raspicam")
 ELSE (${raspicam_FOUND})
-   MESSAGE(FATAL_ERROR "Could not locate raspicam")
+   MESSAGE(FATAL_ERROR "Could not locate raspicam.")
 ENDIF (${raspicam_FOUND})
 
 # add subdirectory LOG
