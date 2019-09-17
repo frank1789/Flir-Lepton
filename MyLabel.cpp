@@ -1,13 +1,9 @@
-#include "MyLabel.h"
+#include "mylabel.hpp"
 
-MyLabel::MyLabel(QWidget *parent) : QLabel(parent)
-{
-}
-MyLabel::~MyLabel()
-{
-}
+MyLabel::MyLabel(QWidget *parent) : QLabel(parent) {}
+MyLabel::~MyLabel() {}
 
-//when the system calls setImage, we'll set the label's pixmap
+// when the system calls setImage, we'll set the label's pixmap
 void MyLabel::setImage(QImage image) {
   QPixmap pixmap = QPixmap::fromImage(image);
   int w = this->width();
