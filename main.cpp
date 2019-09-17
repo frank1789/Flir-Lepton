@@ -9,6 +9,7 @@
 int main(int argc, char **argv) {
   QApplication a(argc, argv);
   MainWindow w;
+  w.setWindowTitle("Flir-Lepton Video");
   // create Thread
   QPointer<LeptonThread> lepton = new LeptonThread();
   QPointer<CameraThread> raspicam = new CameraThread();

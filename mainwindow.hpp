@@ -3,8 +3,7 @@
 
 #include <QImage>
 #include <QMainWindow>
-
-#include "MyLabel.h"
+#include "mylabel.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
