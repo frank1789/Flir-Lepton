@@ -7,4 +7,4 @@ extern const int grayscale[];
 extern const int ironblack[];
 }  // namespace colormap
 
-#endif // PALETTES_H
+#endif  // PALETTES_H
