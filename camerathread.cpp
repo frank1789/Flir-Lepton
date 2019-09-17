@@ -26,14 +26,11 @@ CameraThread::~CameraThread() {
 }
 
 void CameraThread::run() {
-  // wait for the camera
-  usleep(RaspicamLoadTime);
-  // while the camera is on (the user has clicked the button), capture
+  // while the camera is on capture frame
   while (cameraRunning) {
-    // Capture
+    // capture
     camera.grab();
     camera.retrieve(m_buffer, raspicam::RASPICAM_FORMAT_RGB);
-
     // convert the data and send to the caller to handle
     QImage image = QImage(m_buffer, camera.getWidth(), camera.getHeight(),
                           QImage::Format_RGB888);

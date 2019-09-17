@@ -5,101 +5,55 @@
 #include <QImage>
 #include <QThread>
 
-// This makes it so we don't have to prefix everything with raspicam::
-// So raspicam::RaspiCam becomes just RaspiCam
+// constant raspberry Camera V2
+constexpr unsigned int RaspicamLoadTime{30000};  // 0.03 s = 30 ms = 30000 us
+constexpr unsigned int RaspicamResetTime{200};   // 0.0002 s = 0.2 ms = 200 us
 
-constexpr unsigned int RaspicamLoadTime{3000000};  // 3 s = 3000 ms = 3e+6 us
-constexpr unsigned int RaspicamResetTime{200};     // 0.0002 s = 0.2 ms = 200 us
-
-/*!
- * \brief Class to run the camera and get data from it.
+/**
+ * @brief Class control and get data from Raspberry Camera.
  *
- * This class is responsible for grabbing data from the Raspberry Pi camera
- * using the [raspicam library](https://github.com/cedricve/raspicam)
- * and converting it to a QImage so it can be displayed by MainWindow.
+ * This class grab data and converting it in QImage, then the image can be
+ * displayed in QLabel. Depend on library
+ * [Raspicam](https://github.com/cedricve/raspicam)
  */
 class CameraThread : public QThread {
   Q_OBJECT
  public:
-  /*!
-   * \brief CameraWorker constructor.
+  /**
+   * @brief Construct a new Camera Thread object.
    *
-   * Registers QImage as a metatype for this class and initializes data
-   * to be the correct size for RASPICAM_FORMAT_RGB image format.
+   * Open Camera connection, then, registers QImage as metatype and allocate
+   * buffer at size equal RASPICAM_FORMAT_RGB image format.
    */
   CameraThread();
 
-  //! CameraWorker destructor.
+  /**
+   * @brief Destroy the Camera Thread object.
+   *
+   * Deallocate buffer and close the Camera connection.
+   */
   ~CameraThread();
 
-  void run();
-
- private:
-  /*!
-   * \brief Raspberry Pi camera.
+  /**
+   * @brief This method acquires images from the camera during operation and
+   * emits the signal to send the required buffer.
    *
-   * Access the Raspberry Pi camera using the [raspicam library]
-   * (https://github.com/cedricve/raspicam).
    */
-  raspicam::RaspiCam camera;
-
-  /*!
-   * \brief whether or not the camera is running.
-   *
-   * Flag for the camera's state so that the program doesn't try to start
-   * the camera when it's already running.
-   */
-  bool cameraRunning;
-
-  /*!
-   * \brief data grabbed from the camera.
-   *
-   * The raw data grabbed from the camera, before it is converted to a
-   * QImage.
-   */
-  unsigned char *m_buffer;
-
+  void run() override;
  signals:
-  /*!
-   * \brief emits the image from the camera.
+  /**
+   * @brief emits the image from the camera.
    *
-   * This signal is emitted by the doWork function when it grabs an image
-   * from the camera and converts it to a QImage. Classes that use this
-   * worker connect a slot to this signal; for example, see how this signal
-   * is connected to a slot of the same name in
-   * MainWindow::on_btnStart_clicked().
-   *
-   * \param image the image that is emitted and handled by connected slots.
+   * This signal is emitted during run function when it grabs an image
+   * from the camera and converts it to a QImage.
+   * @param[in] image
    */
   void updateImage(QImage &image);
 
-  /*!
-   * \brief emitted when the worker is done.
-   *
-   * This signal is emitted when this worker is done. Classes that use this
-   * worker connect a slot to this signal; for example, see how this signal
-   * is connected to the MainWindow::cameraFinished slot in
-   * MainWindow::on_btnStart_clicked().
-   */
-  // void finished();
-
-  // public slots:
-  /*!
-   * \brief start the camera begin grabbing frames.
-   *
-   * First, grabs a frame from the camera in RGB format (RASPICAM_FORMAT_RGB).
-   * Next, converts the raw RGB image to a QImage and emits it. Finally,
-   * Finally, force processing of events in this thread with
-   * QApplication::proccessEvents() so that stopWork() is called if necessary.
-   */
-  // void doWork();
-
-  /*!
-   * \brief stops this worker.
-   *
-   * Sets the cameraRunning flag to false.
-   */
-  // void stopWork();
+ private:
+  raspicam::RaspiCam camera;  // Access the Raspberry Pi camera
+  bool cameraRunning;         // status camera running
+  unsigned char *m_buffer;  // raw data from camera, before converted in QImage
 };
 
 #endif  // CAMERAWORKER_H

@@ -21,12 +21,24 @@ extern LEP_CAMERA_PORT_DESC_T _port;
 // Lepton I2C Commands
 //============================================================================
 
-void lepton_connect();
+/**
+ * @brief Open I2C communication with Lepton sensor
+ * @throw Runtime error if communication can't be established
+ */
+void leptonI2C_connect();
 
+/**
+ * @brief Close I2C communication with Lepton sensor
+ * @throw Runtime error if communication can't be closed
+ */
 void leptonI2C_disconnect();
 
+/**
+ * @brief Run FFC
+ *
+ */
 void lepton_perform_ffc();
 
 double leptonI2C_InternalTemp();
 
-#endif // LEPTON_I2C_H
+#endif  // LEPTON_I2C_H
