@@ -1,5 +1,5 @@
-#ifndef MYLABEL_HPP
-#define MYLABEL_HPP
+#ifndef MYLABEL_H
+#define MYLABEL_H
 
 #include <QLabel>
 #include <QWidget>
@@ -35,4 +35,7 @@ class MyLabel : public QLabel {
   void setImage(QImage);
 };
 
-#endif  // MYLABEL_HPP
+
+
+
+#endif // MYLABEL_H

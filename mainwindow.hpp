@@ -3,7 +3,7 @@
 
 #include <QImage>
 #include <QMainWindow>
-#include "mylabel.hpp"
+#include "MyLabel.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -21,10 +21,12 @@ class MainWindow : public QMainWindow {
  public slots:
   void set_thermal_image(QImage img);
   void set_rgb_image(QImage img);
+  void setCompose(QImage img);
 
  signals:
   void update_thermal_image(QImage);
   void update_rgb_image(QImage);
+  void updateCompose(QImage);
 
  private:
   Ui::MainWindow *ui;
@@ -36,6 +38,6 @@ class MainWindow : public QMainWindow {
   // label's placeholder
   MyLabel *m_lepton_label;
   MyLabel *m_raspic_label;
-  MyLabel *m_overlap_label;
+  MyLabel * m_compose_label;
 };
 #endif  // MAINWINDOW_HPP

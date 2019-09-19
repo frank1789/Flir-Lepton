@@ -5,6 +5,7 @@
 
 #include "camerathread.hpp"
 #include "leptonthread.hpp"
+#include "imagecomposerthread.hpp"
 
 int main(int argc, char **argv) {
   QApplication a(argc, argv);
@@ -13,16 +14,21 @@ int main(int argc, char **argv) {
   // create Thread
   QPointer<LeptonThread> lepton = new LeptonThread();
   QPointer<CameraThread> raspicam = new CameraThread();
+  QPointer<ImageComposer> composer = new ImageComposer();
   // connect signal
-  QObject::connect(lepton, &LeptonThread::updateImage, &w,
-                   &MainWindow::set_thermal_image);
-  QObject::connect(raspicam, &CameraThread::updateImage, &w,
-                   &MainWindow::set_rgb_image);
+  QObject::connect(lepton,    &LeptonThread::updateImage, &w, &MainWindow::set_thermal_image);
+  QObject::connect(raspicam,  &CameraThread::updateImage, &w, &MainWindow::set_rgb_image);
+  QObject::connect(lepton,    &LeptonThread::updateImage, composer, &ImageComposer::set_thermal_image);
+  QObject::connect(raspicam,  &CameraThread::updateImage, composer, &ImageComposer::set_rgb_image);
+  QObject::connect(composer,  &ImageComposer::updateImage, &w, &MainWindow::setCompose);
+
+
   // open window
   w.show();
 
   raspicam->start();
   lepton->start();
+  composer->start();
 
   // //create a FFC button
   // QPushButton *button1 = new QPushButton("Reset Cam", myWidget);
