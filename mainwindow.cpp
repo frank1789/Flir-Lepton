@@ -36,9 +36,12 @@ MainWindow::MainWindow(QWidget *parent)
   m_compose_label->setPixmap(QPixmap::fromImage(*m_overlap_image));
 
   // connect signal from this to respective classes label
-  connect(this, &MainWindow::update_thermal_image, m_lepton_label, &MyLabel::setImage);
-  connect(this, &MainWindow::update_rgb_image,     m_raspic_label, &MyLabel::setImage);
-  connect(this, &MainWindow::updateCompose,        m_compose_label, &MyLabel::setImage);
+  connect(this, &MainWindow::update_thermal_image, m_lepton_label,
+          &MyLabel::setImage);
+  connect(this, &MainWindow::update_rgb_image, m_raspic_label,
+          &MyLabel::setImage);
+  connect(this, &MainWindow::updateCompose, m_compose_label,
+          &MyLabel::setImage);
 }
 
 void MainWindow::set_thermal_image(QImage img) {

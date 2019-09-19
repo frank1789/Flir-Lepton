@@ -35,7 +35,4 @@ class MyLabel : public QLabel {
   void setImage(QImage);
 };
 
-
-
-
-#endif // MYLABEL_H
+#endif  // MYLABEL_H

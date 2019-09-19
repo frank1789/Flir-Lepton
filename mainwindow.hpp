@@ -38,6 +38,6 @@ class MainWindow : public QMainWindow {
   // label's placeholder
   MyLabel *m_lepton_label;
   MyLabel *m_raspic_label;
-  MyLabel * m_compose_label;
+  MyLabel *m_compose_label;
 };
 #endif  // MAINWINDOW_HPP
