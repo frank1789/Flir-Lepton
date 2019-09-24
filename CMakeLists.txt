@@ -1,10 +1,18 @@
+#-----------------------------------------------------------------------------
+# Minimum cmake version and define project
+#-----------------------------------------------------------------------------
 CMAKE_MINIMUM_REQUIRED(VERSION 3.7)
 set(LEPTONCAMERA "FlirLepton")
-project(${LEPTONCAMERA} LANGUAGES C CXX)
+project(${LEPTONCAMERA} LANGUAGES C CXX VERSION "0.0.0")
 
+#-----------------------------------------------------------------------------
 # check build type
+#-----------------------------------------------------------------------------
 message(STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
 
+#-----------------------------------------------------------------------------
+# C/C++ standard extensions
+#-----------------------------------------------------------------------------
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
@@ -19,30 +27,42 @@ set(CMAKE_AUTOMOC ON)
 # Create code from a list of Qt designer ui files
 set(CMAKE_AUTOUIC ON)
 
-# Find the QtWidgets library
+#-----------------------------------------------------------------------------
+# Git
+#-----------------------------------------------------------------------------
+# find git program
+find_package(Git)
+
+#-----------------------------------------------------------------------------
+# Library and Dependecies
+#-----------------------------------------------------------------------------
+# Find the Qt library
 if(APPLE AND EXISTS /usr/local/opt/qt5)
 	list(APPEND CMAKE_PREFIX_PATH "/usr/local/opt/qt5")
 endif()
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
-IF (${Qt5_FOUND})
-   MESSAGE(STATUS "Found Qt 5")
-ELSE (${Qt5_FOUND})
-   MESSAGE(FATAL_ERROR "Could not locate Qt.")
-ENDIF (${Qt5_FOUND})
+if (${Qt5_FOUND})
+   message(STATUS "Found Qt 5")
+else (${Qt5_FOUND})
+   message(FATAL_ERROR "Could not locate Qt.")
+endif (${Qt5_FOUND})
 
-# Find Thread Library
+# Find PThread Library
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 find_package(Threads REQUIRED)
 
-# Find raspicam library
+# Find Raspicam library
 list(APPEND CMAKE_PREFIX_PATH "/usr/local/lib")
 find_package(raspicam REQUIRED)
-IF (${raspicam_FOUND})
-   MESSAGE(STATUS "Found raspicam")
-ELSE (${raspicam_FOUND})
-   MESSAGE(FATAL_ERROR "Could not locate raspicam.")
-ENDIF (${raspicam_FOUND})
+if (${raspicam_FOUND})
+   message (STATUS "Found raspicam")
+else (${raspicam_FOUND})
+   message (FATAL_ERROR "Could not locate raspicam.")
+endif (${raspicam_FOUND})
 
+#-----------------------------------------------------------------------------
+# Local library and dependecies
+#-----------------------------------------------------------------------------
 # add subdirectory LOG
 add_subdirectory(log)
 # add subdirectory SDK
