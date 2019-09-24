@@ -75,9 +75,7 @@ message( STATUS "Architecture: ${ARCHITECTURE}" )
 # git extract version
 #-----------------------------------------------------------------------------
 execute_process(COMMAND ${GIT_EXECUTABLE} rev-list --tags --max-count=1 WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} OUTPUT_VARIABLE GIT_REV)
-message(STATUS ${GIT_REV})
 execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags ${GIT_REV} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} OUTPUT_VARIABLE GIT_VER)
-message(STATUS ${GIT_VER})
 
 #parse the version information into pieces.
 string(REGEX REPLACE "^([0-9]+)\\..*" "\\1" VERSION_MAJOR "${GIT_VERSION}")
