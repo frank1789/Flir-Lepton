@@ -34,6 +34,15 @@ MainWindow::MainWindow(QWidget *parent)
   m_lepton_label->setPixmap(QPixmap::fromImage(*m_lepton_image));
   m_raspic_label->setPixmap(QPixmap::fromImage(*m_raspic_image));
   m_overlap_label->setPixmap(QPixmap::fromImage(*m_overlap_image));
+  // init groupbox
+  ui->groupBox->setTitle("Colour map");
+  // init radio buttons
+  ui->rainbow_btn->setText("Rainbow");
+  ui->grayscale_btn->setText("Gray scale");
+  ui->ironblack_btn->setText("Iron Black");
+  // init push buttons
+  ui->capture_btn->setText("Capture");
+  ui->FFC_btn->setText("Perform FFC");
 
   // connect signal from this to respective classes label
   connect(this, &MainWindow::update_thermal_image, m_lepton_label,
