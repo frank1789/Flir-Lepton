@@ -1,6 +1,7 @@
 #include "mainwindow.hpp"
 #include "palettes.h"
 #include "ui_mainwindow.h"
+#include "log/logger.h"
 
 #include <QColor>
 
@@ -46,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent)
   connect(m_btn_capture, &QPushButton::clicked,
           [=]() { this->call_capture_image(); });
   connect(m_rbtn_rainbow, &QRadioButton::clicked,
-          [=]() { this->changeColourMap(); });
+          [=]() { this->changeColour(); });
 }
 
 MainWindow::~MainWindow() {
@@ -89,15 +90,15 @@ void MainWindow::call_FFC() { emit performFFC(); }
 
 void MainWindow::call_capture_image() { emit captureImage(); }
 
-void MainWindow::changeColourMap() {
+void MainWindow::changeColour() {
   if (!m_rbtn_rainbow->isChecked()) {
-    emit changeColour(colormap::rainbow);
+    emit changeColourMap(colormap::rainbow);
   }
   if (!m_rbtn_grayscale->isChecked()) {
-    emit changeColour(colormap::grayscale);
+    emit changeColourMap(colormap::grayscale);
   }
   if (!m_rbtn_ironblack->isChecked()) {
-    emit changeColour(colormap::ironblack);
+    emit changeColourMap(colormap::ironblack);
   }
 }
 

@@ -32,12 +32,12 @@ class MainWindow : public QMainWindow {
  private slots:
   void call_FFC();
   void call_capture_image();
-  void changeColourMap();
+  void changeColour();
 
  signals:
   void update_thermal_image(QImage);
   void update_rgb_image(QImage);
-  void changeColour(const int *);
+  void changeColourMap(const int *);
   void performFFC();
   void captureImage();
 
