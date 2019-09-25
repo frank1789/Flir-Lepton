@@ -67,5 +67,6 @@ class MainWindow : public QMainWindow {
   QHBoxLayout *m_preview_label;
   QGridLayout *m_group_label;
   QGroupBox *create_colour_selector();
+  QGridLayout *create_label_preview();
 };
 #endif  // MAINWINDOW_HPP

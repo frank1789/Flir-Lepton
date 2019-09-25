@@ -14,10 +14,6 @@ MainWindow::MainWindow(QWidget *parent)
   // init layout
   m_vertside_layout = new QVBoxLayout;
 
-  m_preview_label = new QHBoxLayout;
-  m_group_label = new QGridLayout;
-  setLayout(m_group_label);
-
   // init combobox overlap selector
   m_overlap_selector = new QComboBox;
 
@@ -37,20 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
     }
   }
 
-  // allocate label's placeholder
-  m_lepton_label = new MyLabel(this);
-  m_raspic_label = new MyLabel(this);
-  m_overlap_label = new MyLabel(this);
 
-  // set minimum size
-  m_lepton_label->setMinimumSize(320, 240);
-  m_raspic_label->setMinimumSize(320, 240);
-  m_overlap_label->setMinimumSize(640, 480);
-
-  // load image
-  m_lepton_label->setPixmap(QPixmap::fromImage(*m_lepton_image));
-  m_raspic_label->setPixmap(QPixmap::fromImage(*m_raspic_image));
-  m_overlap_label->setPixmap(QPixmap::fromImage(*m_overlap_image));
 
   // init push buttons
   m_btn_capture = new QPushButton("Capture");
@@ -60,17 +43,14 @@ MainWindow::MainWindow(QWidget *parent)
   m_vertside_layout->addWidget(m_btn_performffc);
   m_vertside_layout->addWidget(create_colour_selector());
   m_vertside_layout->addWidget(m_btn_capture);
-  //  widget->setLayout(m_vertside_layout);
 
-  // define labels layout
-  m_preview_label->addWidget(m_lepton_label);
-  m_preview_label->addWidget(m_raspic_label);
 
-  m_group_label->addLayout(m_preview_label, 0, 0);
-  m_group_label->addWidget(m_overlap_label, 1, 0);
-  m_group_label->addLayout(m_vertside_layout, 0, 1);
 
-  widget->setLayout(m_group_label);
+
+
+
+
+  widget->setLayout(create_label_preview());
 
   // connect signal from this to respective classes label
   connect(this, &MainWindow::update_thermal_image, m_lepton_label,
@@ -86,12 +66,17 @@ void MainWindow::set_rgb_image(QImage img) { emit update_rgb_image(img); }
 
 MainWindow::~MainWindow() {
   delete ui;
-  delete m_lepton_label;
-  delete m_raspic_label;
-  delete m_overlap_label;
+
+  // images
   delete m_lepton_image;
   delete m_raspic_image;
   delete m_overlap_image;
+
+  // label
+  delete m_lepton_label;
+  delete m_raspic_label;
+  delete m_overlap_label;
+  delete m_group_label;
 
   // colour
   delete m_rbtn_rainbow;
@@ -125,4 +110,32 @@ QGroupBox *MainWindow::create_colour_selector() {
   m_rbtn_ironblack->setChecked(true);
 
   return m_colour_group;
+}
+
+QGridLayout * MainWindow::create_label_preview()
+{
+    // create horizzontal layout
+     m_group_label = new QGridLayout;
+
+    // allocate label's placeholder
+    m_lepton_label = new MyLabel(this);
+    m_raspic_label = new MyLabel(this);
+    m_overlap_label = new MyLabel(this);
+
+    // set minimum size
+    m_lepton_label->setMinimumSize(320, 240);
+    m_raspic_label->setMinimumSize(320, 240);
+    m_overlap_label->setMinimumSize(640, 480);
+
+    // load image
+    m_lepton_label->setPixmap(QPixmap::fromImage(*m_lepton_image));
+    m_raspic_label->setPixmap(QPixmap::fromImage(*m_raspic_image));
+    m_overlap_label->setPixmap(QPixmap::fromImage(*m_overlap_image));
+
+    // define horizzontal layout
+    m_group_label->addWidget(m_lepton_label, 0, 0);
+    m_group_label->addWidget(m_raspic_label, 0, 1);
+    m_group_label->addWidget(m_overlap_label,1,0,1,3);
+
+    return m_group_label;
 }
