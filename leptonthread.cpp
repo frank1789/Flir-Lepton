@@ -105,6 +105,8 @@ void LeptonThread::performFFC() {
   // perform FFC
   lepton_perform_ffc();
 }
-void LeptonThread::rainMap() { this->colorMap = colormap::rainbow; }
-void LeptonThread::greyMap() { this->colorMap = colormap::grayscale; }
-void LeptonThread::ironMap() { this->colorMap = colormap::ironblack; }
+
+void LeptonThread::changeColourMap(const int *colour) {
+  this->colorMap = colour;
+  this->start();
+}

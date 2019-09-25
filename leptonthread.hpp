@@ -45,9 +45,7 @@ class LeptonThread : public QThread {
   const int* colorMap;  // associate colors to the frame
  public slots:
   void performFFC();
-  void rainMap();
-  void greyMap();
-  void ironMap();
+  void changeColourMap(const int *colour);
   void snapImage();
 
  signals:

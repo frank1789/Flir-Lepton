@@ -19,7 +19,7 @@ class MyLabel : public QLabel {
    *
    * @param parent
    */
-  MyLabel(QWidget *parent = 0);
+  MyLabel(QWidget *parent = nullptr);
 
   /**
    * @brief Destroy the My Label object

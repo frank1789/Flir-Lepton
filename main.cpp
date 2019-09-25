@@ -18,13 +18,22 @@ int main(int argc, char **argv) {
                    &MainWindow::set_thermal_image);
   QObject::connect(raspicam, &CameraThread::updateImage, &w,
                    &MainWindow::set_rgb_image);
+
+  QObject::connect(&w, &MainWindow::changeColourMap, lepton,
+                   &LeptonThread::changeColourMap);
+  QObject::connect(&w, &MainWindow::performFFC, lepton,
+                   &LeptonThread::performFFC);
+  QObject::connect(&w, &MainWindow::captureImage, lepton,
+                   &LeptonThread::snapImage);
+
   // open window
   w.show();
 
-  raspicam->start();
+  // start thread
   lepton->start();
+  raspicam->start();
 
-  // //create a FFC button
+  //  // //create a FFC button
   // QPushButton *button1 = new QPushButton("Reset Cam", myWidget);
   // button1->setGeometry(660, 480/6, 100, 30);
 
