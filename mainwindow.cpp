@@ -33,8 +33,6 @@ MainWindow::MainWindow(QWidget *parent)
     }
   }
 
-
-
   // init push buttons
   m_btn_capture = new QPushButton("Capture");
   m_btn_performffc = new QPushButton("Perform FFC");
@@ -43,12 +41,6 @@ MainWindow::MainWindow(QWidget *parent)
   m_vertside_layout->addWidget(m_btn_performffc);
   m_vertside_layout->addWidget(create_colour_selector());
   m_vertside_layout->addWidget(m_btn_capture);
-
-
-
-
-
-
 
   widget->setLayout(create_label_preview());
 
@@ -112,30 +104,29 @@ QGroupBox *MainWindow::create_colour_selector() {
   return m_colour_group;
 }
 
-QGridLayout * MainWindow::create_label_preview()
-{
-    // create horizzontal layout
-     m_group_label = new QGridLayout;
+QGridLayout *MainWindow::create_label_preview() {
+  // create horizzontal layout
+  m_group_label = new QGridLayout;
 
-    // allocate label's placeholder
-    m_lepton_label = new MyLabel(this);
-    m_raspic_label = new MyLabel(this);
-    m_overlap_label = new MyLabel(this);
+  // allocate label's placeholder
+  m_lepton_label = new MyLabel(this);
+  m_raspic_label = new MyLabel(this);
+  m_overlap_label = new MyLabel(this);
 
-    // set minimum size
-    m_lepton_label->setMinimumSize(320, 240);
-    m_raspic_label->setMinimumSize(320, 240);
-    m_overlap_label->setMinimumSize(640, 480);
+  // set minimum size
+  m_lepton_label->setMinimumSize(320, 240);
+  m_raspic_label->setMinimumSize(320, 240);
+  m_overlap_label->setMinimumSize(640, 480);
 
-    // load image
-    m_lepton_label->setPixmap(QPixmap::fromImage(*m_lepton_image));
-    m_raspic_label->setPixmap(QPixmap::fromImage(*m_raspic_image));
-    m_overlap_label->setPixmap(QPixmap::fromImage(*m_overlap_image));
+  // load image
+  m_lepton_label->setPixmap(QPixmap::fromImage(*m_lepton_image));
+  m_raspic_label->setPixmap(QPixmap::fromImage(*m_raspic_image));
+  m_overlap_label->setPixmap(QPixmap::fromImage(*m_overlap_image));
 
-    // define horizzontal layout
-    m_group_label->addWidget(m_lepton_label, 0, 0);
-    m_group_label->addWidget(m_raspic_label, 0, 1);
-    m_group_label->addWidget(m_overlap_label,1,0,1,3);
+  // define horizzontal layout
+  m_group_label->addWidget(m_lepton_label, 0, 0);
+  m_group_label->addWidget(m_raspic_label, 0, 1);
+  m_group_label->addWidget(m_overlap_label, 1, 0, 1, 3);
 
-    return m_group_label;
+  return m_group_label;
 }
