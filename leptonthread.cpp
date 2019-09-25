@@ -15,6 +15,7 @@ void LeptonThread::run() {
   m_ir_image = QImage(80, 60, QImage::Format_RGB888);
   // open SPI port
   leptonSPI_OpenPort(0);
+  usleep(LeptonLoadTime);
   while (true) {
     // read data packets from lepton over SPI
     int resets = 0;
@@ -27,16 +28,16 @@ void LeptonThread::run() {
       if (packetNumber != j) {
         j = -1;
         resets += 1;
-        usleep(1000);
-        if (resets == 750) {
+        usleep(LeptonResetTime);
+        if (resets == MaxResetsPerSegment) {
           leptonSPI_ClosePort(0);
-          usleep(750000);
+          usleep(LeptonRebootTime);
           leptonSPI_OpenPort(0);
         }
       }
     }
 #if LOGGER
-    if (resets >= 30) {
+    if (resets >= kMaxResetsPerFrame) {
       LOG(DEBUG, "reading, resets: %d", resets)
     }
 #endif
