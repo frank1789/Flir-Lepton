@@ -11,11 +11,8 @@ MainWindow::MainWindow(QWidget *parent)
   QWidget *widget = new QWidget;
   setCentralWidget(widget);
 
-  // init layout
-  m_vertside_layout = new QVBoxLayout;
-
-  // init combobox overlap selector
-  m_overlap_selector = new QComboBox;
+  // init complete group
+  m_group_all = new QGridLayout;
 
   // allocate image
   m_lepton_image = new QImage(320, 240, QImage::Format_RGB888);
@@ -33,16 +30,10 @@ MainWindow::MainWindow(QWidget *parent)
     }
   }
 
-  // init push buttons
-  m_btn_capture = new QPushButton("Capture");
-  m_btn_performffc = new QPushButton("Perform FFC");
-
-  // define vertical layout buttons
-  m_vertside_layout->addWidget(m_btn_performffc);
-  m_vertside_layout->addWidget(create_colour_selector());
-  m_vertside_layout->addWidget(m_btn_capture);
-
-  widget->setLayout(create_label_preview());
+  m_group_all->addLayout(create_label_preview(), 0, 0);
+  m_group_all->addLayout(create_upper_control(), 0, 1);
+  m_group_all->addLayout(create_lower_control(), 1, 1);
+  widget->setLayout(m_group_all);
 
   // connect signal from this to respective classes label
   connect(this, &MainWindow::update_thermal_image, m_lepton_label,
@@ -69,6 +60,13 @@ MainWindow::~MainWindow() {
   delete m_raspic_label;
   delete m_overlap_label;
   delete m_group_label;
+
+  // command
+  delete m_btn_capture;
+  delete m_btn_performffc;
+  delete m_overlap_selector;
+  delete m_vertical_lower;
+  delete m_vertical_upper;
 
   // colour
   delete m_rbtn_rainbow;
@@ -129,4 +127,35 @@ QGridLayout *MainWindow::create_label_preview() {
   m_group_label->addWidget(m_overlap_label, 1, 0, 1, 3);
 
   return m_group_label;
+}
+
+QVBoxLayout *MainWindow::create_upper_control() {
+  // init layout
+  m_vertical_upper = new QVBoxLayout;
+
+  // init push buttons
+  m_btn_performffc = new QPushButton("Perform FFC");
+
+  // define vertical upper layout button
+  m_vertical_upper->addWidget(m_btn_performffc);
+  m_vertical_upper->addStretch(5);
+  m_vertical_upper->addWidget(create_colour_selector());
+  return m_vertical_upper;
+}
+
+QVBoxLayout *MainWindow::create_lower_control() {
+  // init layout
+  m_vertical_lower = new QVBoxLayout;
+
+  // init push button
+  m_btn_capture = new QPushButton("Capture");
+
+  // init combobox overlap selector
+  m_overlap_selector = new QComboBox;
+
+  // define vertical lower layout button
+  m_vertical_lower->addWidget(m_overlap_selector);
+  m_vertical_lower->addWidget(m_btn_capture);
+
+  return m_vertical_lower;
 }

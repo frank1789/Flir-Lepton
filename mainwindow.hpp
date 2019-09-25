@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_HPP
 #define MAINWINDOW_HPP
 
+#include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -9,7 +10,6 @@
 #include <QPushButton>
 #include <QRadioButton>
 #include <QVBoxLayout>
-#include <QComboBox>
 #include "mylabel.hpp"
 
 QT_BEGIN_NAMESPACE
@@ -62,11 +62,16 @@ class MainWindow : public QMainWindow {
   QComboBox *m_overlap_selector;
 
   // layout
-  QVBoxLayout *m_vertside_layout;
+  QVBoxLayout *m_vertical_upper;
+  QVBoxLayout *m_vertical_lower;
   QVBoxLayout *m_vertcolour_layout;
   QHBoxLayout *m_preview_label;
   QGridLayout *m_group_label;
+  QGridLayout *m_group_all;
   QGroupBox *create_colour_selector();
   QGridLayout *create_label_preview();
+  QVBoxLayout *create_bar_control();
+  QVBoxLayout *create_lower_control();
+  QVBoxLayout *create_upper_control();
 };
 #endif  // MAINWINDOW_HPP
