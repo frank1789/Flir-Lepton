@@ -1,4 +1,4 @@
-#include "MyLabel.h"
+#include "mylabel.hpp"
 #include <QColor>
 #include <QPainter>
 #include "log/logger.h"
@@ -10,7 +10,5 @@ MyLabel::~MyLabel() {}
 // when the system calls setImage, we'll set the label's pixmap
 void MyLabel::setImage(QImage image) {
   QPixmap pixmap = QPixmap::fromImage(image);
-  int w = this->width();
-  int h = this->height();
-  setPixmap(pixmap.scaled(w, h, Qt::KeepAspectRatio));
+  setPixmap(pixmap.scaled(this->width(), this->height(), Qt::KeepAspectRatio));
 }
