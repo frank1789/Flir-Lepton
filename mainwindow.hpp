@@ -1,8 +1,15 @@
 #ifndef MAINWINDOW_HPP
 #define MAINWINDOW_HPP
 
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QHBoxLayout>
 #include <QImage>
 #include <QMainWindow>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QVBoxLayout>
+#include <QComboBox>
 #include "mylabel.hpp"
 
 QT_BEGIN_NAMESPACE
@@ -28,6 +35,7 @@ class MainWindow : public QMainWindow {
 
  private:
   Ui::MainWindow *ui;
+
   // image placeholder
   QImage *m_lepton_image;
   QImage *m_raspic_image;
@@ -37,5 +45,27 @@ class MainWindow : public QMainWindow {
   MyLabel *m_lepton_label;
   MyLabel *m_raspic_label;
   MyLabel *m_overlap_label;
+
+  // action buttons
+  QPushButton *m_btn_performffc;
+  QPushButton *m_btn_capture;
+
+  // radio buttons
+  QRadioButton *m_rbtn_rainbow;
+  QRadioButton *m_rbtn_grayscale;
+  QRadioButton *m_rbtn_ironblack;
+
+  // group box
+  QGroupBox *m_colour_group;
+
+  // combo box
+  QComboBox *m_overlap_selector;
+
+  // layout
+  QVBoxLayout *m_vertside_layout;
+  QVBoxLayout *m_vertcolour_layout;
+  QHBoxLayout *m_preview_label;
+  QGridLayout *m_group_label;
+  QGroupBox *create_colour_selector();
 };
 #endif  // MAINWINDOW_HPP
