@@ -31,8 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
   }
 
   m_group_all->addLayout(create_label_preview(), 0, 0);
-  m_group_all->addLayout(create_upper_control(), 0, 1);
-  m_group_all->addLayout(create_lower_control(), 1, 1);
+  m_group_all->addLayout(create_bar_control(), 0, 1);
   widget->setLayout(m_group_all);
 
   // connect signal from this to respective classes label
@@ -67,6 +66,7 @@ MainWindow::~MainWindow() {
   delete m_overlap_selector;
   delete m_vertical_lower;
   delete m_vertical_upper;
+  delete m_vertical_bar;
 
   // colour
   delete m_rbtn_rainbow;
@@ -138,7 +138,7 @@ QVBoxLayout *MainWindow::create_upper_control() {
 
   // define vertical upper layout button
   m_vertical_upper->addWidget(m_btn_performffc);
-  m_vertical_upper->addStretch(5);
+  m_vertical_upper->addStretch(0);
   m_vertical_upper->addWidget(create_colour_selector());
   return m_vertical_upper;
 }
@@ -155,7 +155,20 @@ QVBoxLayout *MainWindow::create_lower_control() {
 
   // define vertical lower layout button
   m_vertical_lower->addWidget(m_overlap_selector);
+  m_vertical_lower->addStretch(1);
   m_vertical_lower->addWidget(m_btn_capture);
 
   return m_vertical_lower;
+}
+
+QVBoxLayout *MainWindow::create_bar_control() {
+    // init layout
+    m_vertical_bar = new QVBoxLayout;
+
+    // collect layout
+    m_vertical_bar->addLayout(create_upper_control());
+    m_vertical_bar->addStretch(0);
+    m_vertical_bar->addLayout(create_lower_control());
+
+    return m_vertical_bar;
 }

@@ -65,9 +65,12 @@ class MainWindow : public QMainWindow {
   QVBoxLayout *m_vertical_upper;
   QVBoxLayout *m_vertical_lower;
   QVBoxLayout *m_vertcolour_layout;
+  QVBoxLayout *m_vertical_bar;
   QHBoxLayout *m_preview_label;
   QGridLayout *m_group_label;
   QGridLayout *m_group_all;
+
+  // layout generator methods
   QGroupBox *create_colour_selector();
   QGridLayout *create_label_preview();
   QVBoxLayout *create_bar_control();
