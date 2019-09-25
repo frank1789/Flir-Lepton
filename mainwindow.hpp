@@ -38,6 +38,7 @@ class MainWindow : public QMainWindow {
  signals:
   void update_thermal_image(QImage);
   void update_rgb_image(QImage);
+  void updateCompose(QImage);
   void changeColourMap(const int *);
   void performFFC();
   void captureImage();

@@ -1,8 +1,8 @@
 #include "mainwindow.hpp"
+#include <QColor>
+#include <QDebug>
 #include "palettes.h"
 #include "ui_mainwindow.h"
-#include <QDebug>
-#include <QColor>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -45,9 +45,12 @@ MainWindow::MainWindow(QWidget *parent)
   connect(m_btn_performffc, &QPushButton::clicked, [=]() { this->call_FFC(); });
   connect(m_btn_capture, &QPushButton::clicked,
           [=]() { this->call_capture_image(); });
-  connect(m_rbtn_rainbow, &QRadioButton::clicked,[=]() { this->changeColour(); });
-  connect(m_rbtn_grayscale, &QRadioButton::clicked,[=]() { this->changeColour(); });
-  connect(m_rbtn_ironblack, &QRadioButton::clicked,[=]() { this->changeColour(); });
+  connect(m_rbtn_rainbow, &QRadioButton::clicked,
+          [=]() { this->changeColour(); });
+  connect(m_rbtn_grayscale, &QRadioButton::clicked,
+          [=]() { this->changeColour(); });
+  connect(m_rbtn_ironblack, &QRadioButton::clicked,
+          [=]() { this->changeColour(); });
 }
 
 void MainWindow::setCompose(QImage img) { emit updateCompose(img); }
@@ -94,15 +97,15 @@ void MainWindow::call_capture_image() { emit captureImage(); }
 
 void MainWindow::changeColour() {
   if (m_rbtn_rainbow->isChecked()) {
-      qDebug() << "change palette to rainbow";
+    qDebug() << "change palette to rainbow";
     emit changeColourMap(colormap::rainbow);
   }
   if (m_rbtn_grayscale->isChecked()) {
-      qDebug() << "change palette to grayscale";
+    qDebug() << "change palette to grayscale";
     emit changeColourMap(colormap::grayscale);
   }
   if (m_rbtn_ironblack->isChecked()) {
-      qDebug() << "change palette to ironblack";
+    qDebug() << "change palette to ironblack";
     emit changeColourMap(colormap::ironblack);
   }
 }
@@ -118,7 +121,6 @@ QGroupBox *MainWindow::create_colour_selector() {
   m_rbtn_rainbow = new QRadioButton("Rainbow");
   m_rbtn_grayscale = new QRadioButton("Gray scale");
   m_rbtn_ironblack = new QRadioButton("Iron Black");
-
 
   // define layout
   m_vertcolour_layout->addWidget(m_rbtn_ironblack);
