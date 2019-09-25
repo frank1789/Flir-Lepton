@@ -92,6 +92,13 @@ MainWindow::~MainWindow() {
   delete m_lepton_image;
   delete m_raspic_image;
   delete m_overlap_image;
+
+  // colour
+  delete m_rbtn_rainbow;
+  delete m_rbtn_grayscale;
+  delete m_rbtn_ironblack;
+  delete m_vertcolour_layout;
+  delete m_colour_group;
 }
 
 QGroupBox *MainWindow::create_colour_selector() {
