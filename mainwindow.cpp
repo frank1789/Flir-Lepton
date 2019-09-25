@@ -1,4 +1,5 @@
 #include "mainwindow.hpp"
+#include "palettes.h"
 #include "ui_mainwindow.h"
 
 #include <QColor>
@@ -39,12 +40,14 @@ MainWindow::MainWindow(QWidget *parent)
           &MyLabel::setImage);
   connect(this, &MainWindow::update_rgb_image, m_raspic_label,
           &MyLabel::setImage);
-}
 
-void MainWindow::set_thermal_image(QImage img) {
-  emit update_thermal_image(img);
+  // connect signal button and radio buttons
+  connect(m_btn_performffc, &QPushButton::clicked, [=]() { this->call_FFC(); });
+  connect(m_btn_capture, &QPushButton::clicked,
+          [=]() { this->call_capture_image(); });
+  connect(m_rbtn_rainbow, &QRadioButton::clicked,
+          [=]() { this->changeColourMap(); });
 }
-void MainWindow::set_rgb_image(QImage img) { emit update_rgb_image(img); }
 
 MainWindow::~MainWindow() {
   delete ui;
@@ -74,6 +77,28 @@ MainWindow::~MainWindow() {
   delete m_rbtn_ironblack;
   delete m_vertcolour_layout;
   delete m_colour_group;
+}
+
+void MainWindow::set_thermal_image(QImage img) {
+  emit update_thermal_image(img);
+}
+
+void MainWindow::set_rgb_image(QImage img) { emit update_rgb_image(img); }
+
+void MainWindow::call_FFC() { emit performFFC(); }
+
+void MainWindow::call_capture_image() { emit captureImage(); }
+
+void MainWindow::changeColourMap() {
+  if (!m_rbtn_rainbow->isChecked()) {
+    emit changeColour(colormap::rainbow);
+  }
+  if (!m_rbtn_grayscale->isChecked()) {
+    emit changeColour(colormap::grayscale);
+  }
+  if (!m_rbtn_ironblack->isChecked()) {
+    emit changeColour(colormap::ironblack);
+  }
 }
 
 QGroupBox *MainWindow::create_colour_selector() {
@@ -129,18 +154,16 @@ QGridLayout *MainWindow::create_label_preview() {
   return m_group_label;
 }
 
-QVBoxLayout *MainWindow::create_upper_control() {
+QVBoxLayout *MainWindow::create_bar_control() {
   // init layout
-  m_vertical_upper = new QVBoxLayout;
+  m_vertical_bar = new QVBoxLayout;
 
-  // init push buttons
-  m_btn_performffc = new QPushButton("Perform FFC");
+  // collect layout
+  m_vertical_bar->addLayout(create_upper_control());
+  m_vertical_bar->addStretch(0);
+  m_vertical_bar->addLayout(create_lower_control());
 
-  // define vertical upper layout button
-  m_vertical_upper->addWidget(m_btn_performffc);
-  m_vertical_upper->addStretch(0);
-  m_vertical_upper->addWidget(create_colour_selector());
-  return m_vertical_upper;
+  return m_vertical_bar;
 }
 
 QVBoxLayout *MainWindow::create_lower_control() {
@@ -161,14 +184,16 @@ QVBoxLayout *MainWindow::create_lower_control() {
   return m_vertical_lower;
 }
 
-QVBoxLayout *MainWindow::create_bar_control() {
-    // init layout
-    m_vertical_bar = new QVBoxLayout;
+QVBoxLayout *MainWindow::create_upper_control() {
+  // init layout
+  m_vertical_upper = new QVBoxLayout;
 
-    // collect layout
-    m_vertical_bar->addLayout(create_upper_control());
-    m_vertical_bar->addStretch(0);
-    m_vertical_bar->addLayout(create_lower_control());
+  // init push buttons
+  m_btn_performffc = new QPushButton("Perform FFC");
 
-    return m_vertical_bar;
+  // define vertical upper layout button
+  m_vertical_upper->addWidget(m_btn_performffc);
+  m_vertical_upper->addStretch(0);
+  m_vertical_upper->addWidget(create_colour_selector());
+  return m_vertical_upper;
 }

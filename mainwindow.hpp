@@ -29,9 +29,17 @@ class MainWindow : public QMainWindow {
   void set_thermal_image(QImage img);
   void set_rgb_image(QImage img);
 
+ private slots:
+  void call_FFC();
+  void call_capture_image();
+  void changeColourMap();
+
  signals:
   void update_thermal_image(QImage);
   void update_rgb_image(QImage);
+  void changeColour(const int *);
+  void performFFC();
+  void captureImage();
 
  private:
   Ui::MainWindow *ui;
