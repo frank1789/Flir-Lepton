@@ -30,7 +30,7 @@ void CameraThread::run() {
   while (cameraRunning) {
     // capture
     camera.grab();
-    camera.retrieve(m_buffer, raspicam::RASPICAM_FORMAT_RGB);
+    camera.retrieve(m_buffer, raspicam::RASPICAM_FORMAT_IGNORE);
     // convert the data and send to the caller to handle
     QImage image = QImage(m_buffer, camera.getWidth(), camera.getHeight(),
                           QImage::Format_RGB888);

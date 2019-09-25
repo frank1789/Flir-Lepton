@@ -1,6 +1,10 @@
-#include "mylabel.hpp"
+#include "MyLabel.h"
+#include <QColor>
+#include <QPainter>
+#include "log/logger.h"
 
 MyLabel::MyLabel(QWidget *parent) : QLabel(parent) {}
+
 MyLabel::~MyLabel() {}
 
 // when the system calls setImage, we'll set the label's pixmap

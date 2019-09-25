@@ -50,6 +50,8 @@ MainWindow::MainWindow(QWidget *parent)
   connect(m_rbtn_ironblack, &QRadioButton::clicked,[=]() { this->changeColour(); });
 }
 
+void MainWindow::setCompose(QImage img) { emit updateCompose(img); }
+
 MainWindow::~MainWindow() {
   delete ui;
 

@@ -5,6 +5,7 @@
 
 #include "camerathread.hpp"
 #include "leptonthread.hpp"
+#include "imagecomposerthread.hpp"
 
 int main(int argc, char **argv) {
   QApplication a(argc, argv);
@@ -13,6 +14,7 @@ int main(int argc, char **argv) {
   // create Thread
   QPointer<LeptonThread> lepton = new LeptonThread();
   QPointer<CameraThread> raspicam = new CameraThread();
+  QPointer<ImageComposer> composer = new ImageComposer();
   // connect signal
   QObject::connect(lepton, &LeptonThread::updateImage, &w,
                    &MainWindow::set_thermal_image);

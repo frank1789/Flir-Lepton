@@ -28,6 +28,7 @@ class MainWindow : public QMainWindow {
  public slots:
   void set_thermal_image(QImage img);
   void set_rgb_image(QImage img);
+  void setCompose(QImage img);
 
  private slots:
   void call_FFC();

@@ -68,6 +68,8 @@ add_subdirectory(log)
 # add subdirectory SDK
 add_subdirectory(LeptonSDKEmb32PUB)
 
+#wrap ui
+file(GLOB UIS ${CMAKE_CURRENT_SOURCE_DIR}/*.ui)
 # Check architecture
 EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
 message( STATUS "Architecture: ${ARCHITECTURE}" )
@@ -115,7 +117,7 @@ file(GLOB HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h
     ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
 
 # compile Debug Mode
-add_executable(${LEPTONCAMERA} ${SOURCES})
+add_executable(${LEPTONCAMERA} ${SOURCES} ${UIS})
 target_link_libraries(${LEPTONCAMERA} Qt5::Widgets LeptonSDK LOG ${CMAKE_THREAD_LIBS_INIT} ${raspicam_LIBS})
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
 	message(STATUS "Compiling debug mode")
