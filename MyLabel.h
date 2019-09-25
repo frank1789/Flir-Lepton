@@ -1,24 +1,38 @@
 #ifndef MYLABEL_H
 #define MYLABEL_H
 
-#include <QtCore>
-#include <QWidget>
 #include <QLabel>
+#include <QWidget>
+#include <QtCore>
 
-
-//we extend QLabel to give it an extra slot, setImage
-//this is because we can't pass a QPixmap from our thread
-//so we have to pass a QImage and turn the QImage into a QPixmap on our end
-
+/**
+ * @brief Class extend QLabel to give it an extra slot, setImage because we
+ * can't pass a QPixmap from our thread so we have to pass a QImage and turn the
+ * QImage into a QPixmap before display in QLabel.
+ */
 class MyLabel : public QLabel {
   Q_OBJECT
 
-  public:
-    MyLabel(QWidget *parent = 0);
-    ~MyLabel();
+ public:
+  /**
+   * @brief Construct a new My Label object
+   *
+   * @param parent
+   */
+  MyLabel(QWidget *parent = nullptr);
 
-  public slots:
-    void setImage(QImage);
+  /**
+   * @brief Destroy the My Label object
+   *
+   */
+  ~MyLabel();
+
+ public slots:
+  /**
+   * @brief Set the Image object function that allows the transition from QImage
+   * to QPixmap.
+   */
+  void setImage(QImage);
 };
 
-#endif
+#endif  // MYLABEL_H
