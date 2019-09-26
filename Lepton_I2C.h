@@ -26,4 +26,14 @@ void lepton_perform_ffc();
 
 unsigned int leptonI2C_InternalTemp();
 
+unsigned int leptonI2C_AuxTemp();
+
+void lepton_disableAGC();
+
+void lepton_enableAGC();
+
+unsigned long long int lepton_get_serial_number();
+
+unsigned int lepton_get_uptime();
+
 #endif  // LEPTON_I2C_H
