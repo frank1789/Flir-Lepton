@@ -1,6 +1,7 @@
 #include "mainwindow.hpp"
 #include <QColor>
 #include <QDebug>
+#include "common.hpp"
 #include "palettes.h"
 #include "ui_mainwindow.h"
 
@@ -40,6 +41,8 @@ MainWindow::MainWindow(QWidget *parent)
           &MyLabel::setImage);
   connect(this, &MainWindow::update_rgb_image, m_raspic_label,
           &MyLabel::setImage);
+  connect(this, &MainWindow::updateCompose, m_overlap_label,
+          &MyLabel::setImage);
 
   // connect signal button and radio buttons
   connect(m_btn_performffc, &QPushButton::clicked, [=]() { this->call_FFC(); });
@@ -51,9 +54,12 @@ MainWindow::MainWindow(QWidget *parent)
           [=]() { this->changeColour(); });
   connect(m_rbtn_ironblack, &QRadioButton::clicked,
           [=]() { this->changeColour(); });
-}
 
-void MainWindow::setCompose(QImage img) { emit updateCompose(img); }
+  // connect combobox
+  connect(m_overlap_selector,
+          QOverload<int>::of(&QComboBox::currentIndexChanged),
+          [=](int index) { this->indexChanged(index); });
+}
 
 MainWindow::~MainWindow() {
   delete ui;
@@ -86,14 +92,23 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::set_thermal_image(QImage img) {
+  QMutexLocker locker(&mutex);
   emit update_thermal_image(img);
 }
 
-void MainWindow::set_rgb_image(QImage img) { emit update_rgb_image(img); }
+void MainWindow::set_rgb_image(QImage img) {
+  QMutexLocker locker(&mutex);
+  emit update_rgb_image(img);
+}
 
 void MainWindow::call_FFC() { emit performFFC(); }
 
 void MainWindow::call_capture_image() { emit captureImage(); }
+
+void MainWindow::setCompose(QImage img) {
+  QMutexLocker locker(&mutex);
+  emit updateCompose(img);
+}
 
 void MainWindow::changeColour() {
   if (m_rbtn_rainbow->isChecked()) {
@@ -109,6 +124,8 @@ void MainWindow::changeColour() {
     emit changeColourMap(colormap::ironblack);
   }
 }
+
+void MainWindow::indexChanged(int index) { emit updateMode(index); }
 
 QGroupBox *MainWindow::create_colour_selector() {
   // init groupbox colour
@@ -186,6 +203,33 @@ QVBoxLayout *MainWindow::create_lower_control() {
 
   // init combobox overlap selector
   m_overlap_selector = new QComboBox;
+  addOp(QPainter::CompositionMode_SourceOver, tr("SourceOver"));
+  addOp(QPainter::CompositionMode_DestinationOver, tr("DestinationOver"));
+  addOp(QPainter::CompositionMode_Clear, tr("Clear"));
+  addOp(QPainter::CompositionMode_Source, tr("Source"));
+  addOp(QPainter::CompositionMode_Destination, tr("Destination"));
+  addOp(QPainter::CompositionMode_SourceIn, tr("SourceIn"));
+  addOp(QPainter::CompositionMode_DestinationIn, tr("DestinationIn"));
+  addOp(QPainter::CompositionMode_SourceOut, tr("SourceOut"));
+  addOp(QPainter::CompositionMode_DestinationOut, tr("DestinationOut"));
+  addOp(QPainter::CompositionMode_SourceAtop, tr("SourceAtop"));
+  addOp(QPainter::CompositionMode_DestinationAtop, tr("DestinationAtop"));
+  addOp(QPainter::CompositionMode_Xor, tr("Xor"));
+  addOp(QPainter::CompositionMode_Plus, tr("Plus"));
+  addOp(QPainter::CompositionMode_Multiply, tr("Multiply"));
+  addOp(QPainter::CompositionMode_Screen, tr("Screen"));
+  addOp(QPainter::CompositionMode_Overlay, tr("Overlay"));
+  addOp(QPainter::CompositionMode_Darken, tr("Darken"));
+  addOp(QPainter::CompositionMode_Lighten, tr("Lighten"));
+  addOp(QPainter::CompositionMode_ColorDodge, tr("ColorDodge"));
+  addOp(QPainter::CompositionMode_ColorBurn, tr("ColorBurn"));
+  addOp(QPainter::CompositionMode_HardLight, tr("HardLight"));
+  addOp(QPainter::CompositionMode_SoftLight, tr("SoftLight"));
+  addOp(QPainter::CompositionMode_Difference, tr("Difference"));
+  addOp(QPainter::CompositionMode_Exclusion, tr("Exclusion"));
+
+  // defaul value overlap_selector
+  m_overlap_selector->setCurrentIndex(0);
 
   // define vertical lower layout button
   m_vertical_lower->addWidget(m_overlap_selector);
@@ -207,4 +251,8 @@ QVBoxLayout *MainWindow::create_upper_control() {
   m_vertical_upper->addStretch(0);
   m_vertical_upper->addWidget(create_colour_selector());
   return m_vertical_upper;
+}
+
+void MainWindow::addOp(QPainter::CompositionMode mode, const QString &name) {
+  m_overlap_selector->addItem(name, mode);
 }
