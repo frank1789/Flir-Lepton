@@ -1,8 +1,8 @@
+#include "camerathread.hpp"
 #include <unistd.h>
 #include <fstream>
 #include <iostream>
-
-#include "camerathread.hpp"
+#include "common.hpp"
 
 CameraThread::CameraThread() : QThread(), cameraRunning(true) {
   qRegisterMetaType<QImage>("QImage&");
@@ -34,6 +34,7 @@ void CameraThread::run() {
     // convert the data and send to the caller to handle
     QImage image = QImage(m_buffer, camera.getWidth(), camera.getHeight(),
                           QImage::Format_RGB888);
+    QMutexLocker locker(&mutex);
     emit updateImage(image);
     usleep(RaspicamResetTime);
   }
