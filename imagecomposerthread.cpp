@@ -1,62 +1,70 @@
 #include "imagecomposerthread.hpp"
-#include <QPainter>
+#include "common.hpp"
 #include "log/logger.h"
 
-ImageComposer::ImageComposer(QWidget *parent) : QThread() {
+QMutex mutex;
+
+ImageComposerThread::ImageComposerThread(QWidget *parent) : QThread() {
   m_result = new QImage(640, 480, QImage::Format_RGBA8888_Premultiplied);
-  m_source = new QImage(640, 480, QImage::Format_RGBA8888_Premultiplied);
-  m_destination = new QImage(640, 480, QImage::Format_RGBA8888_Premultiplied);
+  m_rgb = new QImage(640, 480, QImage::Format_RGBA8888_Premultiplied);
+  m_thermal = new QImage(640, 480, QImage::Format_RGBA8888_Premultiplied);
+  m_mode = QPainter::CompositionMode_Xor;
 #if LOGGER
-  LOG(INFO, "ctor ImageCompose allocate")
+  LOG(INFO, "ctor ImageComposerThread class")
 #endif
 }
 
-ImageComposer::~ImageComposer() {
+ImageComposerThread::~ImageComposerThread() {
+  delete m_rgb;
   delete m_result;
-  delete m_source;
-  delete m_destination;
+  delete m_thermal;
 #if LOGGER
-  LOG(INFO, "dtor ImageCompose deallocate")
+  LOG(INFO, "dtor ImageComposerThread class")
 #endif
 }
 
-void ImageComposer::recalculate_result() {
-  QPainter::CompositionMode mode = QPainter::CompositionMode_Overlay;
+void ImageComposerThread::run() {
+  usleep(200000);
+  while (true) {
+    // QMutexLocker locker(&mutex);
+    recalculateResult();
+  }
+}
+
+void ImageComposerThread::recalculateResult() {
+  // m_rgb->scaled(640, 480, Qt::KeepAspectRatio);
+  m_thermal->scaled(640, 480, Qt::KeepAspectRatio);
   QPainter painter(m_result);
   painter.setCompositionMode(QPainter::CompositionMode_Source);
   painter.fillRect(m_result->rect(), Qt::transparent);
   painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
-  painter.drawImage(0, 0, *m_destination);
-  painter.setCompositionMode(mode);
-  painter.drawImage(0, 0, *m_source);
+  painter.drawImage(0, 0, *m_thermal);
+  painter.setCompositionMode(m_mode);
+  painter.drawImage(0, 0, *m_rgb);
   painter.setCompositionMode(QPainter::CompositionMode_DestinationOver);
   painter.fillRect(m_result->rect(), Qt::white);
   painter.end();
-#if LOGGER
-  LOG(DEBUG, "recalculate_result to overlap to image")
-#endif
+  // update signal
+  emit updateImage(*m_result);
 }
 
-void ImageComposer::run() {
-#if LOGGER
-  LOG(INFO, "run imagecomposer")
-#endif
-  while (true) {
-    recalculate_result();
-    emit updateImage(*m_result);
-  }
+void ImageComposerThread::setMode(int index) {
+  m_mode = static_cast<QPainter::CompositionMode>(index);
+  this->start();
 }
 
-void ImageComposer::set_thermal_image(QImage img) {
-  *m_destination = img.scaled(640, 480, Qt::KeepAspectRatio);
-#if LOGGER
-  LOG(INFO, "update thermal image")
-#endif
-}
-
-void ImageComposer::set_rgb_image(QImage img) {
-  *m_source = img.scaled(640, 480, Qt::KeepAspectRatio);
+void ImageComposerThread::setRGBImage(QImage img) {
+  // QMutexLocker locker(&mutex);
+  *m_rgb = img;
 #if LOGGER
   LOG(INFO, "update rgb image")
+#endif
+}
+
+void ImageComposerThread::setThermalImage(QImage img) {
+  // QMutexLocker locker(&mutex);
+  *m_thermal = img;
+#if LOGGER
+  LOG(INFO, "update thermal image")
 #endif
 }

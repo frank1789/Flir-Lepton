@@ -1,29 +1,34 @@
-#ifndef IMAGE_COMPOSER_THREAD_HPP
-#define IMAGE_COMPOSER_THREAD_HPP
+#ifndef IMAGECOMPOSERTHREAD_HPP
+#define IMAGECOMPOSERTHREAD_HPP
 
 #include <QImage>
+#include <QPainter>
 #include <QThread>
 
-class ImageComposer : public QThread {
+class ImageComposerThread : public QThread {
   Q_OBJECT
-
  public:
-  ImageComposer(QWidget *parent = nullptr);
-  ~ImageComposer();
-  inline void recalculate_result();
+  ImageComposerThread(QWidget *parent = nullptr);
+  ~ImageComposerThread() override;
+
   void run() override;
+
+ protected:
+  void recalculateResult();
+
+ public slots:
+  void setMode(int index);
+  void setRGBImage(QImage img);
+  void setThermalImage(QImage img);
 
  signals:
   void updateImage(QImage);
 
- public slots:
-  void set_thermal_image(QImage img);
-  void set_rgb_image(QImage img);
-
  private:
-  QImage *m_source;
-  QImage *m_destination;
+  QImage *m_rgb;
+  QImage *m_thermal;
   QImage *m_result;
+  QPainter::CompositionMode m_mode;
 };
 
-#endif  // IMAGE_COMPOSER_THREAD_HPP
+#endif  // IMAGECOMPOSERTHREAD_HPP
