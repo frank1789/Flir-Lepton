@@ -32,7 +32,7 @@ ImageComposerThread::~ImageComposerThread() {
 void ImageComposerThread::run() {
   usleep(200000);
   while (true) {
-    QMutexLocker locker(&mutex);
+    usleep(200);
     recalculateResult();
   }
 }
@@ -40,6 +40,7 @@ void ImageComposerThread::run() {
 void ImageComposerThread::recalculateResult() {
   // m_rgb->scaled(640, 480, Qt::KeepAspectRatio);
   m_thermal->scaled(640, 480, Qt::KeepAspectRatio);
+  m_thermal->
   QPainter painter(m_result);
   painter.setCompositionMode(QPainter::CompositionMode_Source);
   painter.fillRect(m_result->rect(), Qt::transparent);
@@ -60,7 +61,6 @@ void ImageComposerThread::setMode(int index) {
 }
 
 void ImageComposerThread::setRGBImage(QImage img) {
-  QMutexLocker locker(&mutex);
   *m_rgb = img;
 #if LOGGER
   LOG(INFO, "update rgb image")
@@ -68,7 +68,6 @@ void ImageComposerThread::setRGBImage(QImage img) {
 }
 
 void ImageComposerThread::setThermalImage(QImage img) {
-  QMutexLocker locker(&mutex);
   *m_thermal = img;
 #if LOGGER
   LOG(INFO, "update thermal image")

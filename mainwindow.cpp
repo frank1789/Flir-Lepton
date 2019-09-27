@@ -136,23 +136,16 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::set_thermal_image(QImage img) {
-  QMutexLocker locker(&mutex);
   emit update_thermal_image(img);
 }
 
-void MainWindow::set_rgb_image(QImage img) {
-  QMutexLocker locker(&mutex);
-  emit update_rgb_image(img);
-}
+void MainWindow::set_rgb_image(QImage img) { emit update_rgb_image(img); }
 
 void MainWindow::call_FFC() { emit performFFC(); }
 
 void MainWindow::call_capture_image() { emit captureImage(); }
 
-void MainWindow::setCompose(QImage img) {
-  QMutexLocker locker(&mutex);
-  emit updateCompose(img);
-}
+void MainWindow::setCompose(QImage img) { emit updateCompose(img); }
 
 void MainWindow::changeColour() {
   if (m_rbtn_rainbow->isChecked()) {
