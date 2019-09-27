@@ -5,10 +5,10 @@
 QMutex mutex;
 
 ImageComposerThread::ImageComposerThread(QWidget *parent) : QThread() {
-  m_result = new QImage(640, 480, QImage::Format_RGBA8888_Premultiplied);
-  m_rgb = new QImage(640, 480, QImage::Format_RGBA8888_Premultiplied);
-  m_thermal = new QImage(640, 480, QImage::Format_RGBA8888_Premultiplied);
-  m_mode = QPainter::CompositionMode_Xor;
+  m_result = new QImage(640, 480, QImage::Format_ARGB32_Premultiplied);
+  m_rgb = new QImage();
+  m_thermal = new QImage();
+  m_mode = QPainter::CompositionMode_Overlay;
 #if LOGGER
   LOG(INFO, "ctor ImageComposerThread class")
 #endif
