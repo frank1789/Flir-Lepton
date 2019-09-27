@@ -266,7 +266,7 @@ QVBoxLayout *MainWindow::create_lower_control() {
   addOp(QPainter::CompositionMode_Exclusion, tr("Exclusion"));
 
   // default value overlap_selector
-  m_overlap_selector->setCurrentIndex(0);
+  m_overlap_selector->setCurrentIndex(15);
 
   // define vertical lower layout button
   m_vertical_lower->addWidget(m_overlap_selector);
