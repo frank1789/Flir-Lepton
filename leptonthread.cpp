@@ -3,6 +3,7 @@
 #include <QLabel>
 #include "Lepton_I2C.h"
 #include "SPI.h"
+#include "common.hpp"
 #include "log/logger.h"
 #include "palettes.h"
 
@@ -37,7 +38,7 @@ void LeptonThread::run() {
       }
     }
 #if LOGGER
-    if (resets >= kMaxResetsPerFrame) {
+    if (resets >= MaxResetsPerFrame) {
       LOG(DEBUG, "reading, resets: %d", resets)
     }
 #endif
@@ -84,7 +85,7 @@ void LeptonThread::run() {
       row = i / PACKET_SIZE_UINT16;
       m_ir_image.setPixel(column, row, color);
     }
-
+    QMutexLocker locker(&mutex);
     // emit the signal for update
     emit updateImage(m_ir_image);
   }

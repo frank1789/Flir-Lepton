@@ -16,8 +16,8 @@ constexpr int FRAME_SIZE_UINT16{PACKET_SIZE_UINT16 * PACKETS_PER_FRAME};
 
 // Lepton communication timing parameters
 constexpr uint16_t MaxResetsPerSegment{750};   // packet resets
-constexpr uint16_t kMaxResetsPerFrame{30};     // segment resets
-constexpr uint16_t kMaxResetsBeforeReboot{2};  // frame resets
+constexpr uint16_t MaxResetsPerFrame{30};     // segment resets
+constexpr uint16_t MaxResetsBeforeReboot{2};  // frame resets
 constexpr uint32_t LeptonLoadTime{2000};       // 0.002 s = 2 ms = 2000 us
 constexpr uint32_t LeptonResetTime{1000};      // 0.001 s = 1 ms = 3000 us
 constexpr uint32_t LeptonRebootTime{750000};   // 0.75 s = 750 ms = 750000 us
