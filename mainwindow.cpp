@@ -63,32 +63,76 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow() {
   delete ui;
+  // image placeholder
+  if (m_lepton_image) {
+    delete m_lepton_image;
+  }
+  if (m_raspic_image) {
+    delete m_raspic_image;
+  }
+  if (m_overlap_image) {
+    delete m_overlap_image;
+  }
+  // label's placeholder
+  if (m_lepton_label) {
+    delete m_lepton_label;
+  }
+  if (m_raspic_label) {
+    delete m_raspic_label;
+  }
+  if (m_overlap_label) {
+    delete m_overlap_label;
+  }
+  // action buttons
+  if (m_btn_performffc) {
+    delete m_btn_performffc;
+  }
+  if (m_btn_capture) {
+    delete m_btn_capture;
+  }
+  // radio buttons
+  if (m_rbtn_rainbow) {
+    delete m_rbtn_rainbow;
+  }
+  if (m_rbtn_grayscale) {
+    delete m_rbtn_grayscale;
+  }
+  if (m_rbtn_ironblack) {
+    delete m_rbtn_ironblack;
+  }
 
-  // images
-  delete m_lepton_image;
-  delete m_raspic_image;
-  delete m_overlap_image;
+  // group box
+  if (m_colour_group) {
+    delete m_colour_group;
+  }
 
-  // label
-  delete m_lepton_label;
-  delete m_raspic_label;
-  delete m_overlap_label;
-  delete m_group_label;
+  // combo box
+  if (m_overlap_selector) {
+    delete m_overlap_selector;
+  }
 
-  // command
-  delete m_btn_capture;
-  delete m_btn_performffc;
-  delete m_overlap_selector;
-  delete m_vertical_lower;
-  delete m_vertical_upper;
-  delete m_vertical_bar;
-
-  // colour
-  delete m_rbtn_rainbow;
-  delete m_rbtn_grayscale;
-  delete m_rbtn_ironblack;
-  delete m_vertcolour_layout;
-  delete m_colour_group;
+  // layout
+  if (m_vertical_upper) {
+    delete m_vertical_upper;
+  }
+  if (m_vertical_lower) {
+    delete m_vertical_lower;
+  }
+  if (m_vertcolour_layout) {
+    delete m_vertcolour_layout;
+  }
+  if (m_vertical_bar) {
+    delete m_vertical_bar;
+  }
+  if (m_preview_label) {
+    delete m_preview_label;
+  }
+  if (m_group_label) {
+    delete m_group_label;
+  }
+  if (m_group_all) {
+    delete m_group_all;
+  }
 }
 
 void MainWindow::set_thermal_image(QImage img) {

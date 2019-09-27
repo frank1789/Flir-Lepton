@@ -15,9 +15,15 @@ ImageComposerThread::ImageComposerThread(QWidget *parent) : QThread() {
 }
 
 ImageComposerThread::~ImageComposerThread() {
-  delete m_rgb;
-  delete m_result;
-  delete m_thermal;
+  if (m_rgb) {
+    delete m_rgb;
+  }
+  if (m_result) {
+    delete m_result;
+  }
+  if (m_thermal) {
+    delete m_thermal;
+  }
 #if LOGGER
   LOG(INFO, "dtor ImageComposerThread class")
 #endif
@@ -26,7 +32,7 @@ ImageComposerThread::~ImageComposerThread() {
 void ImageComposerThread::run() {
   usleep(200000);
   while (true) {
-    // QMutexLocker locker(&mutex);
+    QMutexLocker locker(&mutex);
     recalculateResult();
   }
 }
@@ -54,7 +60,7 @@ void ImageComposerThread::setMode(int index) {
 }
 
 void ImageComposerThread::setRGBImage(QImage img) {
-  // QMutexLocker locker(&mutex);
+  QMutexLocker locker(&mutex);
   *m_rgb = img;
 #if LOGGER
   LOG(INFO, "update rgb image")
@@ -62,7 +68,7 @@ void ImageComposerThread::setRGBImage(QImage img) {
 }
 
 void ImageComposerThread::setThermalImage(QImage img) {
-  // QMutexLocker locker(&mutex);
+  QMutexLocker locker(&mutex);
   *m_thermal = img;
 #if LOGGER
   LOG(INFO, "update thermal image")

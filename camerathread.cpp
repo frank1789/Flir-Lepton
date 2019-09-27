@@ -22,7 +22,9 @@ CameraThread::~CameraThread() {
   cameraRunning = false;
   // close camera
   camera.release();
-  delete[] m_buffer;
+  if (m_buffer) {
+    delete[] m_buffer;
+  }
 }
 
 void CameraThread::run() {
