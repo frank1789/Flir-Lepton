@@ -193,7 +193,7 @@ QGroupBox *MainWindow::create_colour_selector() {
 }
 
 QGridLayout *MainWindow::create_label_preview() {
-  // create horizzontal layout
+  // create horizontal layout
   m_group_label = new QGridLayout;
 
   // allocate label's placeholder
@@ -211,7 +211,7 @@ QGridLayout *MainWindow::create_label_preview() {
   m_raspic_label->setPixmap(QPixmap::fromImage(*m_raspic_image));
   m_overlap_label->setPixmap(QPixmap::fromImage(*m_overlap_image));
 
-  // define horizzontal layout
+  // define horizontal layout
   m_group_label->addWidget(m_lepton_label, 0, 0);
   m_group_label->addWidget(m_raspic_label, 0, 1);
   m_group_label->addWidget(m_overlap_label, 1, 0, 1, 3);
@@ -265,7 +265,7 @@ QVBoxLayout *MainWindow::create_lower_control() {
   addOp(QPainter::CompositionMode_Difference, tr("Difference"));
   addOp(QPainter::CompositionMode_Exclusion, tr("Exclusion"));
 
-  // defaul value overlap_selector
+  // default value overlap_selector
   m_overlap_selector->setCurrentIndex(0);
 
   // define vertical lower layout button
