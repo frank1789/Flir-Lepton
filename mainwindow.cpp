@@ -270,7 +270,7 @@ QVBoxLayout *MainWindow::create_lower_control() {
 
   // define vertical lower layout button
   m_vertical_lower->addWidget(m_overlap_selector);
-  m_vertical_lower->addStretch(1);
+  m_vertical_lower->addStretch(15);
   m_vertical_lower->addWidget(m_btn_capture);
 
   return m_vertical_lower;
