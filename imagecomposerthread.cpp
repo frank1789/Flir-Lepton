@@ -4,7 +4,7 @@
 
 QMutex mutex;
 
-ImageComposerThread::ImageComposerThread(QWidget *parent) : QThread() {
+ImageComposerThread::ImageComposerThread() : QThread() {
   m_result = new QImage(640, 480, QImage::Format_ARGB32_Premultiplied);
   m_rgb = new QImage();
   m_thermal = new QImage();
@@ -62,6 +62,7 @@ void ImageComposerThread::setMode(int index) {
 
 void ImageComposerThread::setRGBImage(QImage img) {
   *m_rgb = img;
+  *m_rgb = img.scaled(640, 480, Qt::KeepAspectRatio);
 #if LOGGER
   LOG(INFO, "update rgb image")
 #endif
@@ -69,6 +70,7 @@ void ImageComposerThread::setRGBImage(QImage img) {
 
 void ImageComposerThread::setThermalImage(QImage img) {
   *m_thermal = img;
+  *m_thermal = img.scaled(640, 480, Qt::KeepAspectRatio);
 #if LOGGER
   LOG(INFO, "update thermal image")
 #endif

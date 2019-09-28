@@ -8,7 +8,7 @@
 class ImageComposerThread : public QThread {
   Q_OBJECT
  public:
-  ImageComposerThread(QWidget *parent = nullptr);
+  ImageComposerThread();
   ~ImageComposerThread() override;
 
   void run() override;
