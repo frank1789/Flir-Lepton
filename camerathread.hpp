@@ -3,7 +3,7 @@
 
 #include <raspicam/raspicam.h>
 #include <QImage>
-#include <QThread>
+#include <memory>
 
 // constant raspberry Camera V2
 constexpr unsigned int RaspicamLoadTime{30000};  // 0.03 s = 30 ms = 30000 us
@@ -16,8 +16,7 @@ constexpr unsigned int RaspicamResetTime{200};   // 0.0002 s = 0.2 ms = 200 us
  * displayed in QLabel. Depend on library
  * [Raspicam](https://github.com/cedricve/raspicam)
  */
-class CameraThread : public QThread {
-  Q_OBJECT
+class CameraColour {
  public:
   /**
    * @brief Construct a new Camera Thread object.
@@ -25,35 +24,26 @@ class CameraThread : public QThread {
    * Open Camera connection, then, registers QImage as metatype and allocate
    * buffer at size equal RASPICAM_FORMAT_RGB image format.
    */
-  CameraThread();
+  CameraColour();
 
   /**
    * @brief Destroy the Camera Thread object.
    *
    * Deallocate buffer and close the Camera connection.
    */
-  ~CameraThread();
+  ~CameraColour();
 
   /**
-   * @brief This method acquires images from the camera during operation and
-   * emits the signal to send the required buffer.
+   * @brief This method acquires images from the camera during operation.
    *
+   * @return a frame
    */
-  void run() override;
- signals:
-  /**
-   * @brief emits the image from the camera.
-   *
-   * This signal is emitted during run function when it grabs an image
-   * from the camera and converts it to a QImage.
-   * @param[in] image
-   */
-  void updateImage(QImage &image);
+  QImage getImageRGB();
 
  private:
   raspicam::RaspiCam camera;  // Access the Raspberry Pi camera
-  bool cameraRunning;         // status camera running
-  unsigned char *m_buffer;  // raw data from camera, before converted in QImage
+  std::unique_ptr<unsigned char[]>
+      m_buffer;  // raw data from camera, before converted in QImage
 };
 
 #endif  // CAMERAWORKER_H
