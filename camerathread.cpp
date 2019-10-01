@@ -2,7 +2,6 @@
 #include <unistd.h>
 #include <fstream>
 #include <iostream>
-#include "common.hpp"
 #include "log/logger.h"
 
 CameraColour::CameraColour() {
