@@ -1,17 +1,30 @@
 #include "leptonthread.hpp"
 #include <unistd.h>
 #include <QLabel>
+#include <QPainter>
 #include "Lepton_I2C.h"
 #include "SPI.h"
 #include "log/logger.h"
 #include "palettes.h"
 
-LeptonThread::LeptonThread() : QThread(), colorMap(colormap::ironblack) {}
+LeptonThread::LeptonThread()
+    : QThread(),
+      colorMap(colormap::ironblack),
+      m_result(640, 480, QImage::Format_ARGB32_Premultiplied) {
+  cam = new CameraColour();
+#if LOGGER
+  LOG(INFO, "ctor LeptonThread")
+#endif
+}
 
-LeptonThread::~LeptonThread() {}
+LeptonThread::~LeptonThread() {
+  if (cam) {
+    delete cam;
+  }
+}
 
 void LeptonThread::run() {
-  // generate initial image
+  // generate thermal initial image
   m_ir_image = QImage(80, 60, QImage::Format_RGB888);
   // open SPI port
   leptonSPI_OpenPort(0);
@@ -37,7 +50,7 @@ void LeptonThread::run() {
       }
     }
 #if LOGGER
-    if (resets >= kMaxResetsPerFrame) {
+    if (resets >= MaxResetsPerFrame) {
       LOG(DEBUG, "reading, resets: %d", resets)
     }
 #endif
@@ -84,11 +97,12 @@ void LeptonThread::run() {
       row = i / PACKET_SIZE_UINT16;
       m_ir_image.setPixel(column, row, color);
     }
-
-    // emit the signal for update
+    QImage colour_image = cam->getImageRGB();
     emit updateImage(m_ir_image);
+    emit updateCam(colour_image);
+    recalculateResult(m_ir_image.scaled(640, 480, Qt::KeepAspectRatio),
+                      colour_image.scaled(640, 480, Qt::KeepAspectRatio));
   }
-
   //  close SPI port
   leptonSPI_ClosePort(0);
 }
@@ -110,4 +124,18 @@ void LeptonThread::performFFC() {
 void LeptonThread::changeColourMap(const int *colour) {
   this->colorMap = colour;
   this->start();
+}
+
+void LeptonThread::recalculateResult(const QImage &thermal, const QImage &rgb) {
+  QPainter painter(&m_result);
+  painter.setCompositionMode(QPainter::CompositionMode_Source);
+  painter.fillRect(m_result.rect(), Qt::transparent);
+  painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+  painter.drawImage(0, 0, thermal);
+  painter.setCompositionMode(QPainter::CompositionMode_Overlay);
+  painter.drawImage(0, 0, rgb);
+  painter.setCompositionMode(QPainter::CompositionMode_DestinationOver);
+  painter.fillRect(m_result.rect(), Qt::white);
+  painter.end();
+  emit updateOverlay(m_result);
 }

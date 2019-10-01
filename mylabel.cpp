@@ -12,3 +12,4 @@ void MyLabel::setImage(QImage image) {
   QPixmap pixmap = QPixmap::fromImage(image);
   setPixmap(pixmap.scaled(this->width(), this->height(), Qt::KeepAspectRatio));
 }
+

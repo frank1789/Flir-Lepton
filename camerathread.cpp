@@ -1,40 +1,38 @@
+#include "camerathread.hpp"
 #include <unistd.h>
 #include <fstream>
 #include <iostream>
+#include "log/logger.h"
 
-#include "camerathread.hpp"
+CameraColour::CameraColour() {
+  auto size = camera.getImageTypeSize(raspicam::RASPICAM_FORMAT_RGB);
+  m_buffer = std::make_unique<unsigned char[]>(size);
 
-CameraThread::CameraThread() : QThread(), cameraRunning(true) {
-  qRegisterMetaType<QImage>("QImage&");
-  m_buffer = new unsigned char[camera.getImageTypeSize(
-      raspicam::RASPICAM_FORMAT_RGB)]();
+#if LOGGER
+  LOG(INFO, "ctor CameraColour")
+#endif
   // Open the camera
   if (!camera.open()) {
     std::cerr << "Unable to open camera";
-    cameraRunning = false;
     throw std::runtime_error("Starting camera failed");
-  } else {
-    cameraRunning = true;
   }
+  usleep(RaspicamLoadTime);
 }
 
-CameraThread::~CameraThread() {
-  cameraRunning = false;
+CameraColour::~CameraColour() {
   // close camera
   camera.release();
-  delete[] m_buffer;
+#if LOGGER
+  LOG(INFO, "dtor CameraColour")
+#endif
 }
 
-void CameraThread::run() {
-  // while the camera is on capture frame
-  while (cameraRunning) {
-    // capture
-    camera.grab();
-    camera.retrieve(m_buffer, raspicam::RASPICAM_FORMAT_IGNORE);
-    // convert the data and send to the caller to handle
-    QImage image = QImage(m_buffer, camera.getWidth(), camera.getHeight(),
-                          QImage::Format_RGB888);
-    emit updateImage(image);
-    usleep(RaspicamResetTime);
-  }
+QImage CameraColour::getImageRGB() {
+  // capture
+  camera.grab();
+  camera.retrieve(m_buffer.get(), raspicam::RASPICAM_FORMAT_IGNORE);
+  // convert the data and send to the caller to handle
+  QImage image = QImage(m_buffer.get(), camera.getWidth(), camera.getHeight(),
+                        QImage::Format_RGB888);
+  return image;
 }
