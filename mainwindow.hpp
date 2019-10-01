@@ -7,8 +7,10 @@
 #include <QHBoxLayout>
 #include <QImage>
 #include <QMainWindow>
+#include <QPainter>
 #include <QPushButton>
 #include <QRadioButton>
+#include <QString>
 #include <QVBoxLayout>
 #include "mylabel.hpp"
 
@@ -28,7 +30,9 @@ class MainWindow : public QMainWindow {
  public slots:
   void set_thermal_image(QImage img);
   void set_rgb_image(QImage img);
+
   void setCompose(QImage img);
+  void indexChanged(int index);
 
  private slots:
   void call_FFC();
@@ -42,6 +46,7 @@ class MainWindow : public QMainWindow {
   void changeColourMap(const int *);
   void performFFC();
   void captureImage();
+  void updateMode(int);
 
  private:
   Ui::MainWindow *ui;
@@ -67,6 +72,7 @@ class MainWindow : public QMainWindow {
 
   // group box
   QGroupBox *m_colour_group;
+  void addOp(QPainter::CompositionMode mode, const QString &name);
 
   // combo box
   QComboBox *m_overlap_selector;

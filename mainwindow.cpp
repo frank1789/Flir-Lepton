@@ -36,10 +36,12 @@ MainWindow::MainWindow(QWidget *parent)
   widget->setLayout(m_group_all);
 
   // connect signal from this to respective classes label
-  connect(this, &MainWindow::update_thermal_image, m_lepton_label,
-          &MyLabel::setImage);
-  connect(this, &MainWindow::update_rgb_image, m_raspic_label,
-          &MyLabel::setImage);
+  connect(this, &MainWindow::update_thermal_image,
+          [=](QImage img) { m_lepton_label->setImage(img); });
+  connect(this, &MainWindow::update_rgb_image,
+          [=](QImage img) { m_raspic_label->setImage(img); });
+  connect(this, &MainWindow::updateCompose,
+          [=](QImage img) { m_overlap_label->setImage(img); });
 
   // connect signal button and radio buttons
   connect(m_btn_performffc, &QPushButton::clicked, [=]() { this->call_FFC(); });
@@ -51,39 +53,14 @@ MainWindow::MainWindow(QWidget *parent)
           [=]() { this->changeColour(); });
   connect(m_rbtn_ironblack, &QRadioButton::clicked,
           [=]() { this->changeColour(); });
+
+  // connect combobox
+  connect(m_overlap_selector,
+          QOverload<int>::of(&QComboBox::currentIndexChanged),
+          [=](int index) { this->indexChanged(index); });
 }
 
-void MainWindow::setCompose(QImage img) { emit updateCompose(img); }
-
-MainWindow::~MainWindow() {
-  delete ui;
-
-  // images
-  delete m_lepton_image;
-  delete m_raspic_image;
-  delete m_overlap_image;
-
-  // label
-  delete m_lepton_label;
-  delete m_raspic_label;
-  delete m_overlap_label;
-  delete m_group_label;
-
-  // command
-  delete m_btn_capture;
-  delete m_btn_performffc;
-  delete m_overlap_selector;
-  delete m_vertical_lower;
-  delete m_vertical_upper;
-  delete m_vertical_bar;
-
-  // colour
-  delete m_rbtn_rainbow;
-  delete m_rbtn_grayscale;
-  delete m_rbtn_ironblack;
-  delete m_vertcolour_layout;
-  delete m_colour_group;
-}
+MainWindow::~MainWindow() { delete ui; }
 
 void MainWindow::set_thermal_image(QImage img) {
   emit update_thermal_image(img);
@@ -91,9 +68,13 @@ void MainWindow::set_thermal_image(QImage img) {
 
 void MainWindow::set_rgb_image(QImage img) { emit update_rgb_image(img); }
 
+void MainWindow::setCompose(QImage img) { emit updateCompose(img); }
+
 void MainWindow::call_FFC() { emit performFFC(); }
 
 void MainWindow::call_capture_image() { emit captureImage(); }
+
+// void MainWindow::setCompose(QImage img) { //emit updateCompose(img); }
 
 void MainWindow::changeColour() {
   if (m_rbtn_rainbow->isChecked()) {
@@ -109,6 +90,8 @@ void MainWindow::changeColour() {
     emit changeColourMap(colormap::ironblack);
   }
 }
+
+void MainWindow::indexChanged(int index) { emit updateMode(index); }
 
 QGroupBox *MainWindow::create_colour_selector() {
   // init groupbox colour
@@ -139,7 +122,7 @@ QGroupBox *MainWindow::create_colour_selector() {
 }
 
 QGridLayout *MainWindow::create_label_preview() {
-  // create horizzontal layout
+  // create horizontal layout
   m_group_label = new QGridLayout;
 
   // allocate label's placeholder
@@ -157,7 +140,7 @@ QGridLayout *MainWindow::create_label_preview() {
   m_raspic_label->setPixmap(QPixmap::fromImage(*m_raspic_image));
   m_overlap_label->setPixmap(QPixmap::fromImage(*m_overlap_image));
 
-  // define horizzontal layout
+  // define horizontal layout
   m_group_label->addWidget(m_lepton_label, 0, 0);
   m_group_label->addWidget(m_raspic_label, 0, 1);
   m_group_label->addWidget(m_overlap_label, 1, 0, 1, 3);
@@ -186,10 +169,37 @@ QVBoxLayout *MainWindow::create_lower_control() {
 
   // init combobox overlap selector
   m_overlap_selector = new QComboBox;
+  addOp(QPainter::CompositionMode_SourceOver, tr("SourceOver"));
+  addOp(QPainter::CompositionMode_DestinationOver, tr("DestinationOver"));
+  addOp(QPainter::CompositionMode_Clear, tr("Clear"));
+  addOp(QPainter::CompositionMode_Source, tr("Source"));
+  addOp(QPainter::CompositionMode_Destination, tr("Destination"));
+  addOp(QPainter::CompositionMode_SourceIn, tr("SourceIn"));
+  addOp(QPainter::CompositionMode_DestinationIn, tr("DestinationIn"));
+  addOp(QPainter::CompositionMode_SourceOut, tr("SourceOut"));
+  addOp(QPainter::CompositionMode_DestinationOut, tr("DestinationOut"));
+  addOp(QPainter::CompositionMode_SourceAtop, tr("SourceAtop"));
+  addOp(QPainter::CompositionMode_DestinationAtop, tr("DestinationAtop"));
+  addOp(QPainter::CompositionMode_Xor, tr("Xor"));
+  addOp(QPainter::CompositionMode_Plus, tr("Plus"));
+  addOp(QPainter::CompositionMode_Multiply, tr("Multiply"));
+  addOp(QPainter::CompositionMode_Screen, tr("Screen"));
+  addOp(QPainter::CompositionMode_Overlay, tr("Overlay"));
+  addOp(QPainter::CompositionMode_Darken, tr("Darken"));
+  addOp(QPainter::CompositionMode_Lighten, tr("Lighten"));
+  addOp(QPainter::CompositionMode_ColorDodge, tr("ColorDodge"));
+  addOp(QPainter::CompositionMode_ColorBurn, tr("ColorBurn"));
+  addOp(QPainter::CompositionMode_HardLight, tr("HardLight"));
+  addOp(QPainter::CompositionMode_SoftLight, tr("SoftLight"));
+  addOp(QPainter::CompositionMode_Difference, tr("Difference"));
+  addOp(QPainter::CompositionMode_Exclusion, tr("Exclusion"));
+
+  // default value overlap_selector
+  m_overlap_selector->setCurrentIndex(15);
 
   // define vertical lower layout button
   m_vertical_lower->addWidget(m_overlap_selector);
-  m_vertical_lower->addStretch(1);
+  m_vertical_lower->addStretch(15);
   m_vertical_lower->addWidget(m_btn_capture);
 
   return m_vertical_lower;
@@ -207,4 +217,8 @@ QVBoxLayout *MainWindow::create_upper_control() {
   m_vertical_upper->addStretch(0);
   m_vertical_upper->addWidget(create_colour_selector());
   return m_vertical_upper;
+}
+
+void MainWindow::addOp(QPainter::CompositionMode mode, const QString &name) {
+  m_overlap_selector->addItem(name, mode);
 }

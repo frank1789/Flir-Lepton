@@ -16,7 +16,7 @@ message(STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -122,13 +122,13 @@ target_link_libraries(${LEPTONCAMERA} Qt5::Widgets LeptonSDK LOG ${CMAKE_THREAD_
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
 	message(STATUS "Compiling debug mode")
 	add_definitions(-DLOGGER)
-        target_compile_options(${LEPTONCAMERA} PUBLIC -march=native -g -O0)
+        target_compile_options(${LEPTONCAMERA} PUBLIC -march=armv8-a+crc -mtune=cortex-a53 -mfpu=crypto-neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations -pipe -g -O0)
 endif ()
 # compile Release mode
 if( NOT CMAKE_BUILD_TYPE )
 	SET( CMAKE_BUILD_TYPE Release ... FORCE )
 	message(STATUS "Active release mode")
-target_compile_options(${LEPTONCAMERA} PUBLIC -march=native -O2)
+target_compile_options(${LEPTONCAMERA} PUBLIC -march=armv8-a+crc -mtune=cortex-a53 -mfpu=crypto-neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations -O2 -pipe)
 endif()
 
 
