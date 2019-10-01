@@ -1,7 +1,6 @@
 #include "mainwindow.hpp"
 #include <QColor>
 #include <QDebug>
-#include "common.hpp"
 #include "palettes.h"
 #include "ui_mainwindow.h"
 
