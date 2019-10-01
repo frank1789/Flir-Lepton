@@ -37,12 +37,12 @@ MainWindow::MainWindow(QWidget *parent)
   widget->setLayout(m_group_all);
 
   // connect signal from this to respective classes label
-  connect(this, &MainWindow::update_thermal_image, m_lepton_label,
-          &MyLabel::setImage);
-  connect(this, &MainWindow::update_rgb_image, m_raspic_label,
-          &MyLabel::setImage);
-  connect(this, &MainWindow::updateCompose, m_overlap_label,
-          &MyLabel::setImage);
+  connect(this, &MainWindow::update_thermal_image,
+          [=](QImage img) { m_lepton_label->setImage(img); });
+  connect(this, &MainWindow::update_rgb_image,
+          [=](QImage img) { m_raspic_label->setImage(img); });
+  connect(this, &MainWindow::updateCompose,
+          [=](QImage img) { m_overlap_label->setImage(img); });
 
   // connect signal button and radio buttons
   connect(m_btn_performffc, &QPushButton::clicked, [=]() { this->call_FFC(); });
@@ -61,79 +61,7 @@ MainWindow::MainWindow(QWidget *parent)
           [=](int index) { this->indexChanged(index); });
 }
 
-MainWindow::~MainWindow() {
-  delete ui;
-  // image placeholder
-  if (m_lepton_image) {
-    delete m_lepton_image;
-  }
-  if (m_raspic_image) {
-    delete m_raspic_image;
-  }
-  if (m_overlap_image) {
-    delete m_overlap_image;
-  }
-  // label's placeholder
-  if (m_lepton_label) {
-    delete m_lepton_label;
-  }
-  if (m_raspic_label) {
-    delete m_raspic_label;
-  }
-  if (m_overlap_label) {
-    delete m_overlap_label;
-  }
-  // action buttons
-  if (m_btn_performffc) {
-    delete m_btn_performffc;
-  }
-  if (m_btn_capture) {
-    delete m_btn_capture;
-  }
-  // radio buttons
-  if (m_rbtn_rainbow) {
-    delete m_rbtn_rainbow;
-  }
-  if (m_rbtn_grayscale) {
-    delete m_rbtn_grayscale;
-  }
-  if (m_rbtn_ironblack) {
-    delete m_rbtn_ironblack;
-  }
-
-  // group box
-  if (m_colour_group) {
-    delete m_colour_group;
-  }
-
-  // combo box
-  if (m_overlap_selector) {
-    delete m_overlap_selector;
-  }
-
-  // layout
-  if (m_vertical_upper) {
-    delete m_vertical_upper;
-  }
-  if (m_vertical_lower) {
-    delete m_vertical_lower;
-  }
-  if (m_vertcolour_layout) {
-    delete m_vertcolour_layout;
-  }
-  if (m_vertical_bar) {
-    delete m_vertical_bar;
-  }
-  if (m_preview_label) {
-    delete m_preview_label;
-  }
-  if (m_group_label) {
-    delete m_group_label;
-  }
-  if (m_group_all) {
-    delete m_group_all;
-  }
-}
+MainWindow::~MainWindow() { delete ui; }
 
 void MainWindow::set_thermal_image(QImage img) {
   emit update_thermal_image(img);
@@ -141,11 +69,13 @@ void MainWindow::set_thermal_image(QImage img) {
 
 void MainWindow::set_rgb_image(QImage img) { emit update_rgb_image(img); }
 
+void MainWindow::setCompose(QImage img) { emit updateCompose(img); }
+
 void MainWindow::call_FFC() { emit performFFC(); }
 
 void MainWindow::call_capture_image() { emit captureImage(); }
 
-void MainWindow::setCompose(QImage img) { emit updateCompose(img); }
+// void MainWindow::setCompose(QImage img) { //emit updateCompose(img); }
 
 void MainWindow::changeColour() {
   if (m_rbtn_rainbow->isChecked()) {
