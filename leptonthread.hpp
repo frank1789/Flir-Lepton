@@ -2,6 +2,7 @@
 #define LEPTONTHREAD_HPP
 
 #include <QImage>
+#include <QPainter>
 #include <QPixmap>
 #include <QThread>
 #include <QtCore>
@@ -77,6 +78,12 @@ class LeptonThread : public QThread {
    */
   void snapImage();
 
+  /**
+   * @brief Set the Mode object during overlaping image.
+   *
+   */
+  void setMode(int mode);
+
  signals:
   void updateText(QString);
   void updateImage(QImage);
@@ -101,8 +108,9 @@ class LeptonThread : public QThread {
   QImage m_result;    // image containing the final result
   // buffer
   uint8_t result[PACKET_SIZE * PACKETS_PER_FRAME];
-  uint16_t* m_frameBuffer;  // store actual frame
-  CameraColour* cam;        // interface raspicam
+  uint16_t* m_frameBuffer;           // store actual frame
+  CameraColour* cam;                 // interface raspicam
+  QPainter::CompositionMode m_mode;  // composition mode
 };
 
 #endif  // LEPTONTHREAD_HPP

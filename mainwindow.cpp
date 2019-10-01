@@ -1,6 +1,6 @@
 #include "mainwindow.hpp"
 #include <QColor>
-#include <QDebug>
+#include "log/logger.h"
 #include "palettes.h"
 #include "ui_mainwindow.h"
 
@@ -78,15 +78,21 @@ void MainWindow::call_capture_image() { emit captureImage(); }
 
 void MainWindow::changeColour() {
   if (m_rbtn_rainbow->isChecked()) {
-    qDebug() << "change palette to rainbow";
+#if LOGGER
+    LOG(TRACE, "change palette to rainbow")
+#endif
     emit changeColourMap(colormap::rainbow);
   }
   if (m_rbtn_grayscale->isChecked()) {
-    qDebug() << "change palette to grayscale";
+#if LOGGER
+    LOG(TRACE, "change palette to grayscale")
+#endif
     emit changeColourMap(colormap::grayscale);
   }
   if (m_rbtn_ironblack->isChecked()) {
-    qDebug() << "change palette to ironblack";
+#if LOGGER
+    LOG(TRACE, "change palette to ironblack")
+#endif
     emit changeColourMap(colormap::ironblack);
   }
 }

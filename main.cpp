@@ -23,6 +23,7 @@ int main(int argc, char **argv) {
                    &LeptonThread::performFFC);
   QObject::connect(&w, &MainWindow::captureImage, lepton,
                    &LeptonThread::snapImage);
+  QObject::connect(&w, &MainWindow::updateMode, lepton, &LeptonThread::setMode);
   // open window
   w.show();
 

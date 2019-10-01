@@ -1,7 +1,6 @@
 #include "leptonthread.hpp"
 #include <unistd.h>
 #include <QLabel>
-#include <QPainter>
 #include "Lepton_I2C.h"
 #include "SPI.h"
 #include "log/logger.h"
@@ -12,6 +11,7 @@ LeptonThread::LeptonThread()
       colorMap(colormap::ironblack),
       m_result(640, 480, QImage::Format_ARGB32_Premultiplied) {
   cam = new CameraColour();
+  m_mode = QPainter::CompositionMode_Overlay;
 #if LOGGER
   LOG(INFO, "ctor LeptonThread")
 #endif
@@ -126,13 +126,17 @@ void LeptonThread::changeColourMap(const int *colour) {
   this->start();
 }
 
+void LeptonThread::setMode(int mode) {
+  m_mode = static_cast<QPainter::CompositionMode>(mode);
+}
+
 void LeptonThread::recalculateResult(const QImage &thermal, const QImage &rgb) {
   QPainter painter(&m_result);
   painter.setCompositionMode(QPainter::CompositionMode_Source);
   painter.fillRect(m_result.rect(), Qt::transparent);
   painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
   painter.drawImage(0, 0, thermal);
-  painter.setCompositionMode(QPainter::CompositionMode_Overlay);
+  painter.setCompositionMode(m_mode);
   painter.drawImage(0, 0, rgb);
   painter.setCompositionMode(QPainter::CompositionMode_DestinationOver);
   painter.fillRect(m_result.rect(), Qt::white);
