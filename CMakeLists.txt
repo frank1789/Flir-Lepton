@@ -29,12 +29,33 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-
-set(CMAKE_C_FLAGS_DEBUG "-march=armv8-a+crc -mtune=cortex-a53 -mfpu=crypto-neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations -pipe -g -O0")
-set(CMAKE_CXX_FLAGS_DEBUG "-march=armv8-a+crc -mtune=cortex-a53 -mfpu=crypto-neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations -pipe -g -O0")
+#
+#
+#
+set(CMAKE_C_FLAGS_DEBUG "-march=armv8-a+crc -mtune=cortex-a53 -mfpu=crypto-neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations -pipe")
+set(CMAKE_CXX_FLAGS_DEBUG "-march=armv8-a+crc -mtune=cortex-a53 -mfpu=crypto-neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations -pipe")
 set(CMAKE_C_FLAGS_RELEASE "-march=armv8-a+crc -mtune=cortex-a53 -mfpu=crypto-neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations -O2 -pipe -O2")
 set(CMAKE_CXX_FLAGS_RELEASE "-march=armv8-a+crc -mtune=cortex-a53 -mfpu=crypto-neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations -O2 -pipe -O2")
 
+#
+#
+#
+# code coverage Configuration
+add_library(coverage_config INTERFACE)
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug" AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+	  message(STATUS "enabled coverage")
+	  # Add required flags (GCC & LLVM/Clang)
+	  target_compile_options(coverage_config INTERFACE
+		-O0        # no optimization
+		-g         # generate debug info
+		-ftest-coverage -fprofile-arcs # sets all required flags
+	  )
+	  if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.13)
+		target_link_options(coverage_config INTERFACE --coverage)
+	  else()
+		target_link_libraries(coverage_config INTERFACE --coverage)
+	  endif()
+endif()
 
 
 
@@ -60,6 +81,7 @@ if(APPLE AND EXISTS /usr/local/opt/qt5)
 	list(APPEND CMAKE_PREFIX_PATH "/usr/local/opt/qt5")
 endif()
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Network REQUIRED)
 if (${Qt5_FOUND})
    message(STATUS "Found Qt 5")
 else (${Qt5_FOUND})
@@ -74,15 +96,16 @@ find_package(Threads REQUIRED)
 list(APPEND CMAKE_PREFIX_PATH "/usr/local/lib")
 find_package(raspicam REQUIRED)
 if (${raspicam_FOUND})
- message (STATUS "Found raspicam")
+message (STATUS "Found raspicam")
 else (${raspicam_FOUND})
- message (FATAL_ERROR "Could not locate raspicam.")
+message (FATAL_ERROR "Could not locate raspicam.")
 endif (${raspicam_FOUND})
 
 #-----------------------------------------------------------------------------
 # Local library and dependecies
 #-----------------------------------------------------------------------------
 add_subdirectory(src)
+add_subdirectory(src/socket)
 # add subdirectory LOG
 add_subdirectory(src/log)
 # add subdirectory SDK
