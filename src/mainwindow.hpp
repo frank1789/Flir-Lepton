@@ -12,7 +12,9 @@
 #include <QRadioButton>
 #include <QString>
 #include <QVBoxLayout>
+
 #include "mylabel.hpp"
+#include "socket/tcpclient.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -28,10 +30,41 @@ class MainWindow : public QMainWindow {
   ~MainWindow();
 
  public slots:
+  /**
+   * @brief Set the thermal image object
+   *
+   * updates the image from the thermal camera.
+   *
+   * @param img[in] input image
+   */
   void set_thermal_image(QImage img);
+
+  /**
+   * @brief Set the rgb image object
+   *
+   * updates the image from the thermal camera.
+   *
+   * @param img[in] input image
+   */
   void set_rgb_image(QImage img);
 
+  /**
+   * @brief Set the Compose object
+   *
+   * the function works on two images with a method specified by the ui and
+   * circumvents the image on the label.
+   *
+   * @param img[in] input image
+   */
   void setCompose(QImage img);
+
+  /**
+   * @brief Update index of combo box selector.
+   *
+   * updates the index of the merging method currently in use.
+   *
+   * @param index[in] integer corresponding to the index.
+   */
   void indexChanged(int index);
 
  private slots:
@@ -52,45 +85,75 @@ class MainWindow : public QMainWindow {
   Ui::MainWindow *ui;
 
   // image placeholder
-  QImage *m_lepton_image;
-  QImage *m_raspic_image;
-  QImage *m_overlap_image;
+  QImage *m_lepton_image{nullptr};
+  QImage *m_raspic_image{nullptr};
+  QImage *m_overlap_image{nullptr};
 
   // label's placeholder
-  MyLabel *m_lepton_label;
-  MyLabel *m_raspic_label;
-  MyLabel *m_overlap_label;
+  MyLabel *m_lepton_label{nullptr};
+  MyLabel *m_raspic_label{nullptr};
+  MyLabel *m_overlap_label{nullptr};
 
   // action buttons
-  QPushButton *m_btn_performffc;
-  QPushButton *m_btn_capture;
+  QPushButton *m_btn_performffc{nullptr};
+  QPushButton *m_btn_capture{nullptr};
 
   // radio buttons
-  QRadioButton *m_rbtn_rainbow;
-  QRadioButton *m_rbtn_grayscale;
-  QRadioButton *m_rbtn_ironblack;
-
-  // group box
-  QGroupBox *m_colour_group;
-  void addOp(QPainter::CompositionMode mode, const QString &name);
+  QRadioButton *m_rbtn_rainbow{nullptr};
+  QRadioButton *m_rbtn_grayscale{nullptr};
+  QRadioButton *m_rbtn_ironblack{nullptr};
 
   // combo box
-  QComboBox *m_overlap_selector;
-
-  // layout
-  QVBoxLayout *m_vertical_upper;
-  QVBoxLayout *m_vertical_lower;
-  QVBoxLayout *m_vertcolour_layout;
-  QVBoxLayout *m_vertical_bar;
-  QHBoxLayout *m_preview_label;
-  QGridLayout *m_group_label;
-  QGridLayout *m_group_all;
+  QComboBox *m_overlap_selector{nullptr};
 
   // layout generator methods
+  /**
+   * @brief Create a colour selector object.
+   *
+   * @return QGroupBox* [out] layout.
+   */
   QGroupBox *create_colour_selector();
+
+  /**
+   * @brief Create a label preview object.
+   *
+   * function that builds the layout of the UI.
+   *
+   * @return QGridLayout* [out] layout.
+   */
   QGridLayout *create_label_preview();
+
+  /**
+   * @brief Create a bar control object.
+   *
+   * function that builds the layout of the UI.
+   *
+   * @return QVBoxLayout* [out] layout.
+   */
   QVBoxLayout *create_bar_control();
+
+  /**
+   * @brief Create a lower control object.
+   *
+   * function that builds the layout of the UI.
+   *
+   * @return QVBoxLayout* [out] layout.
+   */
   QVBoxLayout *create_lower_control();
+
+  /**
+   * @brief Create a upper control object.
+   *
+   * function that builds the layout of the UI.
+   *
+   * @return QVBoxLayout* [out] layout.
+   */
   QVBoxLayout *create_upper_control();
+
+  // group box
+  void addOp(QPainter::CompositionMode mode, const QString &name);
+
+  // socket client layout
+  TcpClient *client{nullptr};
 };
 #endif  // MAINWINDOW_HPP

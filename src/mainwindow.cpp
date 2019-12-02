@@ -1,8 +1,10 @@
 #include "mainwindow.hpp"
+#include "ui_mainwindow.h"
+
 #include <QColor>
+
 #include "log/logger.h"
 #include "palettes.h"
-#include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -13,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
   setCentralWidget(widget);
 
   // init complete group
-  m_group_all = new QGridLayout;
+  auto m_group_all = new QGridLayout;
 
   // allocate image
   m_lepton_image = new QImage(320, 240, QImage::Format_RGB888);
@@ -31,8 +33,10 @@ MainWindow::MainWindow(QWidget *parent)
     }
   }
 
+  client = new TcpClient();
   m_group_all->addLayout(create_label_preview(), 0, 0);
   m_group_all->addLayout(create_bar_control(), 0, 1);
+  m_group_all->addWidget(client, 0, 2);
   widget->setLayout(m_group_all);
 
   // connect signal from this to respective classes label
@@ -60,7 +64,10 @@ MainWindow::MainWindow(QWidget *parent)
           [=](int index) { this->indexChanged(index); });
 }
 
-MainWindow::~MainWindow() { delete ui; }
+MainWindow::~MainWindow() {
+  delete ui;
+  delete client;
+}
 
 void MainWindow::set_thermal_image(QImage img) {
   emit update_thermal_image(img);
@@ -73,8 +80,6 @@ void MainWindow::setCompose(QImage img) { emit updateCompose(img); }
 void MainWindow::call_FFC() { emit performFFC(); }
 
 void MainWindow::call_capture_image() { emit captureImage(); }
-
-// void MainWindow::setCompose(QImage img) { //emit updateCompose(img); }
 
 void MainWindow::changeColour() {
   if (m_rbtn_rainbow->isChecked()) {
@@ -100,11 +105,15 @@ void MainWindow::changeColour() {
 void MainWindow::indexChanged(int index) { emit updateMode(index); }
 
 QGroupBox *MainWindow::create_colour_selector() {
+#if LOGGER
+  LOG(INFO, "make colour selector ui")
+#endif
+
   // init groupbox colour
-  m_colour_group = new QGroupBox("Colour map");
+  auto m_colour_group = new QGroupBox("Colour map");
 
   // init layout
-  m_vertcolour_layout = new QVBoxLayout;
+  auto m_vertcolour_layout = new QVBoxLayout;
 
   // make radio buttons
   m_rbtn_rainbow = new QRadioButton("Rainbow");
@@ -124,12 +133,17 @@ QGroupBox *MainWindow::create_colour_selector() {
   m_rbtn_rainbow->setChecked(false);
   m_rbtn_grayscale->setChecked(false);
 
+  // return layout
   return m_colour_group;
 }
 
 QGridLayout *MainWindow::create_label_preview() {
+#if LOGGER
+  LOG(INFO, "make preview label ui.")
+#endif
+
   // create horizontal layout
-  m_group_label = new QGridLayout;
+  auto m_group_label = new QGridLayout;
 
   // allocate label's placeholder
   m_lepton_label = new MyLabel(this);
@@ -151,24 +165,34 @@ QGridLayout *MainWindow::create_label_preview() {
   m_group_label->addWidget(m_raspic_label, 0, 1);
   m_group_label->addWidget(m_overlap_label, 1, 0, 1, 3);
 
+  // return layout
   return m_group_label;
 }
 
 QVBoxLayout *MainWindow::create_bar_control() {
+#if LOGGER
+  LOG(INFO, "make bar control ui.")
+#endif
+
   // init layout
-  m_vertical_bar = new QVBoxLayout;
+  auto m_vertical_bar = new QVBoxLayout;
 
   // collect layout
   m_vertical_bar->addLayout(create_upper_control());
   m_vertical_bar->addStretch(0);
   m_vertical_bar->addLayout(create_lower_control());
 
+  // return layout
   return m_vertical_bar;
 }
 
 QVBoxLayout *MainWindow::create_lower_control() {
+#if LOGGER
+  LOG(INFO, "make lower control ui.")
+#endif
+
   // init layout
-  m_vertical_lower = new QVBoxLayout;
+  auto m_vertical_lower = new QVBoxLayout;
 
   // init push button
   m_btn_capture = new QPushButton("Capture");
@@ -208,12 +232,17 @@ QVBoxLayout *MainWindow::create_lower_control() {
   m_vertical_lower->addStretch(15);
   m_vertical_lower->addWidget(m_btn_capture);
 
+  // return layout
   return m_vertical_lower;
 }
 
 QVBoxLayout *MainWindow::create_upper_control() {
+#if LOGGER
+  LOG(INFO, "make upper control ui.")
+#endif
+
   // init layout
-  m_vertical_upper = new QVBoxLayout;
+  auto m_vertical_upper = new QVBoxLayout;
 
   // init push buttons
   m_btn_performffc = new QPushButton("Perform FFC");
@@ -222,6 +251,8 @@ QVBoxLayout *MainWindow::create_upper_control() {
   m_vertical_upper->addWidget(m_btn_performffc);
   m_vertical_upper->addStretch(0);
   m_vertical_upper->addWidget(create_colour_selector());
+
+  // return layout
   return m_vertical_upper;
 }
 
