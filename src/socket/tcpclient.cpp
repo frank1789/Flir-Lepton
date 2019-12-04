@@ -123,20 +123,24 @@ QGroupBox *TcpClient::createInformationGroup() {
   LOG(DEBUG, "display all IP:")
 #endif
   for (int i = 0; i < ipAddressesList.size(); ++i) {
-    if (!ipAddressesList.at(i).isLoopback())
+    if (!ipAddressesList.at(i).isLoopback()) {
       hostCombo->addItem(ipAddressesList.at(i).toString());
-#if LOGGER
-    qDebug() << "find out IP addresses:" << ipAddressesList.at(i).toString();
-#endif
+    }
   }
 
   // add localhost addresses
   for (int i = 0; i < ipAddressesList.size(); ++i) {
-    if (ipAddressesList.at(i).isLoopback())
+    if (ipAddressesList.at(i).isLoopback()) {
       hostCombo->addItem(ipAddressesList.at(i).toString());
+    }
   }
+#if LOGGER
+  for (const auto &list : ipAddressesList) {
+    qDebug() << "find out IP addresses:" << list.toString();
+  }
+#endif
 
-  // validat input port must be 1 <= x <= 65535
+  // validate input port must be 1 <= x <= 65535
   m_port_linedit->setValidator(new QIntValidator(1, 65535, this));
 
   // setup grid layout
@@ -214,8 +218,8 @@ void TcpClient::displayError(QAbstractSocket::SocketError socketError) {
                                tr("The following error occurred: %1.")
                                    .arg(m_tcp_socket->errorString()));
   }
-
-  connectButton->setEnabled(true);
+  m_tcp_socket->abort();
+  updateGui(QAbstractSocket::UnconnectedState);
 }
 
 void TcpClient::readFortune() {
@@ -244,17 +248,12 @@ void TcpClient::sendTestMessage() {
     return;
   }
   QString test_message{"Test message sended form code."};
-
-  QString message =
-      QString("%1: %2").arg(m_user_linedit->text()).arg(test_message);
-  QByteArray ba_message = test_message.toUtf8();
+  QString message = QString("%1: %2")
+                        .arg(m_user_linedit->text())
+                        .arg(test_message.simplified());
+  QByteArray ba_message = message.toUtf8();
   ba_message.append(TERMINATION_ASCII_CODE);
   m_tcp_socket->write(ba_message);
-  m_log_text->append(message);
-}
-
-void TcpClient::test() {
-  QTimer::singleShot(10, this, &TcpClient::sendTestMessage);
 }
 
 void TcpClient::readyRead() {
@@ -264,14 +263,14 @@ void TcpClient::readyRead() {
 #endif
     return;
   }
-  recive_data.append(m_tcp_socket->readAll());
+  receive_data.append(m_tcp_socket->readAll());
   while (true) {
-    auto end_index = recive_data.indexOf(23);
+    auto end_index = receive_data.indexOf(TERMINATION_ASCII_CODE);
     if (end_index < 0) {
       break;
     }
-    QString message = QString::fromUtf8(recive_data.left(end_index));
-    recive_data.remove(0, end_index + 1);
+    QString message = QString::fromUtf8(receive_data.left(end_index));
+    receive_data.remove(0, end_index + 1);
     m_log_text->append(message);
   }
 }

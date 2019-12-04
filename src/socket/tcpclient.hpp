@@ -15,32 +15,75 @@ class QNetworkSession;
 class QGroupBox;
 QT_END_NAMESPACE
 
-class TcpClient : public QWidget
-{
+class TcpClient : public QWidget {
   Q_OBJECT
  public:
   explicit TcpClient(QWidget *parent = nullptr);
 
-  void test();
  signals:
 
  public slots:
+  /**
+   * @brief
+   *
+   */
   void sendTestMessage();
 
  private slots:
+  /**
+   * @brief
+   *
+   */
   void connectedToServer();
+
+  /**
+   * @brief
+   *
+   */
   void on_disconnect_clicked();
 
+  /**
+   * @brief
+   *
+   */
   void sessionOpened();
 
+  /**
+   * @brief
+   *
+   * @param socketError
+   */
   void displayError(QAbstractSocket::SocketError socketError);
+
+  /**
+   * @brief
+   *
+   */
   void enableConnectButton();
 
+  /**
+   * @brief
+   *
+   */
   void readFortune();
 
+  /**
+   * @brief
+   *
+   */
   void readyRead();
 
+  /**
+   * @brief
+   *
+   */
   void on_connect_clicked();
+
+  /**
+   * @brief
+   *
+   */
+  void disconnectByServer();
 
  private:
   /**
@@ -57,6 +100,13 @@ class TcpClient : public QWidget
    */
   QGroupBox *createLogGroup();
 
+  /**
+   * @brief
+   *
+   * @param state
+   */
+  void updateGui(QAbstractSocket::SocketState state);
+
   // ui variables
   QLineEdit *m_port_linedit{nullptr};
   QLineEdit *m_user_linedit{nullptr};
@@ -71,12 +121,10 @@ class TcpClient : public QWidget
   // network variables
   QTcpSocket *m_tcp_socket{nullptr};
   QDataStream m_data;
-
   QNetworkSession *networkSession{nullptr};
-  void disconnectByServer();
 
-  QByteArray recive_data;
-  void updateGui(QAbstractSocket::SocketState state);
+  // data exchanged
+  QByteArray receive_data;
 };
 
 #endif  // TCPCLIENT_HPP
