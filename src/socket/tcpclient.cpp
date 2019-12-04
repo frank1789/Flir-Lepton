@@ -16,6 +16,8 @@
 
 #include "../log/logger.h"
 
+constexpr int TERMINATION_ASCII_CODE{23};
+
 TcpClient::TcpClient(QWidget *parent)
     : QWidget(parent), m_tcp_socket(new QTcpSocket(this)) {
   // assemble ui
@@ -36,14 +38,14 @@ TcpClient::TcpClient(QWidget *parent)
   m_data.setDevice(m_tcp_socket);
   m_data.setVersion(QDataStream::Qt_4_0);
 
-  // connect fucntion
+  // connect functions
   connect(m_tcp_socket, &QTcpSocket::readyRead, [=]() { this->readyRead(); });
   connect(m_tcp_socket, &QTcpSocket::connected,
           [=]() { this->connectedToServer(); });
   connect(m_tcp_socket, &QTcpSocket::disconnected,
           [=]() { this->disconnectByServer(); });
 
-  // connect button
+  // connect buttons
   connect(disconnectButton, &QPushButton::clicked,
           [=]() { this->on_disconnect_clicked(); });
   connect(connectButton, &QPushButton::clicked,
@@ -116,7 +118,7 @@ QGroupBox *TcpClient::createInformationGroup() {
 
   // find out IP addresses of this machine
   QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
-// add non-localhost addresses
+  // add non-localhost addresses
 #if LOGGER
   LOG(DEBUG, "display all IP:")
 #endif
@@ -150,7 +152,9 @@ QGroupBox *TcpClient::createInformationGroup() {
 }
 
 QGroupBox *TcpClient::createLogGroup() {
+#if LOGGER
   LOG(INFO, "build logging group ui")
+#endif
 
   // defining layout group
   QGroupBox *groupBox = new QGroupBox(tr("Log"));
@@ -233,16 +237,18 @@ void TcpClient::readFortune() {
 }
 
 void TcpClient::sendTestMessage() {
-  QString test_message{"Test message sended form code."};
   if (m_tcp_socket->state() != QAbstractSocket::ConnectedState) {
 #if LOGGER
     LOG(WARN, "socket test function not connected, then exit.")
 #endif
     return;
   }
+  QString test_message{"Test message sended form code."};
+
   QString message =
       QString("%1: %2").arg(m_user_linedit->text()).arg(test_message);
   QByteArray ba_message = test_message.toUtf8();
+  ba_message.append(TERMINATION_ASCII_CODE);
   m_tcp_socket->write(ba_message);
   m_log_text->append(message);
 }

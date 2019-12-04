@@ -2,6 +2,15 @@
 #include "ui_mainwindow.h"
 
 #include <QColor>
+#include <QComboBox>
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QHBoxLayout>
+#include <QImage>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QString>
+#include <QVBoxLayout>
 
 #include "log/logger.h"
 #include "palettes.h"
@@ -62,6 +71,10 @@ MainWindow::MainWindow(QWidget *parent)
   connect(m_overlap_selector,
           QOverload<int>::of(&QComboBox::currentIndexChanged),
           [=](int index) { this->indexChanged(index); });
+
+  // connect Camera to TcpClient
+  connect(this, &MainWindow::update_rgb_image,
+          [=]() { client->sendTestMessage(); });
 }
 
 MainWindow::~MainWindow() {

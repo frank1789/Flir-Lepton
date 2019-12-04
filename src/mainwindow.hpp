@@ -1,17 +1,8 @@
 #ifndef MAINWINDOW_HPP
 #define MAINWINDOW_HPP
 
-#include <QComboBox>
-#include <QGridLayout>
-#include <QGroupBox>
-#include <QHBoxLayout>
-#include <QImage>
 #include <QMainWindow>
 #include <QPainter>
-#include <QPushButton>
-#include <QRadioButton>
-#include <QString>
-#include <QVBoxLayout>
 
 #include "mylabel.hpp"
 #include "socket/tcpclient.hpp"
@@ -20,6 +11,15 @@ QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
 }
+class QComboBox;
+class QGroupBox;
+class QGridLayout;
+class QHBoxLayout;
+class QVBoxLayout;
+class QImage;
+class QPushButton;
+class QRadioButton;
+class QString;
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow {
