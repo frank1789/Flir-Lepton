@@ -1,15 +1,19 @@
 #include "tcpserver.hpp"
 
+#include <QDebug>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
 #include <QPlainTextEdit>
 #include <QPushButton>
+#include <QTcpServer>
+#include <QTcpSocket>
 #include <QtNetwork>
 
 #include "../log/logger.h"
 
 constexpr int DEFAULT_PORT{52693};
+constexpr int TERMINATION_ASCII_CODE{23};
 
 TcpServer::TcpServer(QWidget *parent)
     : QWidget(parent), m_server(new QTcpServer(this)) {
@@ -21,6 +25,10 @@ TcpServer::TcpServer(QWidget *parent)
   setLayout(grid);
 
   if (!m_server->listen(QHostAddress::LocalHost, DEFAULT_PORT)) {
+#if LOGGER
+    LOG(ERROR, "Failure while starting server:")
+    qDebug() << m_server->errorString();
+#endif
     m_log_text->append(
         tr("Failure while starting server: %1").arg(m_server->errorString()));
     return;
@@ -38,13 +46,14 @@ TcpServer::TcpServer(QWidget *parent)
 TcpServer::~TcpServer() {}
 
 void TcpServer::newConnection() {
+  qDebug() << "enter new connection";
   while (m_server->hasPendingConnections()) {
+    qDebug() << "cycle while";
     QTcpSocket *socket = m_server->nextPendingConnection();
     m_clients << socket;
     disconnectButton->setEnabled(true);
-    connect(socket, &QTcpSocket::disconnected,
-            [=]() { this->removeConnection(); });
-    connect(socket, &QTcpSocket::readyRead, [=]() { this->readyRead(); });
+    connect(socket, &QTcpSocket::disconnected, this, &TcpServer::removeConnection);
+    connect(socket, &QTcpSocket::readyRead, this, &TcpServer::readyRead);
     m_log_text->append(tr("* New connection: %1, port %2")
                            .arg(socket->peerAddress().toString())
                            .arg(socket->peerPort()));
@@ -68,12 +77,15 @@ void TcpServer::removeConnection() {
 void TcpServer::readyRead() {
   QTcpSocket *socket = qobject_cast<QTcpSocket *>(sender());
   if (!socket) {
+#if LOGGER
+    LOG(ERROR, "socket not readable, then exit")
+#endif
     return;
   }
   QByteArray &buffer = m_receivedData[socket];
   buffer.append(socket->readAll());
   while (true) {
-    int endIndex = buffer.indexOf(23);
+    auto endIndex = buffer.indexOf(TERMINATION_ASCII_CODE);
     if (endIndex < 0) {
       break;
     }
@@ -86,12 +98,15 @@ void TcpServer::readyRead() {
 void TcpServer::on_disconnectClients_clicked() {
   foreach (QTcpSocket *socket, m_clients) { socket->close(); }
   disconnectButton->setEnabled(false);
+#if LOGGER
+  LOG(DEBUG, "disconnect all socket")
+#endif
 }
 
 void TcpServer::newMessage(QTcpSocket *sender, const QString &message) {
   m_log_text->append(tr("Sending message: %1").arg(message));
   QByteArray messageArray = message.toUtf8();
-  messageArray.append(23);
+  messageArray.append(TERMINATION_ASCII_CODE);
   for (QTcpSocket *socket : m_clients) {
     if (socket->state() == QAbstractSocket::ConnectedState) {
       socket->write(messageArray);
