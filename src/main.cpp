@@ -4,7 +4,7 @@
 
 #include "leptonthread.hpp"
 #include "mainwindow.hpp"
-#include "socket/tcpserver.h"
+#include "socket/tcpserver.hpp"
 
 int main(int argc, char **argv) {
   QApplication a(argc, argv);

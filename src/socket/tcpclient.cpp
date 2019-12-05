@@ -25,14 +25,18 @@ TcpClient::TcpClient(QWidget *parent)
   disconnectButton = new QPushButton("Disconnect");
   connectButton->setEnabled(false);
   disconnectButton->setEnabled(false);
+#if LOGGER
   LOG(INFO, "dis/connect buttons are set disable")
+#endif
   QGridLayout *grid = new QGridLayout;
   grid->addWidget(createInformationGroup(), 0, 0, 1, 3);
   grid->addWidget(connectButton, 1, 1);
   grid->addWidget(disconnectButton, 1, 2);
   grid->addWidget(createLogGroup(), 2, 0, 1, 3);
   setLayout(grid);
+#if LOGGER
   LOG(INFO, "ctor Client init params")
+#endif
 
   // config client
   m_data.setDevice(m_tcp_socket);
