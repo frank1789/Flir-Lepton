@@ -17,6 +17,7 @@ QT_END_NAMESPACE
 
 class TcpClient : public QWidget {
   Q_OBJECT
+
  public:
   explicit TcpClient(QWidget *parent = nullptr);
 
