@@ -24,7 +24,7 @@ TcpServer::TcpServer(QWidget *parent)
   grid->addWidget(createLogGroup(), 1, 0);
   setLayout(grid);
 
-  if (!m_server->listen(QHostAddress::LocalHost, DEFAULT_PORT)) {
+  if (!m_server->listen(QHostAddress::Any, DEFAULT_PORT)) {
 #if LOGGER
     LOG(ERROR, "Failure while starting server:")
     qDebug() << m_server->errorString();
@@ -52,7 +52,8 @@ void TcpServer::newConnection() {
     QTcpSocket *socket = m_server->nextPendingConnection();
     m_clients << socket;
     disconnectButton->setEnabled(true);
-    connect(socket, &QTcpSocket::disconnected, this, &TcpServer::removeConnection);
+    connect(socket, &QTcpSocket::disconnected, this,
+            &TcpServer::removeConnection);
     connect(socket, &QTcpSocket::readyRead, this, &TcpServer::readyRead);
     m_log_text->append(tr("* New connection: %1, port %2")
                            .arg(socket->peerAddress().toString())
