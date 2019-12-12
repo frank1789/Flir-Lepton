@@ -293,7 +293,7 @@ void TcpClient::on_connect_clicked() {
     LOG(DEBUG, "try connect.")
 #endif
     m_log_text->append(tr("== Connecting..."));
-    quint16 port = static_cast<quint16>(m_port_linedit->text().toInt());
+    auto port = static_cast<quint16>(m_port_linedit->text().toInt());
     m_tcp_socket->connectToHost(hostCombo->currentText(), port);
     auto result =
         QString("== Connected %1:%2.").arg(hostCombo->currentText()).arg(port);
