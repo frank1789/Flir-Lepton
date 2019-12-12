@@ -1,0 +1,8 @@
+#ifndef COMMONCONNECTION_HPP
+#define COMMONCONNECTION_HPP
+
+constexpr int TCP_PORT{52693};
+constexpr int UDP_PORT{9988};
+constexpr int TERMINATION_ASCII_CODE{23};
+
+#endif // COMMONCONNECTION_HPP

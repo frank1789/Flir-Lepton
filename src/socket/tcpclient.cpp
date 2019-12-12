@@ -5,6 +5,9 @@
 #include <QDialogButtonBox>
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QImage>
+#include <QImageReader>
+#include <QImageWriter>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
@@ -15,11 +18,12 @@
 #include <QTextEdit>
 
 #include "../log/logger.h"
-
-constexpr int TERMINATION_ASCII_CODE{23};
+#include "commonconnection.hpp"
 
 TcpClient::TcpClient(QWidget *parent)
-    : QWidget(parent), m_tcp_socket(new QTcpSocket(this)) {
+    : QWidget(parent),
+      m_tcp_socket(new QTcpSocket(this)),
+      m_img_socket(new QTcpSocket(this)) {
   // assemble ui
   connectButton = new QPushButton("Connect");
   disconnectButton = new QPushButton("Disconnect");
@@ -42,11 +46,17 @@ TcpClient::TcpClient(QWidget *parent)
   m_data.setDevice(m_tcp_socket);
   m_data.setVersion(QDataStream::Qt_4_0);
 
-  // connect functions
+  // connect signal and slots text_socket aka (tcp_slot)
   connect(m_tcp_socket, &QTcpSocket::readyRead, [=]() { this->readyRead(); });
   connect(m_tcp_socket, &QTcpSocket::connected,
           [=]() { this->connectedToServer(); });
   connect(m_tcp_socket, &QTcpSocket::disconnected,
+          [=]() { this->disconnectByServer(); });
+  // connect signals and slots img_socket
+  connect(m_img_socket, &QTcpSocket::readyRead, [=]() { this->readyImage(); });
+  connect(m_img_socket, &QTcpSocket::connected,
+          [=]() { this->connectedToServer(); });
+  connect(m_img_socket, &QTcpSocket::disconnected,
           [=]() { this->disconnectByServer(); });
 
   // connect buttons
@@ -96,7 +106,9 @@ TcpClient::TcpClient(QWidget *parent)
 }
 
 QGroupBox *TcpClient::createInformationGroup() {
+#if LOGGER
   LOG(INFO, "build information group ui")
+#endif
   // defining layout group
   QGroupBox *groupBox = new QGroupBox(tr("Server Configuration"));
 
@@ -223,6 +235,7 @@ void TcpClient::displayError(QAbstractSocket::SocketError socketError) {
                                    .arg(m_tcp_socket->errorString()));
   }
   m_tcp_socket->abort();
+  m_img_socket->abort();
   updateGui(QAbstractSocket::UnconnectedState);
 }
 
@@ -260,6 +273,34 @@ void TcpClient::sendTestMessage() {
   m_tcp_socket->write(ba_message);
 }
 
+void TcpClient::sendImage(QImage image) {
+  if (m_img_socket->state() != QAbstractSocket::ConnectedState) {
+#if LOGGER
+    LOG(WARN, "socket send image not connected, then exit.")
+#endif
+    return;
+  }
+  if (!image.isNull()) {
+#if LOGGER
+    LOG(DEBUG, "received image from camera %s",
+        !image.isNull() ? "true" : "false")
+#endif
+    return;
+  }
+  // build buffer for image
+  QBuffer buffer;
+  QImageWriter writer(&buffer, "JPG");
+  writer.write(image);
+  // prepare to send data
+  QByteArray data;
+  QDataStream stream(&data, QIODevice::WriteOnly);
+  stream.setVersion(QDataStream::Qt_4_0);
+  stream << (quint32)buffer.data().size();
+  data.append(buffer.data());
+  // send data
+  m_img_socket->write(data);
+}
+
 void TcpClient::readyRead() {
   if (m_tcp_socket->state() != QAbstractSocket::ConnectedState) {
 #if LOGGER
@@ -279,6 +320,50 @@ void TcpClient::readyRead() {
   }
 }
 
+void TcpClient::readyImage() {
+  if (m_img_socket->state() != QAbstractSocket::ConnectedState) {
+#if LOGGER
+    LOG(WARN, "impossible read from image socket.")
+#endif
+    return;
+  }
+  int dataSize{0};
+  if (dataSize == 0) {
+    QDataStream stream(m_img_socket);
+    stream.setVersion(QDataStream::Qt_5_0);
+
+    if (m_img_socket->bytesAvailable() < sizeof(quint32)) {
+      return;
+    }
+
+    stream >> dataSize;
+  }
+
+  if (dataSize > m_img_socket->bytesAvailable()) {
+    return;
+  }
+  QByteArray array = m_img_socket->read(dataSize);
+  QBuffer buffer(&array);
+  buffer.open(QIODevice::ReadOnly);
+
+  QImageReader reader(&buffer, "JPG");
+  QImage image = reader.read();
+
+  if (!image.isNull()) {
+#if LOGGER
+    LOG(DEBUG, "received image from socket %s",
+        !image.isNull() ? "true" : "false")
+#endif
+    emit updateImage(image);
+  } else {
+#if LOGGER
+    LOG(WARN, "received image from socket %s",
+        !image.isNull() ? "true" : "false")
+#endif
+    return;
+  }
+}
+
 void TcpClient::on_connect_clicked() {
   if (m_user_linedit->text().isEmpty()) {
 #if LOGGER
@@ -295,6 +380,7 @@ void TcpClient::on_connect_clicked() {
     m_log_text->append(tr("== Connecting..."));
     auto port = static_cast<quint16>(m_port_linedit->text().toInt());
     m_tcp_socket->connectToHost(hostCombo->currentText(), port);
+    m_img_socket->connectToHost(hostCombo->currentText(), port);
     auto result =
         QString("== Connected %1:%2.").arg(hostCombo->currentText()).arg(port);
     m_log_text->append(result);
@@ -321,6 +407,7 @@ void TcpClient::on_disconnect_clicked() {
 #endif
   }
   m_tcp_socket->abort();
+  m_img_socket->abort();
   updateGui(QAbstractSocket::UnconnectedState);
 }
 

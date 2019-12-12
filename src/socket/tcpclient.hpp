@@ -13,6 +13,7 @@ class QPushButton;
 class QTcpSocket;
 class QNetworkSession;
 class QGroupBox;
+class QImage;
 QT_END_NAMESPACE
 
 class TcpClient : public QWidget {
@@ -22,6 +23,7 @@ class TcpClient : public QWidget {
   explicit TcpClient(QWidget *parent = nullptr);
 
  signals:
+  void updateImage(QImage image);
 
  public slots:
   /**
@@ -29,6 +31,8 @@ class TcpClient : public QWidget {
    *
    */
   void sendTestMessage();
+
+  void sendImage(QImage image);
 
  private slots:
   /**
@@ -73,6 +77,8 @@ class TcpClient : public QWidget {
    *
    */
   void readyRead();
+
+  void readyImage();
 
   /**
    * @brief
@@ -121,6 +127,7 @@ class TcpClient : public QWidget {
 
   // network variables
   QTcpSocket *m_tcp_socket{nullptr};
+  QTcpSocket *m_img_socket{nullptr};
   QDataStream m_data;
   QNetworkSession *networkSession{nullptr};
 
