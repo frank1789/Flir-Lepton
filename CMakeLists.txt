@@ -8,7 +8,16 @@ project(${LEPTONCAMERA} LANGUAGES C CXX VERSION "0.0.0")
 #-----------------------------------------------------------------------------
 # check build type
 #-----------------------------------------------------------------------------
-message(STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
+if (NOT CMAKE_BUILD_TYPE)
+	message(STATUS "Compile in debug mode")
+	set(CMAKE_BUILD_TYPE Debug)
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+	message(STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
+	set(CMAKE_BUILD_TYPE Debug)
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+	message(STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
+	set(CMAKE_BUILD_TYPE Release)
+endif()
 
 #-----------------------------------------------------------------------------
 # C/C++ standard extensions
@@ -16,9 +25,40 @@ message(STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+#
+#
+#
+set(CMAKE_C_FLAGS_DEBUG "-march=armv8-a+crc -mtune=cortex-a53 -mfpu=crypto-neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations -pipe")
+set(CMAKE_CXX_FLAGS_DEBUG "-march=armv8-a+crc -mtune=cortex-a53 -mfpu=crypto-neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations -pipe")
+set(CMAKE_C_FLAGS_RELEASE "-march=armv8-a+crc -mtune=cortex-a53 -mfpu=crypto-neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations -O2 -pipe -O2")
+set(CMAKE_CXX_FLAGS_RELEASE "-march=armv8-a+crc -mtune=cortex-a53 -mfpu=crypto-neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations -O2 -pipe -O2")
+
+#
+#
+#
+# code coverage Configuration
+add_library(coverage_config INTERFACE)
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug" AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+	  message(STATUS "enabled coverage")
+	  # Add required flags (GCC & LLVM/Clang)
+	  target_compile_options(coverage_config INTERFACE
+		-O0        # no optimization
+		-g         # generate debug info
+		-ftest-coverage -fprofile-arcs # sets all required flags
+	  )
+	  if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.13)
+		target_link_options(coverage_config INTERFACE --coverage)
+	  else()
+		target_link_libraries(coverage_config INTERFACE --coverage)
+	  endif()
+endif()
+
+
+
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -41,6 +81,7 @@ if(APPLE AND EXISTS /usr/local/opt/qt5)
 	list(APPEND CMAKE_PREFIX_PATH "/usr/local/opt/qt5")
 endif()
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Network REQUIRED)
 if (${Qt5_FOUND})
    message(STATUS "Found Qt 5")
 else (${Qt5_FOUND})
@@ -55,38 +96,40 @@ find_package(Threads REQUIRED)
 list(APPEND CMAKE_PREFIX_PATH "/usr/local/lib")
 find_package(raspicam REQUIRED)
 if (${raspicam_FOUND})
-   message (STATUS "Found raspicam")
+message (STATUS "Found raspicam")
 else (${raspicam_FOUND})
-   message (FATAL_ERROR "Could not locate raspicam.")
+message (FATAL_ERROR "Could not locate raspicam.")
 endif (${raspicam_FOUND})
 
 #-----------------------------------------------------------------------------
 # Local library and dependecies
 #-----------------------------------------------------------------------------
+add_subdirectory(src)
+add_subdirectory(src/socket)
 # add subdirectory LOG
-add_subdirectory(log)
+add_subdirectory(src/log)
 # add subdirectory SDK
-add_subdirectory(LeptonSDKEmb32PUB)
+add_subdirectory(src/LeptonSDKEmb32PUB)
 
 #wrap ui
 file(GLOB UIS ${CMAKE_CURRENT_SOURCE_DIR}/*.ui)
 # Check architecture
 EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
 message( STATUS "Architecture: ${ARCHITECTURE}" )
-#-----------------------------------------------------------------------------
-# git extract version
-#-----------------------------------------------------------------------------
-execute_process(COMMAND ${GIT_EXECUTABLE} rev-list --tags --max-count=1 WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} OUTPUT_VARIABLE GIT_REV)
-execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags ${GIT_REV} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} OUTPUT_VARIABLE GIT_VER)
+# #-----------------------------------------------------------------------------
+# # git extract version
+# #-----------------------------------------------------------------------------
+# execute_process(COMMAND ${GIT_EXECUTABLE} rev-list --tags --max-count=1 WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} OUTPUT_VARIABLE GIT_REV)
+# execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags ${GIT_REV} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} OUTPUT_VARIABLE GIT_VER)
 
-#parse the version information into pieces.
-string(REGEX REPLACE "^([0-9]+)\\..*" "\\1" VERSION_MAJOR "${GIT_VERSION}")
-string(REGEX REPLACE "^[0-9]+\\.([0-9]+).*" "\\1" VERSION_MINOR "${GIT_VERSION}")
-string(REGEX REPLACE "^[0-9]+\\.[0-9]+\\.([0-9]+).*" "\\1" VERSION_PATCH "${GIT_VERSION}")
-string(REGEX REPLACE "^[0-9]+\\.[0-9]+\\.[0-9]+(.*)" "\\1" VERSION_SHA1 "${GIT_VERSION}")
-set(PROJECT_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.hpp.in ${CMAKE_CURRENT_BINARY_DIR}/version.cpp)
-include_directories(${PROJECT_BINARY_BIN})
+# #parse the version information into pieces.
+# string(REGEX REPLACE "^([0-9]+)\\..*" "\\1" VERSION_MAJOR "${GIT_VERSION}")
+# string(REGEX REPLACE "^[0-9]+\\.([0-9]+).*" "\\1" VERSION_MINOR "${GIT_VERSION}")
+# string(REGEX REPLACE "^[0-9]+\\.[0-9]+\\.([0-9]+).*" "\\1" VERSION_PATCH "${GIT_VERSION}")
+# string(REGEX REPLACE "^[0-9]+\\.[0-9]+\\.[0-9]+(.*)" "\\1" VERSION_SHA1 "${GIT_VERSION}")
+# set(PROJECT_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
+# configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.hpp.in ${CMAKE_CURRENT_BINARY_DIR}/version.cpp)
+# include_directories(${PROJECT_BINARY_BIN})
 
 # ----------------------------------------------------------------------------
 # display status message for important variables
@@ -108,27 +151,3 @@ message( STATUS "CMAKE_SYSTEM_PROCESSOR = ${CMAKE_SYSTEM_PROCESSOR}" )
 message( STATUS )
 message( STATUS "Change a value with: cmake -D<Variable>=<Value> .." )
 message( STATUS )
-
-#-----------------------------------------------------------------------------
-# file compilation
-#-----------------------------------------------------------------------------
-file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-file(GLOB HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
-
-# compile Debug Mode
-add_executable(${LEPTONCAMERA} ${SOURCES} ${UIS})
-target_link_libraries(${LEPTONCAMERA} Qt5::Widgets LeptonSDK LOG ${CMAKE_THREAD_LIBS_INIT} ${raspicam_LIBS})
-if (CMAKE_BUILD_TYPE MATCHES "Debug")
-	message(STATUS "Compiling debug mode")
-	add_definitions(-DLOGGER)
-        target_compile_options(${LEPTONCAMERA} PUBLIC -march=armv8-a+crc -mtune=cortex-a53 -mfpu=crypto-neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations -pipe -g -O0)
-endif ()
-# compile Release mode
-if( NOT CMAKE_BUILD_TYPE )
-	SET( CMAKE_BUILD_TYPE Release ... FORCE )
-	message(STATUS "Active release mode")
-target_compile_options(${LEPTONCAMERA} PUBLIC -march=armv8-a+crc -mtune=cortex-a53 -mfpu=crypto-neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations -O2 -pipe)
-endif()
-
-
