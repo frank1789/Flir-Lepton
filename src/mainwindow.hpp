@@ -42,7 +42,7 @@ class MainWindow : public QMainWindow {
   /**
    * @brief Set the rgb image object
    *
-   * updates the image from the thermal camera.
+   * updates the image from the RGB camera.
    *
    * @param img[in] input image
    */

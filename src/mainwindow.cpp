@@ -73,8 +73,10 @@ MainWindow::MainWindow(QWidget *parent)
           [=](int index) { this->indexChanged(index); });
 
   // connect Camera to TcpClient
-  connect(this, &MainWindow::update_rgb_image,
-          [=]() { client->sendTestMessage(); });
+  connect(this, &MainWindow::update_rgb_image, [=](QImage image) {
+    QImage image_resized = image.scaled(512, 512, Qt::KeepAspectRatio);
+    client->sendImage(image_resized);
+  });
 }
 
 MainWindow::~MainWindow() {

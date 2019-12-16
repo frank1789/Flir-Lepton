@@ -38,9 +38,6 @@ int main(int argc, char **argv) {
 
   // init server
   QPointer<TcpServer> server = new TcpServer();
-  QThread *thread = new QThread;
-  server->moveToThread(thread);
-  thread->start();
   server->show();
 
   // start thread

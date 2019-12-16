@@ -14,7 +14,7 @@ add_library(${NAME_PROJECT} ${SOURCES})
 target_link_libraries(${NAME_PROJECT} Qt5::Widgets Qt5::Network LOG)
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
 	message(STATUS "compiling in Debug mode")
-	add_definitions(-DLOGGER)
+	add_definitions(-DLOGGER_SERVER)
 	target_link_libraries(coverage_config)
 endif()
 

@@ -1,5 +1,6 @@
 #include "tcpserver.hpp"
 
+#include <QDataStream>
 #include <QDebug>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -10,10 +11,8 @@
 #include <QTcpSocket>
 #include <QtNetwork>
 
+#include "commonconnection.hpp"
 #include "../log/logger.h"
-
-constexpr int DEFAULT_PORT{52693};
-constexpr int TERMINATION_ASCII_CODE{23};
 
 TcpServer::TcpServer(QWidget *parent)
     : QWidget(parent), m_server(new QTcpServer(this)) {
@@ -23,41 +22,53 @@ TcpServer::TcpServer(QWidget *parent)
   grid->addLayout(createInformationGroup(), 0, 0);
   grid->addWidget(createLogGroup(), 1, 0);
   setLayout(grid);
-
-  if (!m_server->listen(QHostAddress::Any, DEFAULT_PORT)) {
-#if LOGGER
-    LOG(ERROR, "Failure while starting server:")
+  if (!m_server->listen(QHostAddress::Any, TCP_PORT)) {
+#if LOGGER_SERVER
+    LOG(ERROR, "Failure while tcp starting server:")
     qDebug() << m_server->errorString();
 #endif
-    m_log_text->append(
-        tr("Failure while starting server: %1").arg(m_server->errorString()));
+    const auto error_message = QString("Failure while starting server: %1")
+                                   .arg(m_server->errorString());
+    m_log_text->append(error_message);
     return;
   }
+
+  // update ui
+  m_connection_address->setText(findIpAddress());
+  m_port_number->setText(QString::number(m_server->serverPort()));
 
   // connect signal
   connect(m_server, &QTcpServer::newConnection,
           [=]() { this->newConnection(); });
-  m_connection_address->setText(m_server->serverAddress().toString());
-  m_port_number->setText(QString::number(m_server->serverPort()));
   connect(disconnectButton, &QPushButton::clicked,
-          [=]() { this->on_disconnectClients_clicked(); });
+          [=]() { this->onDisconnectClientsClicked(); });
 }
 
 TcpServer::~TcpServer() {}
 
+//////////////////////////////////////////////////////////////////////////////
+//// Slot function
+//////////////////////////////////////////////////////////////////////////////
+
 void TcpServer::newConnection() {
-  qDebug() << "enter new connection";
   while (m_server->hasPendingConnections()) {
-    qDebug() << "cycle while";
     QTcpSocket *socket = m_server->nextPendingConnection();
     m_clients << socket;
     disconnectButton->setEnabled(true);
+    // connect signals
     connect(socket, &QTcpSocket::disconnected, this,
             &TcpServer::removeConnection);
     connect(socket, &QTcpSocket::readyRead, this, &TcpServer::readyRead);
-    m_log_text->append(tr("* New connection: %1, port %2")
+    m_log_text->append(QString("* New connection: %1, port %2")
                            .arg(socket->peerAddress().toString())
                            .arg(socket->peerPort()));
+#if LOGGER_SERVER
+    LOG(INFO, "enter new connection.")
+    qDebug() << "\t"
+             << QString("* New connection: %1, port %2")
+                    .arg(socket->peerAddress().toString())
+                    .arg(socket->peerPort());
+#endif
   }
 }
 
@@ -78,46 +89,94 @@ void TcpServer::removeConnection() {
 void TcpServer::readyRead() {
   QTcpSocket *socket = qobject_cast<QTcpSocket *>(sender());
   if (!socket) {
-#if LOGGER
-    LOG(ERROR, "socket not readable, then exit")
+#if LOGGER_SERVER
+    LOG(ERROR, "socket not available, return")
 #endif
     return;
   }
-  QByteArray &buffer = m_receivedData[socket];
-  buffer.append(socket->readAll());
-  while (true) {
-    auto endIndex = buffer.indexOf(TERMINATION_ASCII_CODE);
-    if (endIndex < 0) {
+  QImage image;
+  QString message{""};
+  QDataStream in;
+  in.setDevice(socket);
+  in.setVersion(QDataStream::Qt_4_0);
+  QString header{""};
+  qint32 size{0};
+  in.startTransaction();
+  in >> header >> size;
+  auto message_type = identifies_message_type(header, size);
+  switch (message_type) {
+    case MessageType::Text:
+      in >> message;
+      newMessage(socket, message);
       break;
-    }
-    QString message = QString::fromUtf8(buffer.left(endIndex));
-    buffer.remove(0, endIndex + 1);
-    newMessage(socket, message);
+    case MessageType::Image:
+      in >> image;
+      newMessage(socket, image);
+      break;
+    case MessageType::Unknow:
+      in.abortTransaction();
+      return;
+  }
+  if (!in.commitTransaction()) {
+    return;
   }
 }
 
-void TcpServer::on_disconnectClients_clicked() {
+void TcpServer::onDisconnectClientsClicked() {
   foreach (QTcpSocket *socket, m_clients) { socket->close(); }
   disconnectButton->setEnabled(false);
-#if LOGGER
+#if LOGGER_SERVER
   LOG(DEBUG, "disconnect all socket")
 #endif
 }
 
 void TcpServer::newMessage(QTcpSocket *sender, const QString &message) {
-  m_log_text->append(tr("Sending message: %1").arg(message));
-  QByteArray messageArray = message.toUtf8();
-  messageArray.append(TERMINATION_ASCII_CODE);
+  m_log_text->append(QString("Sending message: %1").arg(message));
   for (QTcpSocket *socket : m_clients) {
     if (socket->state() == QAbstractSocket::ConnectedState) {
-      socket->write(messageArray);
+      send_message_text(socket, message);
     }
   }
   Q_UNUSED(sender)
 }
 
+void TcpServer::newMessage(QTcpSocket *sender, const QImage &image) {
+#if LOGGER_SERVER
+  LOG(DEBUG, "new image ready to be sent")
+#endif
+  const QString default_msg{"Sending image"};
+  m_log_text->append(default_msg);
+  for (QTcpSocket *socket : m_clients)
+    if (socket->state() == QAbstractSocket::ConnectedState) {
+      send_message_image(socket, image);
+    }
+  Q_UNUSED(sender)
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//// Layout function
+//////////////////////////////////////////////////////////////////////////////
+
+QGroupBox *TcpServer::createLogGroup() {
+#if LOGGER_UI
+  LOG(INFO, "build logging group ui")
+#endif
+
+  // defining layout group
+  QGroupBox *groupBox = new QGroupBox(tr("Log"));
+
+  // init element ui
+  m_log_text = new QTextEdit;
+
+  // setup grid layout
+  QGridLayout *gridLayout = new QGridLayout;
+  gridLayout->addWidget(m_log_text, 0, 0);
+  groupBox->setLayout(gridLayout);
+  return groupBox;
+}
+
 QGridLayout *TcpServer::createInformationGroup() {
-#if LOGGER
+#if LOGGER_UI
   LOG(INFO, "build information ui")
 #endif
 
@@ -144,20 +203,22 @@ QGridLayout *TcpServer::createInformationGroup() {
   return grid_layout;
 }
 
-QGroupBox *TcpServer::createLogGroup() {
-#if LOGGER
-  LOG(INFO, "build logging group ui")
+QString TcpServer::findIpAddress() {
+  QString ipAddress;
+  QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
+  // use the first non-localhost IPv4 address
+  for (const auto &address : ipAddressesList) {
+    if (address != QHostAddress::LocalHost && address.toIPv4Address()) {
+      ipAddress = address.toString();
+      break;
+    }
+  }
+  // if we did not find one, use IPv4 localhost
+  if (ipAddress.isEmpty())
+    ipAddress = QHostAddress(QHostAddress::LocalHost).toString();
+#if LOGGER_SERVER
+  LOG(DEBUG, "server is running on IP")
+  qDebug() << "\t" << ipAddress << " port " << m_server->serverPort();
 #endif
-
-  // defining layout group
-  QGroupBox *groupBox = new QGroupBox(tr("Log"));
-
-  // init element ui
-  m_log_text = new QTextEdit;
-
-  // setup grid layout
-  QGridLayout *gridLayout = new QGridLayout;
-  gridLayout->addWidget(m_log_text, 0, 0);
-  groupBox->setLayout(gridLayout);
-  return groupBox;
+  return ipAddress;
 }
