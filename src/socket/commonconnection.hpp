@@ -13,9 +13,12 @@ constexpr int RECORD_SEPARATOR_ASCII_CODE{30};
 constexpr int GROUP_SEPARATOR_ASCII_CODE{29};
 
 /**
+ * \file commonconnection.hpp
+ * @enum MessageType
+ *
  * @brief The MessageType is a strongly typed enum class representing the type
  * of message.
- * @enum mapper::MessageType
+ * 
  */
 enum class MessageType : quint8 {
   Text,   /**< is coded as quint8 of value 0 */
@@ -27,9 +30,9 @@ enum class MessageType : quint8 {
  * @brief identifies_message_type allows to identify the message from the
  * header.
  *
- * The function allows to identify the message from the header. Once the
- * QDatastream is obtained from the socket and the transition is started, the
- * header and dimensions, which represent the input parameters, are extracted.
+ * Once the QDatastream is obtained from the socket and the transition is 
+ * started, the header and dimensions, which represent the input parameters, are
+ * extracted.
  * Then the checking of incoming messages by identifying the header:
  * - message containing text if the header corresponds to the UTF-8 code
  * '\u001D' or to the ASCII code 29.
@@ -38,7 +41,7 @@ enum class MessageType : quint8 {
  *
  * @param[in] header string containing the message header.
  * @param[in] size message size expressed in bytes.
- * @return a message type as indicated by ::::MessageType.
+ * @return a message type as indicated by ::MessageType.
  */
 MessageType identifies_message_type(const QString &header, const qint32 &size);
 
@@ -50,8 +53,8 @@ MessageType identifies_message_type(const QString &header, const qint32 &size);
  * stream are constructed. the message is composed of the header, then the size,
  * the text of the message.
  *
- * @param socket[in] tcp-socket required to send the buffer.
- * @param message[in] string containing the text message.
+ * @param[in] socket tcp-socket required to send the buffer.
+ * @param[in] message string containing the text message.
  */
 void send_message_text(QTcpSocket *socket, const QString &message);
 
@@ -63,8 +66,8 @@ void send_message_text(QTcpSocket *socket, const QString &message);
  * stream are constructed. the message is composed of the header, then the size,
  * the image.
  *
- * @param socket[in] tcp-socket required to send the buffer.
- * @param image[in] containing the picture.
+ * @param[in] socket tcp-socket required to send the buffer.
+ * @param[in] image containing the picture.
  */
 void send_message_image(QTcpSocket *socket, const QImage &image);
 

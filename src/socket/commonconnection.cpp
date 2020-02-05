@@ -76,5 +76,6 @@ void send_message_image(QTcpSocket *socket, const QImage &image) {
   LOG(DEBUG, "sending image:")
   qDebug() << "\theader: " << QString(RECORD_SEPARATOR_ASCII_CODE)
            << "\tsize:" << static_cast<quint32>(image.sizeInBytes()) << "\n";
+//  qDebug() << ba_message;
 #endif
 }
