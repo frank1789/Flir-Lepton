@@ -60,8 +60,6 @@ TcpClient::TcpClient(QWidget *parent)
           &TcpClient::enableConnectButton);
   connect(m_port_linedit, &QLineEdit::textChanged, this,
           &TcpClient::enableConnectButton);
-  //  connect(m_tcp_socket, &QIODevice::readyRead, this,
-  //  &TcpClient::readFortune);
 
   // connect error
   connect(m_tcp_socket,
@@ -94,17 +92,11 @@ TcpClient::TcpClient(QWidget *parent)
     LOG(INFO, "Opening network session.")
     networkSession->open();
   }
-#if LOGGER
-  QTimer *timer = new QTimer(this);
-  timer->setInterval(5000);
-  timer->start();
-#if TEST_IMAGE
-  connect(timer, &QTimer::timeout, [=]() { this->sendImageMessage(); });
-#else
-  connect(timer, &QTimer::timeout, [=]() { this->sendTestMessageStream(); });
-#endif
-#endif
 }
+
+//////////////////////////////////////////////////////////////////////////////
+//// Slot function
+//////////////////////////////////////////////////////////////////////////////
 
 void TcpClient::sendImage(QImage image) {
   if (m_tcp_socket->state() != QAbstractSocket::ConnectedState) {
@@ -115,10 +107,6 @@ void TcpClient::sendImage(QImage image) {
   }
   send_message_image(m_tcp_socket, image);
 }
-
-//////////////////////////////////////////////////////////////////////////////
-//// Slot function
-//////////////////////////////////////////////////////////////////////////////
 
 void TcpClient::connectedToServer() {
 #if LOGGER_CLIENT
@@ -159,24 +147,24 @@ void TcpClient::sessionOpened() {
 
 void TcpClient::displayError(QAbstractSocket::SocketError socketError) {
   switch (socketError) {
-  case QAbstractSocket::RemoteHostClosedError:
-    break;
-  case QAbstractSocket::HostNotFoundError:
-    QMessageBox::information(this, tr("Client"),
-                             tr("The host was not found. Please check the "
-                                "host name and port settings."));
-    break;
-  case QAbstractSocket::ConnectionRefusedError:
-    QMessageBox::information(this, tr("Client"),
-                             tr("The connection was refused by the peer. "
-                                "Make sure the fortune server is running, "
-                                "and check that the host name and port "
-                                "settings are correct."));
-    break;
-  default:
-    QMessageBox::information(this, tr("Client"),
-                             tr("The following error occurred: %1.")
-                                 .arg(m_tcp_socket->errorString()));
+    case QAbstractSocket::RemoteHostClosedError:
+      break;
+    case QAbstractSocket::HostNotFoundError:
+      QMessageBox::information(this, tr("Client"),
+                               tr("The host was not found. Please check the "
+                                  "host name and port settings."));
+      break;
+    case QAbstractSocket::ConnectionRefusedError:
+      QMessageBox::information(this, tr("Client"),
+                               tr("The connection was refused by the peer. "
+                                  "Make sure the fortune server is running, "
+                                  "and check that the host name and port "
+                                  "settings are correct."));
+      break;
+    default:
+      QMessageBox::information(this, tr("Client"),
+                               tr("The following error occurred: %1.")
+                                   .arg(m_tcp_socket->errorString()));
   }
   m_tcp_socket->abort();
   updateGui(QAbstractSocket::UnconnectedState);
@@ -186,25 +174,6 @@ void TcpClient::enableConnectButton() {
   connectButton->setEnabled((!networkSession || networkSession->isOpen()) &&
                             !hostCombo->currentText().isEmpty() &&
                             !m_port_linedit->text().isEmpty());
-}
-
-void TcpClient::readFortune() {
-  m_data.startTransaction();
-
-  QString nextFortune;
-  m_data >> nextFortune;
-
-  if (!m_data.commitTransaction())
-    return;
-
-  if (nextFortune == currentFortune) {
-    QTimer::singleShot(100, this, &TcpClient::connectedToServer);
-    return;
-  }
-
-  currentFortune = nextFortune;
-  m_log_text->append(currentFortune);
-  connectButton->setEnabled(true);
 }
 
 void TcpClient::readyRead() {
@@ -232,14 +201,16 @@ void TcpClient::readyRead() {
   if (header == QString(GROUP_SEPARATOR_ASCII_CODE)) {
     QString message;
     m_data >> message;
+    if (!message.isEmpty()) {
+      m_log_text->append(message);
+    }
 #if LOGGER_CLIENT
     LOG(DEBUG, "check message is not empty: %s",
         (!message.isEmpty()) ? "true" : "false")
     LOG(DEBUG, "server read message in readyRead()\n\tmessage received:")
     qDebug() << "\t" << message << "\n";
 #endif
-    if (!message.isEmpty())
-      m_log_text->append(message);
+
   } else if (header == QString(RECORD_SEPARATOR_ASCII_CODE)) {
 #if LOGGER_CLIENT
     LOG(DEBUG, "image incoming")
@@ -250,8 +221,7 @@ void TcpClient::readyRead() {
     LOG(DEBUG, "check image is not empty: %s",
         (!image.isNull()) ? "true" : "false")
 #endif
-    if (!image.isNull())
-      emit updateImage(image);
+    if (!image.isNull()) emit updateImage(image);
   } else {
     m_data.abortTransaction();
     return;
@@ -320,8 +290,7 @@ QGroupBox *TcpClient::createInformationGroup() {
   if (!name.isEmpty()) {
     hostCombo->addItem(name);
     QString domain = QHostInfo::localDomainName();
-    if (!domain.isEmpty())
-      hostCombo->addItem(name + QChar('.') + domain);
+    if (!domain.isEmpty()) hostCombo->addItem(name + QChar('.') + domain);
   }
   if (name != QLatin1String("localhost"))
     hostCombo->addItem(QString("localhost"));
