@@ -27,7 +27,7 @@ const char *levels_color[] = {YELLOW, CYAN, GREEN, LIGHT_RED, RED, MAGENTA};
 
 void logger(level_t level, const char *file, int line, const char *fmt, ...) {
   va_list args;
-  fprintf(stderr, "[%s %s %s %s:%d] ", levels_color[level], levels_name[level],
+  fprintf(stderr, "[%s %s %s %s:%d] \n\t", levels_color[level], levels_name[level],
           RESET, file, line);
   va_start(args, fmt);
   vfprintf(stderr, fmt, args);

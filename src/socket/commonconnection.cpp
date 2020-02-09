@@ -42,7 +42,7 @@ void send_message_text(QTcpSocket *socket, const QString &message) {
   }
   // prepare datastream
   QByteArray ba_message;
-  QDataStream out(&ba_message, QIODevice::ReadWrite);
+  QDataStream out(&ba_message, QIODevice::WriteOnly);
   out.setVersion(QDataStream::Qt_4_0);
   // serialize information
   out << QString(GROUP_SEPARATOR_ASCII_CODE)
@@ -64,17 +64,18 @@ void send_message_image(QTcpSocket *socket, const QImage &image) {
 #endif
     return;
   }
-  // prepare datastream
+  
+  // prepare datastream and serialize information
   QByteArray ba_message;
-  QDataStream out(&ba_message, QIODevice::ReadWrite);
+  QDataStream out(&ba_message, QIODevice::WriteOnly);
   out.setVersion(QDataStream::Qt_4_0);
-  // serialize information
   out << QString(RECORD_SEPARATOR_ASCII_CODE)
       << static_cast<quint32>(image.sizeInBytes()) << image;
-  socket->write(ba_message);
 #if LOGGER_CLIENT || LOGGER_SERVER
-  LOG(DEBUG, "sending image:")
+  LOG(TRACE, "serialized image")
   qDebug() << "\theader: " << QString(RECORD_SEPARATOR_ASCII_CODE)
            << "\tsize:" << static_cast<quint32>(image.sizeInBytes()) << "\n";
+  qDebug() << ba_message;
 #endif
+  socket->write(ba_message);
 }

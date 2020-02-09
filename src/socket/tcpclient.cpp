@@ -15,8 +15,8 @@
 #include <QString>
 #include <QTextEdit>
 
+#include "../log/logger.h"
 #include "commonconnection.hpp"
-#include "log/logger.h"
 
 TcpClient::TcpClient(QWidget *parent)
     : QWidget(parent), m_tcp_socket(new QTcpSocket(this)) {
@@ -60,8 +60,6 @@ TcpClient::TcpClient(QWidget *parent)
           &TcpClient::enableConnectButton);
   connect(m_port_linedit, &QLineEdit::textChanged, this,
           &TcpClient::enableConnectButton);
-  //  connect(m_tcp_socket, &QIODevice::readyRead, this,
-  //  &TcpClient::readFortune);
 
   // connect error
   connect(m_tcp_socket,
@@ -94,17 +92,11 @@ TcpClient::TcpClient(QWidget *parent)
     LOG(INFO, "Opening network session.")
     networkSession->open();
   }
-#if LOGGER
-  QTimer *timer = new QTimer(this);
-  timer->setInterval(1000);
-  timer->start();
-#if TEST_IMAGE
-  connect(timer, &QTimer::timeout, [=]() { this->sendImageMessage(); });
-#else
-  connect(timer, &QTimer::timeout, [=]() { this->sendTestMessageStream(); });
-#endif
-#endif
 }
+
+//////////////////////////////////////////////////////////////////////////////
+//// Slot function
+//////////////////////////////////////////////////////////////////////////////
 
 void TcpClient::sendImage(QImage image) {
   if (m_tcp_socket->state() != QAbstractSocket::ConnectedState) {
@@ -115,10 +107,6 @@ void TcpClient::sendImage(QImage image) {
   }
   send_message_image(m_tcp_socket, image);
 }
-
-//////////////////////////////////////////////////////////////////////////////
-//// Slot function
-//////////////////////////////////////////////////////////////////////////////
 
 void TcpClient::connectedToServer() {
 #if LOGGER_CLIENT
@@ -188,24 +176,6 @@ void TcpClient::enableConnectButton() {
                             !m_port_linedit->text().isEmpty());
 }
 
-void TcpClient::readFortune() {
-  m_data.startTransaction();
-
-  QString nextFortune;
-  m_data >> nextFortune;
-
-  if (!m_data.commitTransaction()) return;
-
-  if (nextFortune == currentFortune) {
-    QTimer::singleShot(100, this, &TcpClient::connectedToServer);
-    return;
-  }
-
-  currentFortune = nextFortune;
-  m_log_text->append(currentFortune);
-  connectButton->setEnabled(true);
-}
-
 void TcpClient::readyRead() {
   if (m_tcp_socket->state() != QAbstractSocket::ConnectedState) {
 #if LOGGER_CLIENT
@@ -231,13 +201,16 @@ void TcpClient::readyRead() {
   if (header == QString(GROUP_SEPARATOR_ASCII_CODE)) {
     QString message;
     m_data >> message;
+    if (!message.isEmpty()) {
+      m_log_text->append(message);
+    }
 #if LOGGER_CLIENT
     LOG(DEBUG, "check message is not empty: %s",
         (!message.isEmpty()) ? "true" : "false")
-    LOG(DEBUG, "server read message in redyRead()\n\tmessage received:")
+    LOG(DEBUG, "server read message in readyRead()\n\tmessage received:")
     qDebug() << "\t" << message << "\n";
 #endif
-    if (!message.isEmpty()) m_log_text->append(message);
+
   } else if (header == QString(RECORD_SEPARATOR_ASCII_CODE)) {
 #if LOGGER_CLIENT
     LOG(DEBUG, "image incoming")

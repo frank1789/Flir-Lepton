@@ -5,7 +5,7 @@
 #include <QPainter>
 
 #include "mylabel.hpp"
-#include "socket/tcpclient.hpp"
+#include "socket/tcpserver.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -154,6 +154,6 @@ class MainWindow : public QMainWindow {
   void addOp(QPainter::CompositionMode mode, const QString &name);
 
   // socket client layout
-  TcpClient *client{nullptr};
+  TCPServer *server{nullptr};
 };
 #endif  // MAINWINDOW_HPP

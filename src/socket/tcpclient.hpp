@@ -71,12 +71,6 @@ class TcpClient : public QWidget {
   void enableConnectButton();
 
   /**
-   * @brief
-   *
-   */
-  void readFortune();
-
-  /**
    * @brief Read from socket.
    *
    * Function that reads the socket when data are available.
