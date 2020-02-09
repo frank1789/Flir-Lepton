@@ -1,5 +1,4 @@
 #include "mainwindow.hpp"
-#include "ui_mainwindow.h"
 
 #include <QColor>
 #include <QComboBox>
@@ -14,6 +13,7 @@
 
 #include "log/logger.h"
 #include "palettes.h"
+#include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -42,10 +42,10 @@ MainWindow::MainWindow(QWidget *parent)
     }
   }
 
-  client = new TcpClient();
+  server = new TCPServer();
   m_group_all->addLayout(create_label_preview(), 0, 0);
   m_group_all->addLayout(create_bar_control(), 0, 1);
-  m_group_all->addWidget(client, 0, 2);
+  // m_group_all->addWidget(client, 0, 2);
   widget->setLayout(m_group_all);
 
   // connect signal from this to respective classes label
@@ -75,13 +75,20 @@ MainWindow::MainWindow(QWidget *parent)
   // connect Camera to TcpClient
   connect(this, &MainWindow::update_rgb_image, [=](QImage image) {
     QImage image_resized = image.scaled(512, 512, Qt::KeepAspectRatio);
-    client->sendImage(image_resized);
+    QPixmap img = QPixmap::fromImage(image_resized);
+    QByteArray bImage;
+    QBuffer bBuffer(&bImage);
+    // Putting every image in the buffer
+    bBuffer.open(QIODevice::ReadWrite);
+    img.save(&bBuffer, "JPG");
+    // Sending to TCPServer function to display the image
+    server->is_newImg(bImage);
   });
 }
 
 MainWindow::~MainWindow() {
   delete ui;
-  delete client;
+  delete server;
 }
 
 void MainWindow::set_thermal_image(QImage img) {

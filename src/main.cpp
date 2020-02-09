@@ -4,7 +4,6 @@
 
 #include "leptonthread.hpp"
 #include "mainwindow.hpp"
-#include "socket/tcpserver.hpp"
 
 int main(int argc, char **argv) {
   QApplication a(argc, argv);
@@ -35,10 +34,6 @@ int main(int argc, char **argv) {
 
   // open window
   w.show();
-
-  // init server
-  QPointer<TcpServer> server = new TcpServer();
-  server->show();
 
   // start thread
   lepton->start();

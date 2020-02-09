@@ -2,8 +2,7 @@
 
 rm -rf build
 mkdir build && cd build
-lcov --directory . --zerocounters
 cmake -D CMAKE_BUILD_TYPE=Debug ..
-make
+make -j3
 EXECUTABLE=$(find $PWD -name "FlirLepton")
 ${EXECUTABLE}
