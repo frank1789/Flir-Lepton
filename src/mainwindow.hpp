@@ -5,12 +5,13 @@
 #include <QPainter>
 
 #include "mylabel.hpp"
-#include "socket/tcpserver.h"
+#include "socket/tcpserver.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
 }
+
 class QComboBox;
 class QGroupBox;
 class QGridLayout;
