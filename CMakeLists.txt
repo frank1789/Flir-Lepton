@@ -3,7 +3,7 @@
 #-----------------------------------------------------------------------------
 CMAKE_MINIMUM_REQUIRED(VERSION 3.7)
 set(LEPTONCAMERA "FlirLepton")
-project(${LEPTONCAMERA} LANGUAGES C CXX VERSION "4.0.0")
+project(${LEPTONCAMERA} LANGUAGES C CXX VERSION "0.5.0")
 
 #-----------------------------------------------------------------------------
 # check build type

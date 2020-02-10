@@ -64,7 +64,7 @@ void send_message_image(QTcpSocket *socket, const QImage &image) {
 #endif
     return;
   }
-  
+
   // prepare datastream and serialize information
   QByteArray ba_message;
   QDataStream out(&ba_message, QIODevice::WriteOnly);

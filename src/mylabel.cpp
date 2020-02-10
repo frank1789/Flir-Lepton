@@ -1,6 +1,8 @@
 #include "mylabel.hpp"
+
 #include <QColor>
 #include <QPainter>
+
 #include "log/logger.h"
 
 MyLabel::MyLabel(QWidget *parent) : QLabel(parent) {}
@@ -12,4 +14,3 @@ void MyLabel::setImage(QImage image) {
   QPixmap pixmap = QPixmap::fromImage(image);
   setPixmap(pixmap.scaled(this->width(), this->height(), Qt::KeepAspectRatio));
 }
-

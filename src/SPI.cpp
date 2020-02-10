@@ -1,4 +1,5 @@
 #include "SPI.h"
+
 #include <fcntl.h>
 #include <getopt.h>
 #include <linux/spi/spidev.h>
@@ -8,6 +9,7 @@
 #include <stdlib.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
+
 #include <iostream>
 #include <string>
 

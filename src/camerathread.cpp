@@ -1,7 +1,10 @@
 #include "camerathread.hpp"
+
 #include <unistd.h>
+
 #include <fstream>
 #include <iostream>
+
 #include "log/logger.h"
 
 CameraColour::CameraColour() {
