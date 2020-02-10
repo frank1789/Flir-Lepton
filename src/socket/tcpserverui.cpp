@@ -53,13 +53,13 @@ QString TCPServerUi::findIpAddress() {
 
 void TCPServerUi::onClientConnect() {
   m_device_count++;
-  m_device_label->setText(QString("%1").arg(m_device_count, 4));
+  m_device_label->setText(QString::number(m_device_count, 4));
   m_status_label->setText("streaming");
 }
 
 void TCPServerUi::onClientDisconnect() {
-  m_device_count--;
-  m_device_label->setText(QString("%1").arg(m_device_count));
+  m_device_count = (m_device_count <= 0) ? 0 : m_device_count - 1; 
+  m_device_label->setText(QString::number(m_device_count, 4));
   if (m_device_count == 0) {
     m_status_label->setText("ready");
   }
@@ -81,7 +81,7 @@ QGroupBox *TCPServerUi::createInformationGroup() {
   connection_label = new QLabel("Address:");
   port_label = new QLabel("Port:");
   m_connection_address = new QLabel(findIpAddress());
-  m_port_number = new QLabel(QString("%1").arg(TCP_PORT, 6));
+  m_port_number = new QLabel(QString::number(TCP_PORT));
   // assemble element
   grid_layout->addWidget(connection_label, 0, 0);
   grid_layout->addWidget(m_connection_address, 0, 1);
@@ -102,7 +102,7 @@ QGroupBox *TCPServerUi::createLogGroup() {
   const auto incoming = new QLabel("status:");
   const auto connected = new QLabel("connected devices:");
   m_status_label = new QLabel("ready");
-  m_device_label = new QLabel(QString("%1").arg(m_device_count, 4));
+  m_device_label = new QLabel(QString::number(m_device_count, 4));
   // setup grid layout
   QGridLayout *gridLayout = new QGridLayout;
   gridLayout->addWidget(incoming, 0, 0);
