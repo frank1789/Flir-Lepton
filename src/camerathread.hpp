@@ -1,10 +1,10 @@
 #ifndef CAMERAWORKER_H
 #define CAMERAWORKER_H
 
+#include <raspicam/raspicam.h>
+
 #include <QImage>
 #include <memory>
-
-#include <raspicam/raspicam.h>
 
 // constant raspberry Camera V2
 constexpr unsigned int RaspicamLoadTime{30000};  // 0.03 s = 30 ms = 30000 us

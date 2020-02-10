@@ -1,11 +1,14 @@
 #include "mainwindow.hpp"
 
+#include <unistd.h>
+
 #include <QColor>
 #include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QImage>
+#include <QMutexLocker>
 #include <QPushButton>
 #include <QRadioButton>
 #include <QString>
@@ -13,6 +16,7 @@
 
 #include "log/logger.h"
 #include "palettes.h"
+#include "socket/tcpserverui.hpp"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -43,9 +47,13 @@ MainWindow::MainWindow(QWidget *parent)
   }
 
   server = new TCPServer();
+  auto ui_server = new TCPServerUi();
+  connect(server, &TCPServer::Connect, ui_server, &TCPServerUi::onClientConnect);
+  connect(server, &TCPServer::Disconnect, ui_server,
+          &TCPServerUi::onClientDisconnect);
   m_group_all->addLayout(create_label_preview(), 0, 0);
   m_group_all->addLayout(create_bar_control(), 0, 1);
-  // m_group_all->addWidget(client, 0, 2);
+  m_group_all->addWidget(ui_server, 0, 2);
   widget->setLayout(m_group_all);
 
   // connect signal from this to respective classes label
@@ -74,8 +82,9 @@ MainWindow::MainWindow(QWidget *parent)
 
   // connect Camera to TcpClient
   connect(this, &MainWindow::update_rgb_image, [=](QImage image) {
-    QImage image_resized = image.scaled(512, 512, Qt::KeepAspectRatio);
-    QPixmap img = QPixmap::fromImage(image_resized);
+    QMutexLocker locker(&mutex);
+    QPixmap img =
+        QPixmap::fromImage(image.scaled(512, 512, Qt::KeepAspectRatio));
     QByteArray bImage;
     QBuffer bBuffer(&bImage);
     // Putting every image in the buffer

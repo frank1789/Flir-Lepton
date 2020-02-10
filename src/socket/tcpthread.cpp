@@ -1,4 +1,3 @@
-
 #include "tcpthread.hpp"
 
 TCPThread::TCPThread(int nsocket) {

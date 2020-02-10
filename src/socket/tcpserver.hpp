@@ -1,6 +1,6 @@
 
-#ifndef TCPSERVER_H
-#define TCPSERVER_H
+#ifndef TCPSERVER_HPP
+#define TCPSERVER_HPP
 
 #include <QTcpServer>
 #include <QTcpSocket>
@@ -9,16 +9,16 @@
 
 class TCPServer : public QTcpServer {
   Q_OBJECT
- 
+
  public:
   TCPServer();
   void is_newImg(QByteArray img);
- 
+
  signals:
   void newImg(QByteArray img);
   void Connect();
   void Disconnect();
- 
+
  public slots:
   void on_thread_close();
 
