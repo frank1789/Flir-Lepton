@@ -1,8 +1,11 @@
 #include "leptonthread.hpp"
+
 #include <string.h>
 #include <unistd.h>
+
 #include <QLabel>
 #include <type_traits>
+
 #include "Lepton_I2C.h"
 #include "SPI.h"
 #include "log/logger.h"

@@ -8,6 +8,7 @@
 #include <QtCore>
 #include <cstdint>
 #include <ctime>
+
 #include "camerathread.hpp"
 
 // constant Lepton packet and frame

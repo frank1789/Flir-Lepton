@@ -1,4 +1,5 @@
 #include "Lepton_I2C.h"
+
 #include "log/logger.h"
 
 bool _connected{false};

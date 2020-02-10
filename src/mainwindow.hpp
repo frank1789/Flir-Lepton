@@ -155,5 +155,8 @@ class MainWindow : public QMainWindow {
 
   // socket client layout
   TCPServer *server{nullptr};
+
+  // mutex lock
+  QMutex mutex;
 };
 #endif  // MAINWINDOW_HPP

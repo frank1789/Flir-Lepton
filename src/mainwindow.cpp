@@ -1,11 +1,14 @@
 #include "mainwindow.hpp"
 
+#include <unistd.h>
+
 #include <QColor>
 #include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QImage>
+#include <QMutexLocker>
 #include <QPushButton>
 #include <QRadioButton>
 #include <QString>
@@ -74,8 +77,9 @@ MainWindow::MainWindow(QWidget *parent)
 
   // connect Camera to TcpClient
   connect(this, &MainWindow::update_rgb_image, [=](QImage image) {
-    QImage image_resized = image.scaled(512, 512, Qt::KeepAspectRatio);
-    QPixmap img = QPixmap::fromImage(image_resized);
+    QMutexLocker locker(&mutex);
+    QPixmap img =
+        QPixmap::fromImage(image.scaled(512, 512, Qt::KeepAspectRatio));
     QByteArray bImage;
     QBuffer bBuffer(&bImage);
     // Putting every image in the buffer
@@ -83,6 +87,7 @@ MainWindow::MainWindow(QWidget *parent)
     img.save(&bBuffer, "JPG");
     // Sending to TCPServer function to display the image
     server->is_newImg(bImage);
+    usleep(200);
   });
 }
 
