@@ -18,9 +18,9 @@ class TCPServerUi : public QWidget {
   /**
    * @brief Create a Information Group object.
    *
-   * @return QGridLayout* layout.
+   * @return QGroupBox* box widget.
    */
-  QGridLayout *createInformationGroup();
+  QGroupBox *createInformationGroup();
 
   /**
    * @brief Create a Log Group object.
@@ -41,6 +41,7 @@ class TCPServerUi : public QWidget {
   QLabel *m_connection_address{nullptr};
   QLabel *m_port_number{nullptr};
   QLabel *m_device_label{nullptr};
+  QLabel *m_status_label{nullptr};
 };
 
 #endif  // TCPSERVERUI_HPP

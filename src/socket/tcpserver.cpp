@@ -1,6 +1,8 @@
 #include "tcpserver.hpp"
 
-TCPServer::TCPServer() { listen(QHostAddress::Any, 5555); }
+#include "commonconnection.hpp"
+
+TCPServer::TCPServer() { listen(QHostAddress::Any, TCP_PORT); }
 
 void TCPServer::incomingConnection(qintptr socket) {
   TCPThread *thread = new TCPThread(socket);
