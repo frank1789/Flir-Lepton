@@ -92,7 +92,6 @@ MainWindow::MainWindow(QWidget *parent)
     img.save(&bBuffer, "JPG");
     // Sending to TCPServer function to display the image
     server->is_newImg(bImage);
-    usleep(200);
   });
 }
 

@@ -24,7 +24,7 @@ class TCPServerUi : public QWidget {
 
   /**
    * @brief Create a Log Group object.
-   * 
+   *
    * @return QGroupBox* box widget.
    */
   QGroupBox *createLogGroup();
@@ -32,6 +32,14 @@ class TCPServerUi : public QWidget {
  public slots:
   void onClientDisconnect();
   void onClientConnect();
+
+ private:
+  /**
+   * @brief Detect IP address of server
+   *
+   * @return QString return IP address
+   */
+  QString findIpAddress();
 
  private:
   unsigned int m_device_count;

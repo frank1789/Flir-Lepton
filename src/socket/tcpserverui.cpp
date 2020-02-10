@@ -27,6 +27,26 @@ TCPServerUi::TCPServerUi(QWidget *parent) : QWidget(parent) {
   setLayout(grid);
 }
 
+QString TCPServerUi::findIpAddress() {
+  QString ipAddress{""};
+  QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
+  // use the first non-localhost IPv4 address
+  for (const auto &address : ipAddressesList) {
+    if (address != QHostAddress::LocalHost && address.toIPv4Address()) {
+      ipAddress = address.toString();
+      break;
+    }
+  }
+  // if we did not find one, use IPv4 localhost
+  if (ipAddress.isEmpty())
+    ipAddress = QHostAddress(QHostAddress::LocalHost).toString();
+#if LOGGER_UI
+  LOG(DEBUG, "server use IP")
+  qDebug() << "\t" << ipAddress;
+#endif
+  return ipAddress;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 //// Slot function
 //////////////////////////////////////////////////////////////////////////////
@@ -60,7 +80,7 @@ QGroupBox *TCPServerUi::createInformationGroup() {
   // initialize label
   connection_label = new QLabel("Address:");
   port_label = new QLabel("Port:");
-  m_connection_address = new QLabel;
+  m_connection_address = new QLabel(findIpAddress());
   m_port_number = new QLabel(QString("%1").arg(TCP_PORT, 6));
   // assemble element
   grid_layout->addWidget(connection_label, 0, 0);
@@ -82,7 +102,7 @@ QGroupBox *TCPServerUi::createLogGroup() {
   const auto incoming = new QLabel("status:");
   const auto connected = new QLabel("connected devices:");
   m_status_label = new QLabel("ready");
-  m_device_label = new QLabel("0");
+  m_device_label = new QLabel(QString("%1").arg(m_device_count, 4));
   // setup grid layout
   QGridLayout *gridLayout = new QGridLayout;
   gridLayout->addWidget(incoming, 0, 0);
