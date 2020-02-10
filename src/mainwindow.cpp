@@ -16,6 +16,7 @@
 
 #include "log/logger.h"
 #include "palettes.h"
+#include "socket/tcpserverui.hpp"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -46,9 +47,13 @@ MainWindow::MainWindow(QWidget *parent)
   }
 
   server = new TCPServer();
+  auto ui_server = new TcpClient();
+  connect(server, &TCPServer::Connect, ui_server, &TcpClient::onClientConnect);
+  connect(server, &TCPServer::Disconnect, ui_server,
+          &TcpClient::onClientDisconnect);
   m_group_all->addLayout(create_label_preview(), 0, 0);
   m_group_all->addLayout(create_bar_control(), 0, 1);
-  // m_group_all->addWidget(client, 0, 2);
+  m_group_all->addWidget(ui_server, 0, 3);
   widget->setLayout(m_group_all);
 
   // connect signal from this to respective classes label
