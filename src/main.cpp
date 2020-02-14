@@ -3,9 +3,13 @@
 #include <QPointer>
 
 #include "leptonthread.hpp"
+#include "log/instrumentor.h"
 #include "mainwindow.hpp"
 
 int main(int argc, char **argv) {
+#if PROFILING
+  Instrumentor::Get().BeginSession("Profile");
+#endif
   QApplication a(argc, argv);
 
   // init main window
@@ -37,5 +41,9 @@ int main(int argc, char **argv) {
 
   // start thread
   lepton->start();
-  return a.exec();
+  auto r = a.exec();
+#if PROFILING
+  Instrumentor::Get().EndSession();
+#endif
+  return r;
 }

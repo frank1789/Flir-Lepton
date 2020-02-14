@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 
+#include "log/instrumentor.h"
 #include "log/logger.h"
 
 CameraColour::CameraColour() {
@@ -32,6 +33,7 @@ CameraColour::~CameraColour() {
 }
 
 QImage CameraColour::getImageRGB() {
+  PROFILE_FUNCTION();
   // capture
   camera.grab();
   camera.retrieve(m_buffer.get(), raspicam::RASPICAM_FORMAT_IGNORE);

@@ -14,6 +14,7 @@
 #include <QString>
 #include <QVBoxLayout>
 
+#include "log/instrumentor.h"
 #include "log/logger.h"
 #include "palettes.h"
 #include "socket/tcpserverui.hpp"
@@ -48,7 +49,8 @@ MainWindow::MainWindow(QWidget *parent)
 
   server = new TCPServer();
   auto ui_server = new TCPServerUi();
-  connect(server, &TCPServer::Connect, ui_server, &TCPServerUi::onClientConnect);
+  connect(server, &TCPServer::Connect, ui_server,
+          &TCPServerUi::onClientConnect);
   connect(server, &TCPServer::Disconnect, ui_server,
           &TCPServerUi::onClientDisconnect);
   m_group_all->addLayout(create_label_preview(), 0, 0);
@@ -82,6 +84,7 @@ MainWindow::MainWindow(QWidget *parent)
 
   // connect Camera to TcpClient
   connect(this, &MainWindow::update_rgb_image, [=](QImage image) {
+    PROFILE_FUNCTION();
     QMutexLocker locker(&mutex);
     QPixmap img =
         QPixmap::fromImage(image.scaled(512, 512, Qt::KeepAspectRatio));
@@ -104,9 +107,14 @@ void MainWindow::set_thermal_image(QImage img) {
   emit update_thermal_image(img);
 }
 
-void MainWindow::set_rgb_image(QImage img) { emit update_rgb_image(img); }
+void MainWindow::set_rgb_image(QImage img) {
+  emit update_rgb_image(img);
+}
 
-void MainWindow::setCompose(QImage img) { emit updateCompose(img); }
+void MainWindow::setCompose(QImage img) {
+  PROFILE_FUNCTION();
+  emit updateCompose(img);
+}
 
 void MainWindow::call_FFC() { emit performFFC(); }
 

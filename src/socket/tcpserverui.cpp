@@ -58,7 +58,7 @@ void TCPServerUi::onClientConnect() {
 }
 
 void TCPServerUi::onClientDisconnect() {
-  m_device_count = (m_device_count <= 0) ? 0 : m_device_count - 1; 
+  m_device_count = (m_device_count <= 0) ? 0 : m_device_count - 1;
   m_device_label->setText(QString::number(m_device_count, 4));
   if (m_device_count == 0) {
     m_status_label->setText("ready");
