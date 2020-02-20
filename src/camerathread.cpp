@@ -38,8 +38,10 @@ QImage CameraColour::getImageRGB() {
   camera.grab();
   camera.retrieve(m_buffer.get(), raspicam::RASPICAM_FORMAT_IGNORE);
   // convert the data and send to the caller to handle
-  QImage image = QImage(m_buffer.get(), camera.getWidth(), camera.getHeight(),
-                        QImage::Format_RGB888);
+  auto width = camera.getWidth();
+  auto height = camera.getHeight();
+  QImage image = QImage(m_buffer.get(), width, height, QImage::Format_RGB888)
+                     .scaled(1024, 768, Qt::KeepAspectRatio);
 #if LOGGER
   LOG(DEBUG, "FPS camera: %u", camera.getFrameRate())
 #endif

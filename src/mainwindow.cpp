@@ -86,8 +86,7 @@ MainWindow::MainWindow(QWidget *parent)
   connect(this, &MainWindow::update_rgb_image, [=](QImage image) {
     PROFILE_FUNCTION();
     QMutexLocker locker(&mutex);
-    QPixmap img =
-        QPixmap::fromImage(image.scaled(512, 512, Qt::KeepAspectRatio));
+    QPixmap img = QPixmap::fromImage(image);
     QByteArray bImage;
     QBuffer bBuffer(&bImage);
     // Putting every image in the buffer
@@ -107,9 +106,7 @@ void MainWindow::set_thermal_image(QImage img) {
   emit update_thermal_image(img);
 }
 
-void MainWindow::set_rgb_image(QImage img) {
-  emit update_rgb_image(img);
-}
+void MainWindow::set_rgb_image(QImage img) { emit update_rgb_image(img); }
 
 void MainWindow::setCompose(QImage img) {
   PROFILE_FUNCTION();
