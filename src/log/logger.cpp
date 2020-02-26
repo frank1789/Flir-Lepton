@@ -27,7 +27,7 @@ const char *levels_color[] = {YELLOW, CYAN, GREEN, LIGHT_RED, RED, MAGENTA};
 
 void logger(level_t level, const char *file, int line, const char *fmt, ...) {
   va_list args;
-  fprintf(stderr, "[%s %s %s %s:%d] \n\t", levels_color[level], levels_name[level],
+  fprintf(stderr, "[%s %s %s %s:%d] ", levels_color[level], levels_name[level],
           RESET, file, line);
   va_start(args, fmt);
   vfprintf(stderr, fmt, args);
@@ -62,4 +62,20 @@ TimeMeter::~TimeMeter() {
   std::cout << "Total time elapsed: " << m_total_elapsed.count() << " [us] ";
   std::cout << "(" << m_total_elapsed.count() * 0.001 << " [ms])"
             << "\n";
+}
+
+StopWatch::StopWatch() : m_start(std::chrono::high_resolution_clock::now()) {}
+
+StopWatch::~StopWatch() {
+  m_stop = std::chrono::high_resolution_clock::now();
+  auto start = std::chrono::time_point_cast<std::chrono::microseconds>(m_start)
+                   .time_since_epoch()
+                   .count();
+  auto stop = std::chrono::time_point_cast<std::chrono::microseconds>(m_stop)
+                  .time_since_epoch()
+                  .count();
+  auto total_elapsed = stop - start;
+  LOG(TRACE, "Time elapsed: %6.3lf [us]; %6.3lf [ms]",
+      static_cast<double>(total_elapsed),
+      static_cast<double>(total_elapsed * 0.001))
 }
