@@ -3,7 +3,7 @@
 #-----------------------------------------------------------------------------
 CMAKE_MINIMUM_REQUIRED(VERSION 3.7)
 set(LEPTONCAMERA "FlirLepton")
-project(${LEPTONCAMERA} LANGUAGES C CXX VERSION "0.5.1")
+project(${LEPTONCAMERA} LANGUAGES C CXX VERSION "0.6.2")
 
 #-----------------------------------------------------------------------------
 # check build type
@@ -120,9 +120,9 @@ endif (${raspicam_FOUND})
 # Local library and dependecies
 #-----------------------------------------------------------------------------
 add_subdirectory(src)
-add_subdirectory(src/socket)
-add_subdirectory(src/log)
-add_subdirectory(src/LeptonSDKEmb32PUB)
+add_subdirectory(socket)
+add_subdirectory(log)
+add_subdirectory(LeptonSDKEmb32PUB)
 add_subdirectory(tf)
 
 # wrap ui

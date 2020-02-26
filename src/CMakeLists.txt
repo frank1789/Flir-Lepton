@@ -18,6 +18,7 @@ target_link_libraries(${LEPTONCAMERA}
 	LeptonSDK
 	logger
 	socket
+	neuralnetwork
 	${CMAKE_THREAD_LIBS_INIT}
 	${raspicam_LIBS}
 	)
