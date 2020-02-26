@@ -7,6 +7,7 @@
 #include "../tf/model_tpu.hpp"
 #include "../tf/util_label_image.hpp"
 #include "leptonthread.hpp"
+#include "log/instrumentor.h"
 #include "mainwindow.hpp"
 
 int main(int argc, char **argv) {

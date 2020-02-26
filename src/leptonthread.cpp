@@ -8,6 +8,7 @@
 
 #include "Lepton_I2C.h"
 #include "SPI.h"
+#include "log/instrumentor.h"
 #include "log/logger.h"
 #include "palettes.h"
 
@@ -34,6 +35,7 @@ LeptonThread::~LeptonThread() {
 }
 
 void LeptonThread::run() {
+  PROFILE_FUNCTION();
   // generate thermal initial image
   m_ir_image = QImage(80, 60, QImage::Format_RGB888);
   // open SPI port
@@ -141,6 +143,7 @@ void LeptonThread::setMode(int mode) {
 }
 
 void LeptonThread::recalculateResult(const QImage &thermal, const QImage &rgb) {
+  PROFILE_FUNCTION();
   QPainter painter(&m_result);
   painter.setCompositionMode(QPainter::CompositionMode_Source);
   painter.fillRect(m_result.rect(), Qt::transparent);

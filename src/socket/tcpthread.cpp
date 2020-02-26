@@ -1,5 +1,7 @@
 #include "tcpthread.hpp"
 
+#include "../log/instrumentor.h"
+
 TCPThread::TCPThread(int nsocket) {
   socket = new QTcpSocket();
   if (!socket->setSocketDescriptor(nsocket)) {
@@ -9,6 +11,7 @@ TCPThread::TCPThread(int nsocket) {
 }
 
 void TCPThread::on_newImg(QByteArray img) {
+  PROFILE_FUNCTION();
   if (socket->state() == QTcpSocket::ConnectedState) {
     socket->write(img);
   } else {
