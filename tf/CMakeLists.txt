@@ -7,14 +7,14 @@ set(LIB_NAME "neuralnetwork")
 #-------------------------------------------------------------------------------
 set(LIBRARY_TARGET_NAME ${LIB_NAME})
 set(SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/list_colour.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/colormanager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/findmodel.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/list_colour.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/model_tpu.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/util_label_image.cpp
 )
 
-add_library(${LIB_NAME} ${SOURCES} ${HEADERS})
+add_library(${LIB_NAME} ${SOURCES})
 target_link_libraries(${LIB_NAME}
     Qt5::Widgets 
     Qt5::Network 
