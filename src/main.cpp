@@ -2,7 +2,6 @@
 #include <QObject>
 #include <QPointer>
 
-#include "log/instrumentor.h"
 #include "../tf/findmodel.hpp"
 #include "../tf/model_tpu.hpp"
 #include "../tf/util_label_image.hpp"
@@ -51,7 +50,10 @@ int main(int argc, char **argv) {
   label.read();
   ModelTensorFlowLite modeltflite(zz);
   modeltflite.setLabel(label.getLabels());
-  QObject::connect(lepton, &LeptonThread::updateCam, [&modeltflite](QImage img){modeltflite.imageAvailable(QPixmap::fromImage(img)));
+  QObject::connect(lepton, &LeptonThread::updateCam,
+                   [&modeltflite](QImage img) {
+                     modeltflite.imageAvailable(QPixmap::fromImage(img));
+                   });
 
   auto r = a.exec();
 #if PROFILING

@@ -12,7 +12,7 @@ compile_debug() {
     echo "create new directory $DIRECTORY"
     mkdir $DIRECTORY && cd $DIRECTORY
     cmake -D CMAKE_BUILD_TYPE=Debug ..
-    make -j3
+    make -j$(nproc)
     EXECUTABLE=$(find $PWD -name "FlirLepton")
     ${EXECUTABLE}
 }
@@ -23,7 +23,7 @@ compile_release() {
     echo "create new directory $DIRECTORY"
     mkdir $DIRECTORY && cd $DIRECTORY
     cmake -D CMAKE_BUILD_TYPE=Release ..
-    make -j3
+    make -j$(nproc)
     EXECUTABLE=$(find $PWD -name "FlirLepton")
     ${EXECUTABLE}
 }
