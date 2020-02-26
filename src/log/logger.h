@@ -12,7 +12,23 @@ extern "C" {
 #include <stdarg.h>
 #include <stdio.h>
 
+#ifndef LOGGER
+#define LOGGER 1
+#define LOGGER_GEN 1
+#define LOGGER_UI 1
+#endif  // LOGGER
+
+#if LOGGER_UI
 #define LOG(LEVEL, ...) logger(LEVEL, __FILE__, __LINE__, __VA_ARGS__);
+#else
+#define LOG(LEVEL, ...)
+#endif
+
+#if LOGGER_GEN
+#define LOG(LEVEL, ...) logger(LEVEL, __FILE__, __LINE__, __VA_ARGS__);
+#else
+#define LOG(LEVEL, ...)
+#endif
 
 // define constant color hex
 extern const char RED[];
@@ -50,24 +66,29 @@ extern void logger(level_t level, const char *file, int line, const char *fmt,
 #endif
 
 class TimeMeter {
- public:
+public:
   explicit TimeMeter() {}
-
   inline void start();
-
   inline void stop();
-
   void getPartialElapsed();
-
   void getTotalElapsed();
-
   ~TimeMeter();
 
- private:
+private:
   std::chrono::time_point<std::chrono::high_resolution_clock> m_start;
   std::chrono::time_point<std::chrono::high_resolution_clock> m_stop;
   std::chrono::duration<double, std::micro> m_partial_elapsed;
   std::chrono::duration<double, std::micro> m_total_elapsed;
 };
 
-#endif  // LOGGER_H
+class StopWatch {
+ public:
+  explicit StopWatch();
+  ~StopWatch();
+
+ private:
+  std::chrono::time_point<std::chrono::high_resolution_clock> m_start;
+  std::chrono::time_point<std::chrono::high_resolution_clock> m_stop;
+};
+
+#endif // LOGGER_H
