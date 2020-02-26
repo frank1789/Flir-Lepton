@@ -32,6 +32,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 #-------------------------------------------------------------------------------
 # Select external Library
 #-------------------------------------------------------------------------------
+# Check architecture
+EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
 set(HEADERS_PATH "${CMAKE_CURRENT_SOURCE_DIR}/vendor/tensorflow-lite/include" CACHE INTERNAL "")
 include_directories(${HEADERS_PATH})
 
@@ -120,9 +122,9 @@ endif (${raspicam_FOUND})
 # Local library and dependecies
 #-----------------------------------------------------------------------------
 add_subdirectory(src)
-add_subdirectory(socket)
-add_subdirectory(log)
-add_subdirectory(LeptonSDKEmb32PUB)
+add_subdirectory(src/socket)
+add_subdirectory(src/log)
+add_subdirectory(src/LeptonSDKEmb32PUB)
 add_subdirectory(tf)
 
 # wrap ui
