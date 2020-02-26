@@ -25,9 +25,32 @@ endif()
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+#-------------------------------------------------------------------------------
+# Select external Library
+#-------------------------------------------------------------------------------
+set(HEADERS_PATH "${CMAKE_CURRENT_SOURCE_DIR}/vendor/tensorflow-lite/include" CACHE INTERNAL "")
+include_directories(${HEADERS_PATH})
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Linux" AND "${ARCHITECTURE}" STREQUAL "aarch64")
+	set(LIBRARYPATH "${CMAKE_CURRENT_SOURCE_DIR}/vendor/tensorflow-lite/aarch64_armv8-a/lib" CACHE INTERNAL "")
+    message(STATUS "Detect os: ${CMAKE_SYSTEM_NAME}\tarch: ${ARCHITECTURE}")
+    message(STATUS "Set library's directory: ${LIBRARYPATH}")
+    link_directories(${LIBRARYPATH})
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux" AND "${ARCHITECTURE}" STREQUAL "armv7l")
+	set(LIBRARYPATH "${CMAKE_CURRENT_SOURCE_DIR}/vendor/tensorflow-lite/rpi_armv7l/lib" CACHE INTERNAL "")
+    message(STATUS "Detect os: ${CMAKE_SYSTEM_NAME}\tarch: ${ARCHITECTURE}")
+    message(STATUS "Set library's directory: ${LIBRARYPATH}")
+    link_directories(${LIBRARYPATH})
+elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND "${ARCHITECTURE}" STREQUAL "x86_64")
+    set(LIBRARYPATH "${CMAKE_CURRENT_SOURCE_DIR}/vendor/tensorflow-lite/osx_x86_64/lib" CACHE INTERNAL "")
+    message(STATUS "Detect os: ${CMAKE_SYSTEM_NAME}\tarch: ${ARCHITECTURE}")
+    message(STATUS "Set library's directory: ${LIBRARYPATH}")
+    link_directories(${LIBRARYPATH})
+endif()
 
 #-----------------------------------------------------------------------------
 # Specific Flag for RaspBerry Pi 3 
@@ -98,10 +121,9 @@ endif (${raspicam_FOUND})
 #-----------------------------------------------------------------------------
 add_subdirectory(src)
 add_subdirectory(src/socket)
-# add subdirectory LOG
 add_subdirectory(src/log)
-# add subdirectory SDK
 add_subdirectory(src/LeptonSDKEmb32PUB)
+add_subdirectory(tf)
 
 # wrap ui
 file(GLOB UIS ${CMAKE_CURRENT_SOURCE_DIR}/*.ui)
