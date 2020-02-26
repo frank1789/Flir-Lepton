@@ -10,15 +10,14 @@
 #include "mainwindow.hpp"
 
 int main(int argc, char **argv) {
+#if PROFILING
+  Instrumentor::Get().BeginSession("Profile");
+#endif
   QApplication a(argc, argv);
-
-  // init main window
   MainWindow w;
   w.setWindowTitle("Flir-Lepton Video");
-
   // create Thread
   QPointer<LeptonThread> lepton = new LeptonThread();
-
   // connect signal from lepton thread class to mainwindow
   QObject::connect(lepton, &LeptonThread::updateImage, &w,
                    &MainWindow::set_thermal_image);
@@ -26,7 +25,6 @@ int main(int argc, char **argv) {
                    &MainWindow::set_rgb_image);
   QObject::connect(lepton, &LeptonThread::updateOverlay, &w,
                    &MainWindow::setCompose);
-
   // connect signal from mainwindow to lepton thread class
   QObject::connect(&w, &MainWindow::changeColourMap, lepton,
                    &LeptonThread::changeColourMap);
@@ -35,7 +33,6 @@ int main(int argc, char **argv) {
   QObject::connect(&w, &MainWindow::captureImage, lepton,
                    &LeptonThread::snapImage);
   QObject::connect(&w, &MainWindow::updateMode, lepton, &LeptonThread::setMode);
-
   // open window
   w.show();
   // start thread
@@ -56,5 +53,9 @@ int main(int argc, char **argv) {
   QObject::connect(lepton, &LeptonThread::updateCam, &modeltflite,
                    &ModelTensorFlowLite::imageAvailable);
 
-  return a.exec();
+  auto r = a.exec();
+#if PROFILING
+  Instrumentor::Get().EndSession();
+#endif
+  return r;
 }

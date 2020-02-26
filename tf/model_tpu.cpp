@@ -12,9 +12,8 @@
 #include <QFileInfo>
 #include <QImage>
 
-#include "../log/instrumentor.h"
-#include "../log/logger.h"
-#include "../src/streamerthread.hpp"
+#include "../src/log/instrumentor.h"
+#include "../src/log/logger.h"
 #include "colormanager.hpp"
 #include "model_support_function.hpp"
 

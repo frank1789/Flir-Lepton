@@ -8,7 +8,7 @@
 #include <QPushButton>
 #include <QString>
 
-#include "../log/logger.h"
+#include "../src/log/logger.h"
 
 FindModel::FindModel(QDialog* parent) : QDialog(parent) {
   this->setWindowFlags(Qt::Window | Qt::WindowTitleHint |

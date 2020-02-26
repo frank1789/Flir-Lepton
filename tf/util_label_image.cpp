@@ -5,8 +5,8 @@
 #include <QString>
 #include <QTextStream>
 
-#include "../log/instrumentor.h"
-#include "../log/logger.h"
+#include "../src/log/instrumentor.h"
+#include "../src/log/logger.h"
 
 std::tuple<int, std::string> LabelSplitter::coco_label_split(
     const QString &str) {
