@@ -2,6 +2,10 @@
 #include <QObject>
 #include <QPointer>
 
+#include "../log/instrumentor.h"
+#include "../tf/findmodel.hpp"
+#include "../tf/model_tpu.hpp"
+#include "../tf/util_label_image.hpp"
 #include "leptonthread.hpp"
 #include "mainwindow.hpp"
 
@@ -34,8 +38,23 @@ int main(int argc, char **argv) {
 
   // open window
   w.show();
-
   // start thread
   lepton->start();
+  // initialize ui for select TensorFlow lite nad label map
+  FindModel m;
+  m.exec();
+  while (m.isVisible()) {
+    m.show();
+  }
+  // get path of file and initialize model
+  auto dd = m.getLabelPath();
+  auto zz = m.getModelPath();
+  LabelDetection label(dd);
+  label.read();
+  ModelTensorFlowLite modeltflite(zz);
+  modeltflite.setLabel(label.getLabels());
+  QObject::connect(lepton, &LeptonThread::updateCam, &modeltflite,
+                   &ModelTensorFlowLite::imageAvailable);
+
   return a.exec();
 }
