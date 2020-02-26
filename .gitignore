@@ -52,6 +52,7 @@
 # Libraries
 *.lib
 *.a
+!/vendor/tensorflow-lite/rpi_armv7l/lib/libtensorflow-lite.a
 *.la
 *.lo
 
