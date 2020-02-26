@@ -16,7 +16,7 @@ target_link_libraries(${LEPTONCAMERA}
 	Qt5::Widgets
 	Qt5::Network
 	LeptonSDK
-	LOG
+	logger
 	socket
 	${CMAKE_THREAD_LIBS_INIT}
 	${raspicam_LIBS}
