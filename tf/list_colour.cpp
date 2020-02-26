@@ -1,6 +1,6 @@
 #include "list_colour.hpp"
 
-#include "../log/logger.h"
+#include "../src/log/logger.h"
 
 QColor def_color(const QList<colorwheel_t>& colour, int index) {
   auto [i, name_colour, code_colour] = colour.at(index % colour.count());

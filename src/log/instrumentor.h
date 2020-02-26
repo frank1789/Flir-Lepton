@@ -68,7 +68,7 @@ public:
   Instrumentor() : m_CurrentSession(nullptr), m_ProfileCount(0) {}
 
   void BeginSession(const std::string &name,
-                    const std::string &filepath = "results.json") {
+                    const std::string &filepath = "results_raspberry.json") {
     std::lock_guard<std::mutex> lock(m_mutex);
     if (m_CurrentSession) {
       InternalEndSession();

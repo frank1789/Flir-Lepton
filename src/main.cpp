@@ -2,7 +2,7 @@
 #include <QObject>
 #include <QPointer>
 
-#include "../log/instrumentor.h"
+#include "log/instrumentor.h"
 #include "../tf/findmodel.hpp"
 #include "../tf/model_tpu.hpp"
 #include "../tf/util_label_image.hpp"
