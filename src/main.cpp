@@ -9,6 +9,9 @@
 #include "log/instrumentor.h"
 #include "mainwindow.hpp"
 
+const QString local_model_path{"/resources/detect.tflite"};
+const QString local_label_path{"/resources/coco_labels.txt"};
+
 int main(int argc, char **argv) {
 #if PROFILING
   Instrumentor::Get().BeginSession("Profile");
@@ -38,23 +41,16 @@ int main(int argc, char **argv) {
   // start thread
   lepton->start();
   // initialize ui for select TensorFlow lite nad label map
-  FindModel m;
-  m.exec();
-  while (m.isVisible()) {
-    m.show();
-  }
-  // get path of file and initialize model
-  auto dd = m.getLabelPath();
-  auto zz = m.getModelPath();
-  LabelDetection label(dd);
+  auto model_path = QApplication::applicationDirPath() + local_model_path;
+  auto label_path = QApplication::applicationDirPath() + local_label_path;
+  LabelDetection label(label_path);
   label.read();
-  ModelTensorFlowLite modeltflite(zz);
+  ModelTensorFlowLite modeltflite(model_path);
   modeltflite.setLabel(label.getLabels());
   QObject::connect(lepton, &LeptonThread::updateCam,
                    [&modeltflite](QImage img) {
                      modeltflite.imageAvailable(QPixmap::fromImage(img));
                    });
-
   auto r = a.exec();
 #if PROFILING
   Instrumentor::Get().EndSession();
