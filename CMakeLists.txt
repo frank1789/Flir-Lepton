@@ -150,3 +150,8 @@ message( STATUS "CMAKE_BINARY_DIR:\t${CMAKE_BINARY_DIR}")
 message( STATUS )
 message( STATUS "Change a value with: cmake -D<Variable>=<Value> .." )
 message( STATUS )
+
+# ----------------------------------------------------------------------------
+# copy resources
+# ----------------------------------------------------------------------------
+file(INSTALL ${CMAKE_CURRENT_SOURCE_DIR}/resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/src)
