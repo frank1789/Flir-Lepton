@@ -8,7 +8,7 @@
 #include <QPushButton>
 #include <QString>
 
-#include "../src/log/logger.h"
+#include "logger.h"
 
 FindModel::FindModel(QDialog* parent) : QDialog(parent) {
   this->setWindowFlags(Qt::Window | Qt::WindowTitleHint |
@@ -20,8 +20,6 @@ FindModel::FindModel(QDialog* parent) : QDialog(parent) {
   connect(m_load_modelbtn, &QPushButton::clicked, this,
           &FindModel::loadModelFile);
 }
-
-FindModel::~FindModel() {}
 
 QString FindModel::getModelPath() { return m_filename_model; }
 
@@ -38,9 +36,8 @@ void FindModel::loadModelFile() {
 }
 
 void FindModel::loadLabelMapFile() {
-  m_filename_label =
-      QFileDialog::getOpenFileName(this, tr("Open Label map"), QDir::homePath(),
-                                   tr("Label Files (*.txt *.pbtxt)"));
+  m_filename_label = QFileDialog::getOpenFileName(
+      this, tr("Open Label map"), QDir::homePath(), tr("Label Files (*.txt)"));
   m_line_label->setText(m_filename_label);
 }
 
@@ -60,7 +57,7 @@ void FindModel::CloseOnClick() {
 ////////////////////////////////////////////////////////////////////////////////
 
 QGridLayout* FindModel::initializeLayout() {
-  LOG(DEBUG, "build layout FindModel")
+  LOG(LevelAlert::D, "build layout FindModel")
   auto grid = new QGridLayout;
   auto model_label = new QLabel("Model path");
   auto map_label = new QLabel("Label map path");

@@ -1,12 +1,11 @@
 #ifndef LIST_COLOUR_HPP
 #define LIST_COLOUR_HPP
 
-#include <tuple>
-
 #include <QColor>
 #include <QList>
 #include <QObject>
 #include <QString>
+#include <tuple>
 
 using colorwheel_t = std::tuple<int, QString, QColor>;
 
