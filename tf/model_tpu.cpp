@@ -184,11 +184,14 @@ void ModelTensorFlowLite::RunInference(const QImage &image) {
       ObjectOutput(image);
       for (auto &r : getResults()) {
         int cls = r.index_class;
-        auto score = r.score;
-        auto label = QString("%1: %2 %")
-                         .arg(QString::fromStdString(getLabel(cls)))
-                         .arg(QString::number(score * 100, 'g', 4));
-        r.name = label;
+        if (cls > 0) {
+          auto score = r.score;
+          auto label = QString("%1: %2 %")
+                           .arg(QString::fromStdString(getLabel(cls)))
+                           .arg(QString::number(score * 100, 'g', 4));
+          r.name = label;
+          LOG(LevelAlert::D, label)
+        }
       }
       break;
 
@@ -234,9 +237,6 @@ void ModelTensorFlowLite::ObjectOutput(const QImage img) {
 
 std::string ModelTensorFlowLite::getLabel(int i) {
   auto it = m_labels.find(i);
-  if (it->first == 0) {
-    return "background";
-  }
   LOG(LevelAlert::D, "search for class: ", i, "found: ", it->second)
   return it->second;
 }
