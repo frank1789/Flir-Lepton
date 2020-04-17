@@ -11,7 +11,7 @@ using colorwheel_t = std::tuple<int, QString, QColor>;
 
 QColor def_color(const QList<colorwheel_t>& colour, int index);
 
-const QList<colorwheel_t> defColors{
+const QList<colorwheel_t> Colors{
     colorwheel_t(1, "Air Force blue", "#5D8AA8"),
     colorwheel_t(2, "Alice blue", "#F0F8FF"),
     colorwheel_t(3, "Alizarin", "#E32636"),

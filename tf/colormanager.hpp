@@ -11,7 +11,9 @@ QT_END_NAMESPACE
 
 class ColorManager {
  public:
+  explicit ColorManager() = default;
   QColor getColor(QString element);
+  QColor getColor(int i) const;
   static QImage billinearInterpolation(QImage mask, double newHeight,
                                        double newWidth);
   static QImage applyTransformation(QImage image, QTransform painterTransform);

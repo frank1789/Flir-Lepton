@@ -14,12 +14,15 @@ QT_BEGIN_NAMESPACE
 class QImage;
 class QString;
 class QPixmap;
+class QString;
+class QRectF;
 QT_END_NAMESPACE
 
 enum class TypeDetection : int { ImageClassifier, ObjectDetection };
 
 class ModelTensorFlowLite : public QObject {
-public:
+  Q_OBJECT
+ public:
   explicit ModelTensorFlowLite();
   void InitializeModelTFLite(const std::string &path);
 
@@ -35,22 +38,24 @@ public:
 
   // getter
   std::string getLabel(int i);
-  std::vector<std::tuple<int, float, QRectF>> getResults() const;
+  std::vector<BoxDetection> getResults() const;
   std::vector<std::pair<float, int>> getResultClassification() const;
 
-public slots:
+ signals:
+  void objAvailable(QImage, BoxDetection);
+
+ public slots:
   void imageAvailable(QPixmap image);
   void imageAvailable(QImage image);
 
-private:
+ private:
   // input image properties
-  const int m_num_channels{3};
+  const int channels_{3};
+
   // size tensor image desired
   int wanted_height_;
   int wanted_width_;
   int wanted_channels_;
-  // detection mask
-  bool has_detection_mask_;
   TypeDetection kind_network_{TypeDetection::ObjectDetection};
   int num_threads_;
   std::vector<std::pair<float, int>> top_results;
@@ -65,4 +70,4 @@ private:
   std::vector<TfLiteTensor *> outputs;
 };
 
-#endif // MODEL_TPU_HPP
+#endif  // MODEL_TPU_HPP

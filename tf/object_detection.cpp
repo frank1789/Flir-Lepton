@@ -37,11 +37,12 @@ void ObjectDetection::SearchObject(const std::vector<TfLiteTensor *> &outputs,
           static_cast<qreal>(detection_boxes_.get()[4 * i + 3] * img.width());
       QRectF box(left, top, right - left, bottom - top);
       LOG(LevelAlert::D, "find score: ", score, ", class: ", cls)
-      class_box_.emplace_back(std::make_tuple(cls, score, box));
+      BoxDetection r = {cls, score, left, top, right - left, bottom - top, ""};
+      class_box_.emplace_back(r);
     }
   }
 }
 
-std::vector<std::tuple<int, float, QRectF>> ObjectDetection::getResult() const {
+std::vector<BoxDetection> ObjectDetection::getResult() const {
   return class_box_;
 }
