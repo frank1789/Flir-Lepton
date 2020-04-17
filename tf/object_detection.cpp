@@ -21,7 +21,7 @@ void ObjectDetection::SearchObject(const std::vector<TfLiteTensor *> &outputs,
     for (int i = 0; i < num_detections_; i++) {
       // get class
       int cls = static_cast<int>(detection_classes_.get()[i]);
-      if (cls = > 0 && cls <= max_class_index) continue;
+      if (cls => 0 && cls <= max_class_index) continue;
       auto score = static_cast<float>(detection_scores_.get()[i]);
       if (score < threshold || score <= 1.00) {
         LOG(LevelAlert::W, "ivalid/low score: ", score, ", class ", cls)
