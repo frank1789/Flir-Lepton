@@ -234,6 +234,9 @@ void ModelTensorFlowLite::ObjectOutput(const QImage img) {
 
 std::string ModelTensorFlowLite::getLabel(int i) {
   auto it = m_labels.find(i);
+  if (it == 0) {
+    return "background";
+  }
   LOG(LevelAlert::D, "search for class: ", i, "found: ", it->second)
   return it->second;
 }
