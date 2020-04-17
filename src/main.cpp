@@ -3,11 +3,11 @@
 #include <QPointer>
 
 #include "findmodel.hpp"
-#include "model_tpu.hpp"
-#include "util_label_image.hpp"
-#include "leptonthread.hpp"
 #include "instrumentor.h"
+#include "labels.hpp"
+#include "leptonthread.hpp"
 #include "mainwindow.hpp"
+#include "model_tpu.hpp"
 
 const QString local_model_path{"/resources/detect.tflite"};
 const QString local_label_path{"/resources/coco_labels.txt"};
