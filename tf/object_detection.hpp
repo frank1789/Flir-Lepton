@@ -1,17 +1,13 @@
 #ifndef OBJECT_DETECTION_HPP
 #define OBJECT_DETECTION_HPP
 
-#include <QObject>
+#include <QImage>
+#include <QtGlobal>
 #include <memory>
 #include <vector>
 
 #include "tensorflow/lite/kernels/internal/tensor.h"
 #include "tensorflow/lite/kernels/internal/tensor_utils.h"
-
-QT_BEGIN_NAMESPACE
-class QImage;
-class QRectF;
-QT_END_NAMESPACE
 
 struct BoxDetection{
   int index_class;
@@ -22,6 +18,7 @@ struct BoxDetection{
   qreal heigh;
   QString name;
 };
+
 class ObjectDetection {
  public:
   explicit ObjectDetection() = default;

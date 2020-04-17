@@ -1,14 +1,10 @@
 #include "object_detection.hpp"
 
-#include <QImage>
-#include <QRectF>
-
 #include "tensordata.hpp"
 
 void ObjectDetection::SearchObject(const std::vector<TfLiteTensor *> &outputs,
-                                   float threshold, const QImage &img, int max_index_class) {
-                                   const int &max_class_index) {
-  LOG(LevelAlert::D, max_class_index)
+                                   float threshold, const QImage &img,
+                                   int max_index_class) {
   if (outputs.size() > 3 && outputs.size() < 5) {
     detection_boxes_ =
         std::make_unique<float>(*TensorData<float>(outputs[0], 0));
@@ -37,12 +33,16 @@ void ObjectDetection::SearchObject(const std::vector<TfLiteTensor *> &outputs,
           static_cast<qreal>(detection_boxes_.get()[4 * i + 2] * img.height());
       const auto right =
           static_cast<qreal>(detection_boxes_.get()[4 * i + 3] * img.width());
-      QRectF box(left, top, right - left, bottom - top);
-      LOG(LevelAlert::D, "find score: ", score, ", class: ", cls)
-      BoxDetection r = {cls, score, left, top, right - left, bottom - top, ""};
-        BoxDetection r = {cls, score, left, top,right - left, bottom - top, ""};
-      class_box_.emplace_back(r);
-      // }
+
+      if (score <= 1.00f && class < max_index_class) {
+        LOG(LevelAlert::D, "append to vector find score: ", score,
+            ", class: ", cls)
+        BoxDetection r = {cls,          score,        left, top,
+                          right - left, bottom - top, ""};
+        class_box_.emplace_back(r);
+      } else {
+        class_box_.emplace_back({0, 0f, 0, 0, 0, 0, ""});
+      }
     }
   }
 }
