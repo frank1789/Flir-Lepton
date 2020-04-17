@@ -6,7 +6,8 @@
 #include "tensordata.hpp"
 
 void ObjectDetection::SearchObject(const std::vector<TfLiteTensor *> &outputs,
-                                   float threshold, const QImage &img) {
+                                   float threshold, const QImage &img,
+                                   const int &max_class_index) {
   if (outputs.size() > 3 && outputs.size() < 5) {
     detection_boxes_ =
         std::make_unique<float>(*TensorData<float>(outputs[0], 0));
@@ -19,7 +20,8 @@ void ObjectDetection::SearchObject(const std::vector<TfLiteTensor *> &outputs,
     for (int i = 0; i < num_detections_; i++) {
       // get class
       int cls = static_cast<int>(detection_classes_.get()[i]);
-      if (cls == 0) continue;  // in general class 0 is background
+      if (cls == 0 || cls < max_class_index)
+        continue;  // in general class 0 is background
       auto score = static_cast<float>(detection_scores_.get()[i]);
       if (score < threshold || score >= 1.00) {
         LOG(LevelAlert::W, "ivalid/low score: ", score, ", class ", cls)

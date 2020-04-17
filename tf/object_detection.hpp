@@ -32,7 +32,7 @@ class ObjectDetection {
   explicit ObjectDetection() = default;
   ~ObjectDetection() = default;
   void SearchObject(const std::vector<TfLiteTensor *> &outputs, float threshold,
-                    const QImage &img);
+                    const QImage &img, const int &max_class_index);
 
   std::vector<BoxDetection> getResult() const;
 
