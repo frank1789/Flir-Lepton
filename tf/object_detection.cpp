@@ -23,7 +23,7 @@ void ObjectDetection::SearchObject(const std::vector<TfLiteTensor *> &outputs,
       int cls = static_cast<int>(detection_classes_.get()[i]);
       if (cls >= 0 && cls <= max_class_index) continue;
       auto score = static_cast<float>(detection_scores_.get()[i]);
-      if (score < threshold || score <= 1.00) {
+      if (score < threshold || score <= 1.00f) {
         LOG(LevelAlert::W, "ivalid/low score: ", score, ", class ", cls)
         break;
       }
@@ -39,10 +39,10 @@ void ObjectDetection::SearchObject(const std::vector<TfLiteTensor *> &outputs,
           static_cast<qreal>(detection_boxes_.get()[4 * i + 3] * img.width());
       QRectF box(left, top, right - left, bottom - top);
       LOG(LevelAlert::D, "find score: ", score, ", class: ", cls)
-      if (score <= 1.00 && cls <= max_class_index) {
+      // if (score <= 1.00 && cls <= max_class_index) {
         BoxDetection r = {cls, score, left, top,right - left, bottom - top, ""};
         class_box_.emplace_back(r);
-      }
+      // }
     }
   }
 }
