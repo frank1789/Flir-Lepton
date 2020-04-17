@@ -7,11 +7,11 @@
 #include <QString>
 #include <QTcpSocket>
 
-#include "../log/logger.h"
+#include "logger.h"
 
 MessageType identifies_message_type(const QString &header, const qint32 &size) {
-#if LOGGER_SERVER || LOGGER_CLIENT
-  LOG(DEBUG,
+#if LOGGER
+  LOG(LevelAlert::D,
       "incoming message control through header identification:\n"
       "\t* message containing text if the header corresponds to the code UTF-8 "
       "'\\u001D' or the ASCII code %d\n"
@@ -35,8 +35,9 @@ MessageType identifies_message_type(const QString &header, const qint32 &size) {
 void send_message_text(QTcpSocket *socket, const QString &message) {
   // check image is not empty
   if (message.isNull()) {
-#if LOGGER_CLIENT || LOGGER_SERVER
-    LOG(ERROR, "image is not valid: %s", message.isNull() ? "true" : "false")
+#if LOGGER
+    LOG(LevelAlert::E, "image is not valid: %s",
+        message.isNull() ? "true" : "false")
 #endif
     return;
   }
@@ -48,8 +49,8 @@ void send_message_text(QTcpSocket *socket, const QString &message) {
   out << QString(GROUP_SEPARATOR_ASCII_CODE)
       << static_cast<quint32>(ba_message.size()) << message;
   socket->write(ba_message);
-#if LOGGER_CLIENT || LOGGER_SERVER
-  LOG(TRACE, "sending text")
+#if LOGGER
+  LOG(LevelAlert::T, "sending text")
   qDebug() << "\theader: " << QString(GROUP_SEPARATOR_ASCII_CODE)
            << "\tsize: " << static_cast<quint32>(ba_message.size());
   qDebug() << "\t" << message << "\n";
@@ -59,8 +60,9 @@ void send_message_text(QTcpSocket *socket, const QString &message) {
 void send_message_image(QTcpSocket *socket, const QImage &image) {
   // check image is not null
   if (image.isNull()) {
-#if LOGGER_CLIENT || LOGGER_SERVER
-    LOG(ERROR, "image is not valid: %s", image.isNull() ? "true" : "false")
+#if LOGGER
+    LOG(LevelAlert::E, "image is not valid: %s",
+        image.isNull() ? "true" : "false")
 #endif
     return;
   }
@@ -71,8 +73,8 @@ void send_message_image(QTcpSocket *socket, const QImage &image) {
   out.setVersion(QDataStream::Qt_4_0);
   out << QString(RECORD_SEPARATOR_ASCII_CODE)
       << static_cast<quint32>(image.sizeInBytes()) << image;
-#if LOGGER_CLIENT || LOGGER_SERVER
-  LOG(TRACE, "serialized image")
+#if LOGGER
+  LOG(LevelAlert::T, "serialized image")
   qDebug() << "\theader: " << QString(RECORD_SEPARATOR_ASCII_CODE)
            << "\tsize:" << static_cast<quint32>(image.sizeInBytes()) << "\n";
   qDebug() << ba_message;

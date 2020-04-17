@@ -45,10 +45,8 @@ double leptonI2C_InternalTemp() {
   if (_connected) {
     LEP_RESULT result =
         LEP_GetSysFpaTemperatureKelvin(&_port, &fpa_temp_kelvin);
-#if LOGGER
-    LOG(DEBUG, "FPA raw temperature: %i, code %i", fpa_temp_kelvin, result)
-    LOG(DEBUG, "temperature K: %i, code %i", fpa_temp_kelvin / 100, result)
-#endif
+    LOG(LevelAlert::D, "FPA raw temperature: %i, code %i", fpa_temp_kelvin, result)
+    LOG(LevelAlert::D, "temperature K: %i, code %i", fpa_temp_kelvin / 100, result)
   }
   return static_cast<double>((fpa_temp_kelvin) / 100);
 }

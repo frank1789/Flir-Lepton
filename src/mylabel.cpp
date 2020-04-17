@@ -4,7 +4,6 @@
 #include <QPainter>
 
 #include "instrumentor.h"
-#include "logger.h"
 
 MyLabel::MyLabel(QWidget *parent) : QLabel(parent) {}
 

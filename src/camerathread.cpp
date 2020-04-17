@@ -11,26 +11,17 @@
 CameraColour::CameraColour() {
   auto size = camera.getImageTypeSize(raspicam::RASPICAM_FORMAT_RGB);
   m_buffer = std::make_unique<unsigned char[]>(size);
-#if LOGGER
-  LOG(INFO, "ctor CameraColour")
-#endif
+  LOG(LevelAlert::I, "ctor CameraColour")
   // Open the camera
   if (!camera.open()) {
-#if LOGGER
-    LOG(ERROR, "unable open camera throw runtime error.")
-#endif
+    LOG(LevelAlert::E, "unable open camera throw runtime error.")
     std::cerr << "Unable to open camera";
     throw std::runtime_error("Starting camera failed");
   }
   usleep(RaspicamLoadTime);
 }
 
-CameraColour::~CameraColour() {
-  // close camera
-#if LOGGER
-  LOG(INFO, "dtor CameraColour")
-#endif
-}
+CameraColour::~CameraColour(){LOG(LevelAlert::I, "dtor CameraColour")}
 
 QImage CameraColour::getImageRGB() {
   PROFILE_FUNCTION();
@@ -42,8 +33,6 @@ QImage CameraColour::getImageRGB() {
   auto height = camera.getHeight();
   QImage image = QImage(m_buffer.get(), width, height, QImage::Format_RGB888)
                      .scaled(1024, 768, Qt::KeepAspectRatio);
-#if LOGGER
-  LOG(DEBUG, "FPS camera: %u", camera.getFrameRate())
-#endif
+  LOG(LevelAlert::D, "FPS camera: %u", camera.getFrameRate())
   return image;
 }

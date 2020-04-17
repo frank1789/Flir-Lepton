@@ -119,21 +119,17 @@ void MainWindow::call_capture_image() { emit captureImage(); }
 
 void MainWindow::changeColour() {
   if (m_rbtn_rainbow->isChecked()) {
-#if LOGGER
-    LOG(TRACE, "change palette to rainbow")
-#endif
+    LOG(LevelAlert::D, "change palette to rainbow")
     emit changeColourMap(colormap::rainbow);
   }
   if (m_rbtn_grayscale->isChecked()) {
-#if LOGGER
-    LOG(TRACE, "change palette to grayscale")
-#endif
+    LOG(LevelAlert::D, "change palette to grayscale")
+
     emit changeColourMap(colormap::grayscale);
   }
   if (m_rbtn_ironblack->isChecked()) {
-#if LOGGER
-    LOG(TRACE, "change palette to ironblack")
-#endif
+    LOG(LevelAlert::D, "change palette to ironblack")
+
     emit changeColourMap(colormap::ironblack);
   }
 }
@@ -141,9 +137,7 @@ void MainWindow::changeColour() {
 void MainWindow::indexChanged(int index) { emit updateMode(index); }
 
 QGroupBox *MainWindow::create_colour_selector() {
-#if LOGGER
-  LOG(INFO, "make colour selector ui")
-#endif
+  LOG(LevelAlert::I, "make colour selector ui")
 
   // init groupbox colour
   auto m_colour_group = new QGroupBox("Colour map");
@@ -175,7 +169,7 @@ QGroupBox *MainWindow::create_colour_selector() {
 
 QGridLayout *MainWindow::create_label_preview() {
 #if LOGGER
-  LOG(INFO, "make preview label ui.")
+  LOG(LevelAlert::I, "make preview label ui.")
 #endif
 
   // create horizontal layout
@@ -207,7 +201,7 @@ QGridLayout *MainWindow::create_label_preview() {
 
 QVBoxLayout *MainWindow::create_bar_control() {
 #if LOGGER
-  LOG(INFO, "make bar control ui.")
+  LOG(LevelAlert::I, "make bar control ui.")
 #endif
 
   // init layout
@@ -224,7 +218,7 @@ QVBoxLayout *MainWindow::create_bar_control() {
 
 QVBoxLayout *MainWindow::create_lower_control() {
 #if LOGGER
-  LOG(INFO, "make lower control ui.")
+  LOG(LevelAlert::I, "make lower control ui.")
 #endif
 
   // init layout
@@ -273,9 +267,7 @@ QVBoxLayout *MainWindow::create_lower_control() {
 }
 
 QVBoxLayout *MainWindow::create_upper_control() {
-#if LOGGER
-  LOG(INFO, "make upper control ui.")
-#endif
+  LOG(LevelAlert::I, "make upper control ui.")
 
   // init layout
   auto m_vertical_upper = new QVBoxLayout;

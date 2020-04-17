@@ -1,6 +1,6 @@
 #include "tcpthread.hpp"
 
-#include "../log/instrumentor.h"
+#include "instrumentor.h"
 
 TCPThread::TCPThread(int nsocket) {
   socket = new QTcpSocket();

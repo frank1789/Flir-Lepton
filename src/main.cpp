@@ -45,7 +45,8 @@ int main(int argc, char **argv) {
   auto label_path = QApplication::applicationDirPath() + local_label_path;
   LabelDetection label(label_path);
   label.read();
-  ModelTensorFlowLite modeltflite(model_path);
+  ModelTensorFlowLite modeltflite;
+  modeltflite.LoadModelFromFile(model_path);
   modeltflite.setLabel(label.getLabels());
   QObject::connect(lepton, &LeptonThread::updateCam,
                    [&modeltflite](QImage img) {

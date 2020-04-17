@@ -38,7 +38,7 @@ void ObjectDetection::SearchObject(const std::vector<TfLiteTensor *> &outputs,
       QRectF box(left, top, right - left, bottom - top);
       LOG(LevelAlert::D, "find score: ", score, ", class: ", cls)
       BoxDetection r = {cls, score, left, top, right - left, bottom - top, ""};
-      class_box_.emplace_back(r);
+      class_box_.push_back(r);
     }
   }
 }

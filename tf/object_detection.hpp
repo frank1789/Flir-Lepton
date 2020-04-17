@@ -2,6 +2,7 @@
 #define OBJECT_DETECTION_HPP
 
 #include <QObject>
+#include <QtGlobal>
 #include <memory>
 #include <vector>
 
@@ -11,9 +12,10 @@
 QT_BEGIN_NAMESPACE
 class QImage;
 class QRectF;
+class QString;
 QT_END_NAMESPACE
 
-struct BoxDetection{
+struct BoxDetection {
   int index_class;
   float score;
   qreal left;
