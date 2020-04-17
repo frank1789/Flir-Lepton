@@ -8,6 +8,7 @@
 void ObjectDetection::SearchObject(const std::vector<TfLiteTensor *> &outputs,
                                    float threshold, const QImage &img,
                                    const int &max_class_index) {
+  LOG(LevelAlert::D, max_class_index)
   if (outputs.size() > 3 && outputs.size() < 5) {
     detection_boxes_ =
         std::make_unique<float>(*TensorData<float>(outputs[0], 0));
