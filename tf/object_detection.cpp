@@ -37,11 +37,10 @@ void ObjectDetection::SearchObject(const std::vector<TfLiteTensor *> &outputs,
       if (score <= 1.00f && cls < max_index_class) {
         LOG(LevelAlert::D, "append to vector find score: ", score,
             ", class: ", cls)
-        BoxDetection r = {cls,score,left, top, right - left, bottom - top, ""};
-        class_box_.emplace_back(r);
+        class_box_.push_back({cls,score,left, top, right - left, bottom - top, ""});
       } else {
         BoxDetection empty_result;
-        class_box_.emplace_back(empty_result);
+        class_box_.push_back(empty_result);
       }
     }
   }

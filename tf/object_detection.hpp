@@ -2,7 +2,6 @@
 #define OBJECT_DETECTION_HPP
 
 #include <QImage>
-#include <QtGlobal>
 #include <memory>
 #include <vector>
 
@@ -12,10 +11,10 @@
 struct BoxDetection{
   int index_class{0};
   float score{0.0f};
-  qreal left{0.0f};
-  qreal top{0.0f};
-  qreal width{0.0f};
-  qreal heigh{0.0f};
+  float left{0.0f};
+  float top{0.0f};
+  float width{0.0f};
+  float heigh{0.0f};
   QString name{""};
 };
 
