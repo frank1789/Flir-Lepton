@@ -190,7 +190,7 @@ void ModelTensorFlowLite::RunInference(const QImage &image) {
                            .arg(QString::fromStdString(getLabel(cls)))
                            .arg(QString::number(score * 100, 'g', 4));
           r.name = label;
-          LOG(LevelAlert::D, label)
+          LOG(LevelAlert::D, label.toStdString())
         }
       }
       break;
