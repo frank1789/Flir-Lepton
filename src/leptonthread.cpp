@@ -8,8 +8,8 @@
 
 #include "Lepton_I2C.h"
 #include "SPI.h"
-#include "log/instrumentor.h"
-#include "log/logger.h"
+#include "instrumentor.h"
+#include "logger.h"
 #include "palettes.h"
 
 LeptonThread::LeptonThread()
@@ -20,9 +20,7 @@ LeptonThread::LeptonThread()
   m_mode = QPainter::CompositionMode_Overlay;
   m_frameBuffer = new uint16_t;
   memset(result, 0, sizeof(result));
-#if LOGGER
   LOG(INFO, "ctor LeptonThread")
-#endif
 }
 
 LeptonThread::~LeptonThread() {
@@ -61,11 +59,9 @@ void LeptonThread::run() {
         }
       }
     }
-#if LOGGER
     if (resets >= MaxResetsPerFrame) {
       LOG(DEBUG, "reading, resets: %d", resets)
     }
-#endif
 
     m_frameBuffer = (uint16_t *)result;
     int row, column;

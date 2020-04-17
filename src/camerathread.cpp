@@ -5,8 +5,8 @@
 #include <fstream>
 #include <iostream>
 
-#include "log/instrumentor.h"
-#include "log/logger.h"
+#include "instrumentor.h"
+#include "logger.h"
 
 CameraColour::CameraColour() {
   auto size = camera.getImageTypeSize(raspicam::RASPICAM_FORMAT_RGB);

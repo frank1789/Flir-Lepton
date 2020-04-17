@@ -1,6 +1,6 @@
 #include "Lepton_I2C.h"
 
-#include "log/logger.h"
+#include "logger.h"
 
 bool _connected{false};
 LEP_CAMERA_PORT_DESC_T _port;
