@@ -15,7 +15,7 @@ class FindModel : public QDialog {
   Q_OBJECT
  public:
   explicit FindModel(QDialog *parent = nullptr);
-  ~FindModel();
+  ~FindModel() = default;
   QString getModelPath();
   QString getLabelPath();
 
@@ -39,4 +39,4 @@ class FindModel : public QDialog {
   QString m_filename_label{""};
 };
 
-#endif // FINDMODEL_HPP
+#endif  // FINDMODEL_HPP

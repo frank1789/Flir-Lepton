@@ -3,8 +3,7 @@
 #include <QColor>
 #include <QPainter>
 
-#include "log/instrumentor.h"
-#include "log/logger.h"
+#include "instrumentor.h"
 
 MyLabel::MyLabel(QWidget *parent) : QLabel(parent) {}
 

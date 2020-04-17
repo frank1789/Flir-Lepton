@@ -3,8 +3,27 @@
 #include <QColor>
 #include <QPainter>
 #include <QString>
+#include <random>
 
 #include "list_colour.hpp"
+
+int generateRandomInteger(int max) {
+  std::random_device dev;
+  std::mt19937 rng(dev());
+  std::uniform_int_distribution<std::mt19937::result_type> value(0, max);
+  return static_cast<int>(value(rng));
+}
+
+QColor ColorManager::getColor(int i) const {
+  int index;
+  QString name_color;
+  QColor color;
+  if (i > Colors.size()) {
+    i = generateRandomInteger(Colors.size());
+  }
+  std::tie(index, name_color, color) = Colors[i];
+  return color;
+}
 
 QColor ColorManager::getColor(QString element) {
   int index = elements.indexOf(element);
@@ -18,7 +37,7 @@ QColor ColorManager::getColor(QString element) {
 }
 
 QColor ColorManager::getNewColor() {
-  QColor color = def_color(defColors, elements.count());
+  QColor color = def_color(Colors, elements.count());
 
   if (!rgb) {
     int r = color.red();
@@ -53,7 +72,8 @@ int billinerColor(QImage mask, QColor color, int xa, int xb, int xc, int xd,
 }
 
 uint billinearPixel(QImage mask, double sx, double sy, int k, int j) {
-  double alpha, beta;
+  double alpha;
+  double beta;
 
   int xa = static_cast<int>(k / sx);
   int ya = static_cast<int>(j / sy);
