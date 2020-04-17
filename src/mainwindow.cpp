@@ -14,8 +14,8 @@
 #include <QString>
 #include <QVBoxLayout>
 
-#include "log/instrumentor.h"
-#include "log/logger.h"
+#include "instrumentor.h"
+#include "logger.h"
 #include "palettes.h"
 #include "socket/tcpserverui.hpp"
 #include "ui_mainwindow.h"

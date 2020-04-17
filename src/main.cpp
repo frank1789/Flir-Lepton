@@ -2,11 +2,11 @@
 #include <QObject>
 #include <QPointer>
 
-#include "../tf/findmodel.hpp"
-#include "../tf/model_tpu.hpp"
-#include "../tf/util_label_image.hpp"
+#include "findmodel.hpp"
+#include "model_tpu.hpp"
+#include "util_label_image.hpp"
 #include "leptonthread.hpp"
-#include "log/instrumentor.h"
+#include "instrumentor.h"
 #include "mainwindow.hpp"
 
 const QString local_model_path{"/resources/detect.tflite"};
