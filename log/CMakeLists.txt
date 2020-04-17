@@ -25,17 +25,10 @@ target_include_directories(
         ${CMAKE_CURRENT_LIST_DIR}
 )
 
-target_compile_options(${LIB_NAME} PRIVATE -fstack-protector-strong
-        -Wunused
-        -Wshadow
+target_compile_options(${LIB_NAME} PRIVATE 
+  -fpic 
+  -O2
+  -fstack-protector-strong
+  -Wunused
+  -Wshadow
 )
-
-if (CMAKE_BUILD_TYPE MATCHES "Debug")
-	if(COVERAGE)
-		target_link_libraries(coverage)
-	endif()
-	else()
-	target_compile_options(${LIB_NAME} PUBLIC -fpic -O2)
-endif()
-
-

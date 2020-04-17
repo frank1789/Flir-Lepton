@@ -22,11 +22,5 @@ target_link_libraries(${LEPTONCAMERA}
 	${CMAKE_THREAD_LIBS_INIT}
 	${raspicam_LIBS}
 	)
-if (CMAKE_BUILD_TYPE MATCHES "Debug")
-	target_compile_options(${LEPTONCAMERA} PUBLIC -fpic -O0 -g)
-	if(COVERAGE)
-		target_link_libraries(coverage_config)
-	endif()
-	else()
-	target_compile_options(${LEPTONCAMERA} PUBLIC -fpic -O2)
-endif()
+
+target_compile_options(${LEPTONCAMERA} PUBLIC -fpic -O2)
