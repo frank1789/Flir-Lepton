@@ -51,6 +51,6 @@ void LabelDetection::read() {
   while (!in.atEnd()) {
     QString line = in.readLine();
     auto [label_id, label_name] = m_process_line(line);
-    m_labels[label_id] = label_name;
+    m_labels.emplace(label_id, label_name);
   }
 }

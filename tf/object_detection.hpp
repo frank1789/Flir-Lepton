@@ -2,7 +2,6 @@
 #define OBJECT_DETECTION_HPP
 
 #include <QObject>
-#include <QtGlobal>
 #include <memory>
 #include <vector>
 
@@ -12,10 +11,9 @@
 QT_BEGIN_NAMESPACE
 class QImage;
 class QRectF;
-class QString;
 QT_END_NAMESPACE
 
-struct BoxDetection {
+struct BoxDetection{
   int index_class;
   float score;
   qreal left;
@@ -29,7 +27,7 @@ class ObjectDetection {
   explicit ObjectDetection() = default;
   ~ObjectDetection() = default;
   void SearchObject(const std::vector<TfLiteTensor *> &outputs, float threshold,
-                    const QImage &img, const int &max_class_index);
+                    const QImage &img, int max_index_class);
 
   std::vector<BoxDetection> getResult() const;
 
