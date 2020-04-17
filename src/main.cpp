@@ -48,10 +48,7 @@ int main(int argc, char **argv) {
   ModelTensorFlowLite modeltflite;
   modeltflite.LoadModelFromFile(model_path);
   modeltflite.setLabel(label.getLabels());
-  QObject::connect(lepton, &LeptonThread::updateCam,
-                   [&modeltflite](QImage img) {
-                     modeltflite.imageAvailable(QPixmap::fromImage(img));
-                   });
+  QObject::connect(lepton, &LeptonThread::updateCam, [&modeltflite](QImage img) {modeltflite.imageAvailable(img);});
   auto r = a.exec();
 #if PROFILING
   Instrumentor::Get().EndSession();

@@ -19,7 +19,7 @@ void ObjectDetection::SearchObject(const std::vector<TfLiteTensor *> &outputs,
       int cls = static_cast<int>(detection_classes_.get()[i]);
       if (cls == 0 || cls <= max_index_class) continue;
       auto score = static_cast<float>(detection_scores_.get()[i]);
-      if (score < threshold || score <= 1.00f) {
+      if (score < threshold) {
         LOG(LevelAlert::W, "low score: ", score, ", class ", cls)
         break;
       }
@@ -34,13 +34,11 @@ void ObjectDetection::SearchObject(const std::vector<TfLiteTensor *> &outputs,
       const auto right =
           static_cast<float>(detection_boxes_.get()[4 * i + 3] * img.width());
 
-      if (score <= 1.00f && cls < max_index_class) {
+      if (cls <= max_index_class) {
         LOG(LevelAlert::D, "append to vector find score: ", score,
             ", class: ", cls)
-        class_box_.push_back({cls,score,left, top, right - left, bottom - top, ""});
-      } else {
-        BoxDetection empty_result;
-        class_box_.push_back(empty_result);
+        class_box_.push_back(
+            {cls, score, left, top, right - left, bottom - top, ""});
       }
     }
   }

@@ -180,20 +180,23 @@ void ModelTensorFlowLite::RunInference(const QImage &image) {
       ClassifierOutput();
       break;
 
-    case TypeDetection::ObjectDetection:
+    case TypeDetection::ObjectDetection: {
       ObjectOutput(image);
-      for (auto &r : getResults()) {
-        int cls = r.index_class;
-        if (cls > 0) {
-          auto score = r.score;
-          auto label = QString("%1: %2 %")
-                           .arg(QString::fromStdString(getLabel(cls)))
-                           .arg(QString::number(score * 100, 'g', 4));
-          r.name = label;
-          LOG(LevelAlert::D, label.toStdString())
+      auto result = object_detect_->getResult();
+      if (result.size() > 0) {
+        for (auto &r : result) {
+          int cls = r.index_class;
+          if (cls > 0) {
+            auto score = r.score;
+            auto label = QString("%1: %2 %")
+                             .arg(QString::fromStdString(getLabel(cls)))
+                             .arg(QString::number(score * 100, 'g', 4));
+            r.name = label;
+            LOG(LevelAlert::D, label.toStdString())
+          }
         }
       }
-      break;
+    } break;
 
     default:
       return;
