@@ -26,13 +26,13 @@ void ObjectDetection::SearchObject(const std::vector<TfLiteTensor *> &outputs,
 
       // get corners coordinates
       const auto top =
-          static_cast<qreal>(detection_boxes_.get()[4 * i] * img.height());
+          static_cast<float>(detection_boxes_.get()[4 * i] * img.height());
       const auto left =
-          static_cast<qreal>(detection_boxes_.get()[4 * i + 1] * img.width());
+          static_cast<float>(detection_boxes_.get()[4 * i + 1] * img.width());
       const auto bottom =
-          static_cast<qreal>(detection_boxes_.get()[4 * i + 2] * img.height());
+          static_cast<float>(detection_boxes_.get()[4 * i + 2] * img.height());
       const auto right =
-          static_cast<qreal>(detection_boxes_.get()[4 * i + 3] * img.width());
+          static_cast<float>(detection_boxes_.get()[4 * i + 3] * img.width());
 
       if (score <= 1.00f && cls < max_index_class) {
         LOG(LevelAlert::D, "append to vector find score: ", score,
