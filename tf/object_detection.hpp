@@ -24,9 +24,6 @@ struct BoxDetection {
   qreal heigh;
   QString name;
 };
-
-Q_DECLARE_METATYPE(BoxDetection);
-
 class ObjectDetection {
  public:
   explicit ObjectDetection() = default;
