@@ -53,11 +53,11 @@ clear_old_build() {
 # ////////////////////////////////////////////////////////////////////////////
 
 if [ "$#" -eq "0" ]; then
-    echo "build release version"
+    echo "**** build release mode ****"
     compile_release
 else
     if [ "$1" = "Debug" ] || [ "$1" = "debug" ]; then
-        echo "build release version"
+        echo "**** build debug mode ****"
         compile_debug
     fi
 fi

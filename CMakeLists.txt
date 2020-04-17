@@ -123,8 +123,8 @@ endif (${raspicam_FOUND})
 #-----------------------------------------------------------------------------
 add_subdirectory(src)
 add_subdirectory(src/socket)
-add_subdirectory(src/log)
 add_subdirectory(src/LeptonSDKEmb32PUB)
+add_subdirectory(log)
 add_subdirectory(tf)
 
 # wrap ui
