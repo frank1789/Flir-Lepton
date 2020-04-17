@@ -12,7 +12,7 @@ constexpr auto to_underlying(E e) noexcept {
   return static_cast<std::underlying_type_t<E>>(e);
 }
 
-#define LOGGER 0
+#define LOGGER 1
 #if LOGGER
 #define LOGGER_GEN 1
 #define LOGGER_UI 1
