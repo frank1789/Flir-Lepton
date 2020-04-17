@@ -10,13 +10,13 @@
 #include "tensorflow/lite/kernels/internal/tensor_utils.h"
 
 struct BoxDetection{
-  int index_class;
-  float score;
-  qreal left;
-  qreal top;
-  qreal width;
-  qreal heigh;
-  QString name;
+  int index_class{0};
+  float score{0.0f};
+  qreal left{0.0f};
+  qreal top{0.0f};
+  qreal width{0.0f};
+  qreal heigh{0.0f};
+  QString name{""};
 };
 
 class ObjectDetection {
