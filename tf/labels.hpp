@@ -11,13 +11,39 @@ QT_BEGIN_NAMESPACE
 class QString;
 QT_END_NAMESPACE
 
+/**
+ * @brief LabelDetection class allows you to import the files containing the
+ * labels, necessary for the classification and object detection operation,
+ * choosing how to interpret the file based on the name or extension.
+ *
+ */
 class LabelDetection {
  public:
+ /**
+  * @brief Construct a new Label Detection object
+  * 
+  * @param path string containing the path to the file.
+  */
   LabelDetection(QString path);
+
+  /**
+   * @brief Construct a new Label Detection object
+   * 
+   * @param path string containing the path to the file.
+   */
   LabelDetection(const std::string &path);
+
+  /**
+   * @brief Read file lines by lines.
+   * 
+   */
   void read();
 
-  // getter method
+  /**
+   * @brief Get the Labels object.
+   * 
+   * @return std::unordered_map<int, std::string> label map.
+   */
   std::unordered_map<int, std::string> getLabels();
 
  private:
