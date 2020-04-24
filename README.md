@@ -4,13 +4,14 @@
 
 This Qt-based project allows the interface between the Flir Lepton 2.5 camera
 and Raspicam to be part of my thesis project for the Master's Degree in
-Mechatronics, by title _Enanching UAV capabilities with machine learning on
-board_.
+Mechatronics, by title **_Enanching UAV capabilities with machine learning on
+board_**.
 
 ## Prerequisites
 
-* Qt
-* gcc 6.3 (c++14 or above)
+* Raspbian Buster
+* Qt (5.12 or above)
+* gcc 8.3 (c++17 or above)
 * cmake (3.7 or above)
 * Flir Lepton Guide [product page](https://learn.sparkfun.com/tutorials/flir-lepton-hookup-guide)
     +   Lepton Flir 2.0 [reference](https://groupgets.com/manufacturers/flir/products/lepton-2-0)
@@ -21,7 +22,7 @@ board_.
 
 Connections: 
 1.  match your female to female jumpers wires to the images below (_note: your
-jumper wires may differ in color_), You can also use the list below.
+jumper wires may differ in color_), otherwise you can also use the list below.
 
 <center>
 
@@ -69,13 +70,12 @@ cd Flir-Lepton
 ```
 
 The software has a single main window in which the images acquired by the
-thermal camera and Raspicam are displayed. you can edit the color map for the
-thermal image from the main widget and save photos. it is possible to modify the
+thermal camera and Raspicam are displayed. <br>You can edit the color map for the
+thermal image from the main widget and save photos. It is possible to modify the
 fusion filter between the images, these however require that the cameras are
-perfectly aligned with a support structure.
-
+perfectly aligned with a support structure.<br>
 Inside there is a TCP server to send images to clients connected using the
-default port 52693, while the address is shown in the main widget.
+default **port 52693**, while the address is shown in the main widget.
 
 <div class="row" align="center">
     <div class="column">    
