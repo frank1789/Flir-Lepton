@@ -1,0 +1,33 @@
+FROM arm32v7/debian:buster
+LABEL version="0.1.0" maintaner="Francesco Argentieri <francesco.argentieri89@gmail.com>"
+ENV DEBIAN_FRONTEND noninteractive
+
+# update and upgrade local package, then install library for qt, build tools
+RUN apt-get update && apt-get -y upgrade && \
+ 	apt-get -y --no-install-recommends install unzip \
+	build-essential	\
+	cmake \
+	wget \
+	curl \
+	qt5-default \
+	pkg-config \
+    wget \
+    ca-certificates \
+ 	&& apt-get clean
+
+# download and unzip raspicam
+RUN wget https://netcologne.dl.sourceforge.net/project/raspicam/raspicam-0.1.6.zip
+
+RUN	raspicamxx=$(find $PWD -type f -name "raspicam-*.*") && \
+	unzip -a ${raspicamxx}
+
+# RUN echo $PWD
+# RUN	raspicam=$(find $PWD -type d -name "raspicam-*") && \
+# 	echo ${raspicam} \
+# 	cd ${raspicam} \
+# 	mkdir build-raspi \
+# 	cd build-raspi 
+# RUN echo $PWD
+
+# RUN	cmake --version \
+# 	cmake .. && make -j$(nproc) && make install && ldconfig
