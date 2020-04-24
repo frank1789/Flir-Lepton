@@ -8,6 +8,10 @@ RUN apt-get update && apt-get -y upgrade && \
 	build-essential	\
 	cmake \
 	pkg-config \
+	libjpeg-dev \
+	libtiff5-dev \
+	libjasper-dev \
+	libpng-dev \
 	libavcodec-dev \
 	libavformat-dev \
 	libswscale-dev \
@@ -31,8 +35,7 @@ RUN apt-get update && apt-get -y upgrade && \
 	pkg-config \
     wget \
     ca-certificates \
-    && apt autoremove \
- 	&& apt-get clean
+    && apt autoremove
 
 # download and unzip raspicam
 RUN wget https://netcologne.dl.sourceforge.net/project/raspicam/raspicam-0.1.6.zip
