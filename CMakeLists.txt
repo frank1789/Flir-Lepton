@@ -10,10 +10,7 @@ project(${LEPTONCAMERA} LANGUAGES C CXX VERSION "0.6.2")
 #-----------------------------------------------------------------------------
 if(NOT CMAKE_BUILD_TYPE)
 	message(STATUS "Compile in debug mode")
-	set(CMAKE_BUILD_TYPE Debug)
-elseif(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-	message(STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
-	set(CMAKE_BUILD_TYPE Debug)
+	set(CMAKE_BUILD_TYPE Release)
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
 	message(STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
 	set(CMAKE_BUILD_TYPE Release)
@@ -62,27 +59,6 @@ set(CMAKE_CXX_FLAGS_DEBUG "-march=armv8-a+crc -mtune=cortex-a53 -mfpu=crypto-neo
 set(CMAKE_C_FLAGS_RELEASE "-march=armv8-a+crc -mtune=cortex-a53 -mfpu=crypto-neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations -pipe -pthread")
 set(CMAKE_CXX_FLAGS_RELEASE "-march=armv8-a+crc -mtune=cortex-a53 -mfpu=crypto-neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations -pipe -pthread")
 
-#-----------------------------------------------------------------------------
-# Code coverage
-#-----------------------------------------------------------------------------
-if(COVERAGE)
-	add_library(coverage_config INTERFACE)
-	if(${CMAKE_BUILD_TYPE} STREQUAL "Debug" AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-	  	message(STATUS "enabled coverage")
-	  	# Add required flags (GCC & LLVM/Clang)
-	  	target_compile_options(coverage_config INTERFACE
-			-O0        # no optimization
-			-g         # generate debug info
-			-ftest-coverage -fprofile-arcs # sets all required flags
-	  	)
-	  	if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.13)
-			target_link_options(coverage_config INTERFACE --coverage)
-	  	else()
-			target_link_libraries(coverage_config INTERFACE --coverage)
-	  	endif()
-	endif()
-endif()
-
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed
@@ -123,8 +99,8 @@ endif (${raspicam_FOUND})
 #-----------------------------------------------------------------------------
 add_subdirectory(src)
 add_subdirectory(src/socket)
-add_subdirectory(src/log)
 add_subdirectory(src/LeptonSDKEmb32PUB)
+add_subdirectory(log)
 add_subdirectory(tf)
 
 # wrap ui

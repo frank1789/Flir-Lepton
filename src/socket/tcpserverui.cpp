@@ -15,10 +15,8 @@
 #include "commonconnection.hpp"
 
 TCPServerUi::TCPServerUi(QWidget *parent) : QWidget(parent) {
-#if LOGGER_UI
-  LOG(INFO, "ctor TCPServerUi initialize ui")
-  LOG(INFO, "dis/connect buttons are set disable")
-#endif
+  LOG(LevelAlert::I, "ctor TCPServerUi initialize ui")
+  LOG(LevelAlert::I, "dis/connect buttons are set disable")
   m_device_count = 0;
   // assemble ui, layout
   QGridLayout *grid = new QGridLayout;
@@ -41,7 +39,7 @@ QString TCPServerUi::findIpAddress() {
   if (ipAddress.isEmpty())
     ipAddress = QHostAddress(QHostAddress::LocalHost).toString();
 #if LOGGER_UI
-  LOG(DEBUG, "server use IP")
+  LOG(LevelAlert::D, "server use IP")
   qDebug() << "\t" << ipAddress;
 #endif
   return ipAddress;
@@ -70,9 +68,7 @@ void TCPServerUi::onClientDisconnect() {
 //////////////////////////////////////////////////////////////////////////////
 
 QGroupBox *TCPServerUi::createInformationGroup() {
-#if LOGGER_UI
-  LOG(INFO, "build information group ui")
-#endif
+  LOG(LevelAlert::I, "build information group ui")
   // initialize grid layout
   auto grid_layout = new QGridLayout;
   // initialize group
@@ -93,9 +89,8 @@ QGroupBox *TCPServerUi::createInformationGroup() {
 }
 
 QGroupBox *TCPServerUi::createLogGroup() {
-#if LOGGER_UI
-  LOG(INFO, "build logging group ui")
-#endif
+  LOG(LevelAlert::I, "build logging group ui")
+
   // defining layout group
   QGroupBox *groupBox = new QGroupBox(tr("Information:"));
   // init element ui

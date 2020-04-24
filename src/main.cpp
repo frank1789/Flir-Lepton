@@ -2,12 +2,12 @@
 #include <QObject>
 #include <QPointer>
 
-#include "../tf/findmodel.hpp"
-#include "../tf/model_tpu.hpp"
-#include "../tf/util_label_image.hpp"
+#include "findmodel.hpp"
+#include "instrumentor.h"
+#include "labels.hpp"
 #include "leptonthread.hpp"
-#include "log/instrumentor.h"
 #include "mainwindow.hpp"
+#include "model_tpu.hpp"
 
 const QString local_model_path{"/resources/detect.tflite"};
 const QString local_label_path{"/resources/coco_labels.txt"};
@@ -45,12 +45,10 @@ int main(int argc, char **argv) {
   auto label_path = QApplication::applicationDirPath() + local_label_path;
   LabelDetection label(label_path);
   label.read();
-  ModelTensorFlowLite modeltflite(model_path);
+  ModelTensorFlowLite modeltflite;
+  modeltflite.LoadModelFromFile(model_path);
   modeltflite.setLabel(label.getLabels());
-  QObject::connect(lepton, &LeptonThread::updateCam,
-                   [&modeltflite](QImage img) {
-                     modeltflite.imageAvailable(QPixmap::fromImage(img));
-                   });
+  QObject::connect(lepton, &LeptonThread::updateCam, [&modeltflite](QImage img) {modeltflite.imageAvailable(img);});
   auto r = a.exec();
 #if PROFILING
   Instrumentor::Get().EndSession();

@@ -1,90 +1,72 @@
 #ifndef MODEL_TPU_HPP
 #define MODEL_TPU_HPP
 
-#include <tensorflow/lite/interpreter.h>
-#include <tensorflow/lite/kernels/register.h>
-#include <tensorflow/lite/model.h>
-
 #include <QObject>
-#include <QThread>
 #include <memory>
 #include <string>
+
+#include "object_detection.hpp"
+#include "tensorflow/lite/interpreter.h"
+#include "tensorflow/lite/kernels/register.h"
+#include "tensorflow/lite/model.h"
 
 QT_BEGIN_NAMESPACE
 class QImage;
 class QString;
-class QByteArray;
+class QPixmap;
+class QString;
+class QRectF;
 QT_END_NAMESPACE
 
-enum type_detection { none = -1, image_classifier = 1, object_detection = 2 };
-
-struct result_t {
-  // Results
-  QList<QString> caption;
-  QList<double> confidences;
-  QList<QRectF> box;
-  QList<QImage> masks;
-};
+enum class TypeDetection : int { ImageClassifier, ObjectDetection };
 
 class ModelTensorFlowLite : public QObject {
+  Q_OBJECT
  public:
   explicit ModelTensorFlowLite();
-  explicit ModelTensorFlowLite(const QString &path);
+  void InitializeModelTFLite(const std::string &path);
 
-  void run(QImage image);
-
-  void setInput(QImage image);
-
-  bool get_classifier_output(std::vector<std::pair<float, int> > *top_results);
-  bool get_object_outputs();
-
+  // setter
+  void LoadModelFromFile(const std::string &path);
+  void LoadModelFromFile(const QString &path);
   void setLabel(const std::unordered_map<int, std::string> &l);
-  QString getLabel(int i);
+
+  // core
+  void RunInference(const QImage &image);
+  void ClassifierOutput();
+  void ObjectOutput(const QImage img);
+
+  // getter
+  std::string getLabel(int i);
+  std::vector<BoxDetection> getResults() const;
+  std::vector<std::pair<float, int>> getResultClassification() const;
+
+ signals:
+  void objAvailable(BoxDetection);
+
  public slots:
   void imageAvailable(QPixmap image);
+  void imageAvailable(QImage image);
 
  private:
-  //  methods
-  void init_model_TFLite(const std::string &path);
-  bool getObjectOutputsTFLite(QStringList &captions, QList<double> &confidences,
-                              QList<QRectF> &locations, QList<QImage> &masks);
+  // input image properties
+  const int channels_{3};
 
-  // constants
-  static constexpr float MASK_THRESHOLD{0.3f};
-
-  // parametric threshold
-  float threshold;
-
-  // output string
-  const QString m_num_detections = "num_detections: ";
-  const QString m_detection_classes = "detection_classes: ";
-  const QString m_detection_scores = "detection_scores: ";
-  const QString m_detection_boxes = "detection_boxes: ";
-  const QString m_detection_masks = "detection_masks: ";
-
-  // image properties
-  const int m_num_channels{3};
-  int img_height, img_width;
-  int wanted_height, wanted_width, wanted_channels;
-
-  // detection mask
-  bool has_detection_mask;
-
-  //
-  int kind_network;
-
-  // thread
-  int numThreads;
-
-  result_t m_result;
-
+  // size tensor image desired
+  int wanted_height_;
+  int wanted_width_;
+  int wanted_channels_;
+  TypeDetection kind_network_{TypeDetection::ObjectDetection};
+  int num_threads_;
+  std::vector<std::pair<float, int>> top_results;
   std::unordered_map<int, std::string> m_labels;
+  std::unique_ptr<ObjectDetection> object_detect_{nullptr};
 
   // model
-  std::unique_ptr<tflite::FlatBufferModel> model;
+  std::unique_ptr<tflite::FlatBufferModel> model{nullptr};
   tflite::ops::builtin::BuiltinOpResolver resolver;
   tflite::StderrReporter error_reporter;
-  std::unique_ptr<tflite::Interpreter> interpreter;
+  std::unique_ptr<tflite::Interpreter> interpreter{nullptr};
   std::vector<TfLiteTensor *> outputs;
 };
 

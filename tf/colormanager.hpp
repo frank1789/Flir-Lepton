@@ -9,10 +9,11 @@ class QString;
 class QImage;
 QT_END_NAMESPACE
 
-class ColorManager
-{
+class ColorManager {
  public:
+  explicit ColorManager() = default;
   QColor getColor(QString element);
+  QColor getColor(int i) const;
   static QImage billinearInterpolation(QImage mask, double newHeight,
                                        double newWidth);
   static QImage applyTransformation(QImage image, QTransform painterTransform);
@@ -26,4 +27,4 @@ class ColorManager
   bool rgb = true;
 };
 
-#endif // COLORMANAGER_HPP
+#endif  // COLORMANAGER_HPP

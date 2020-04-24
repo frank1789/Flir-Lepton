@@ -7,8 +7,6 @@ compile_release() {
     mkdir $DIRECTORY && cd $DIRECTORY
     cmake -D CMAKE_BUILD_TYPE=Release ..
     make
-    EXECUTABLE=$(find $PWD -name "FlirLepton")
-    ${EXECUTABLE}
 }
 
 clear_old_build() {
