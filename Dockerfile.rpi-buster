@@ -7,16 +7,42 @@ RUN apt-get update && apt-get -y upgrade && \
  	apt-get -y --no-install-recommends install unzip \
 	build-essential	\
 	cmake \
+	pkg-config \
+	libjpeg-dev \
+	libtiff5-dev \
+	libjasper-dev \
+	libpng-dev \
+	libavcodec-dev \
+	libavformat-dev \
+	libswscale-dev \
+	libv4l-dev \
+	libxvidcore-dev \
+	libx264-dev \
+	libfontconfig1-dev \
+	libcairo2-dev \
+	libgdk-pixbuf2.0-dev \
+	libpango1.0-dev \
+	libgtk2.0-dev \
+	libgtk-3-dev \
+	libatlas-base-dev \
+	gfortran \
+	libqtgui4 \
+	libqtwebkit4 \
+	libqt4-test \
 	wget \
 	curl \
 	qt5-default \
 	pkg-config \
     wget \
     ca-certificates \
- 	&& apt-get clean
+    && apt autoremove
 
 # download and unzip raspicam
 RUN wget https://netcologne.dl.sourceforge.net/project/raspicam/raspicam-0.1.6.zip
 
 RUN	raspicamxx=$(find $PWD -type f -name "raspicam-*.*") && \
 	unzip -a ${raspicamxx}
+
+COPY build-raspicam.sh build-raspicam.sh
+
+RUN ./build-raspicam.sh
