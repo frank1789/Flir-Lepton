@@ -20,14 +20,3 @@ RUN wget https://netcologne.dl.sourceforge.net/project/raspicam/raspicam-0.1.6.z
 
 RUN	raspicamxx=$(find $PWD -type f -name "raspicam-*.*") && \
 	unzip -a ${raspicamxx}
-
-# RUN echo $PWD
-# RUN	raspicam=$(find $PWD -type d -name "raspicam-*") && \
-# 	echo ${raspicam} \
-# 	cd ${raspicam} \
-# 	mkdir build-raspi \
-# 	cd build-raspi 
-# RUN echo $PWD
-
-# RUN	cmake --version \
-# 	cmake .. && make -j$(nproc) && make install && ldconfig
