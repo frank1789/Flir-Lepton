@@ -16,8 +16,8 @@ class FindModel : public QDialog {
  public:
   explicit FindModel(QDialog *parent = nullptr);
   ~FindModel() = default;
-  QString getModelPath();
-  QString getLabelPath();
+  QString getModelPath() const;
+  QString getLabelPath() const;
 
  private slots:
   void loadModelFile();

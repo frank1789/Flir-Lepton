@@ -21,9 +21,9 @@ FindModel::FindModel(QDialog* parent) : QDialog(parent) {
           &FindModel::loadModelFile);
 }
 
-QString FindModel::getModelPath() { return m_filename_model; }
+QString FindModel::getModelPath() const { return m_filename_model; }
 
-QString FindModel::getLabelPath() { return m_filename_label; }
+QString FindModel::getLabelPath() const { return m_filename_label; }
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Slot
@@ -66,7 +66,7 @@ QGridLayout* FindModel::initializeLayout() {
   // disable line edit
   m_line_model->setReadOnly(true);
   m_line_label->setReadOnly(true);
-  // set palceholder
+  // set placeholder
   m_line_label->setPlaceholderText("path/to/label_map.txt");
   m_line_model->setPlaceholderText("path/to/model.tflite");
   // add button

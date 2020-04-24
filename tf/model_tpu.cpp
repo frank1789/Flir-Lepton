@@ -182,18 +182,16 @@ void ModelTensorFlowLite::RunInference(const QImage &image) {
 
     case TypeDetection::ObjectDetection: {
       ObjectOutput(image);
-      auto result = object_detect_->getResult();
-      if (result.size() > 0) {
-        for (auto &r : result) {
+      auto partial_result = object_detect_->getResult();
+      if (partial_result.size() > 0) {
+        for (auto &r : partial_result) {
           int cls = r.index_class;
-          if (cls > 0) {
-            auto score = r.score;
-            auto label = QString("%1: %2 %")
-                             .arg(QString::fromStdString(getLabel(cls)))
-                             .arg(QString::number(score * 100, 'g', 4));
-            r.name = label;
-            LOG(LevelAlert::D, label.toStdString())
-          }
+          auto score = r.score;
+          auto label = QString("%1: %2 %")
+                           .arg(QString::fromStdString(getLabel(cls)))
+                           .arg(QString::number(score * 100, 'g', 4));
+          r.name = label;
+          emit objAvailable(r);
         }
       }
     } break;
@@ -235,7 +233,7 @@ void ModelTensorFlowLite::ClassifierOutput() {
 
 void ModelTensorFlowLite::ObjectOutput(const QImage img) {
   object_detect_ = std::make_unique<ObjectDetection>();
-  object_detect_->SearchObject(outputs, kThreshold, img, m_labels.size());
+  object_detect_->searchObject(outputs, kThreshold, img);
 }
 
 std::string ModelTensorFlowLite::getLabel(int i) {

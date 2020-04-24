@@ -40,7 +40,10 @@ class ModelTensorFlowLite : public QObject {
   std::string getLabel(int i);
   std::vector<BoxDetection> getResults() const;
   std::vector<std::pair<float, int>> getResultClassification() const;
-  
+
+ signals:
+  void objAvailable(BoxDetection);
+
  public slots:
   void imageAvailable(QPixmap image);
   void imageAvailable(QImage image);
