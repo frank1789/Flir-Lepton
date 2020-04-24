@@ -20,3 +20,7 @@ RUN wget https://netcologne.dl.sourceforge.net/project/raspicam/raspicam-0.1.6.z
 
 RUN	raspicamxx=$(find $PWD -type f -name "raspicam-*.*") && \
 	unzip -a ${raspicamxx}
+
+COPY ./Flir-Lepton/build-raspicam.sh .
+
+RUN ./build-raspicam.sh

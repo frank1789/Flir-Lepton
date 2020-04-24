@@ -1,4 +1,8 @@
-!#usr/bin/env sh
+#!/usr/bin/env sh
+
+# search for correct folder
+echo $PWD
+ls -a
 
 # setup folder
 raspicam=$(find $PWD -type d -name "raspicam-*")
