@@ -23,7 +23,7 @@ before_script:
   - docker build . -t ${IMAGE}:latest -f ${image}
 
 script:
-    - docker run -it -v $PWD:/Flir-Lepton ${IMAGE}:latest bash  -c "./build-raspicam.sh && cd Flir-Lepton &&  ./build.sh"
+    - docker run -it -v $PWD:/Flir-Lepton ${IMAGE}:latest bash  -c "cd Flir-Lepton ./build-raspicam.sh && ./build.sh"
     - if [[ ${TRAVIS_BRANCH} == "master" ]] && [[ ${TRAVIS_PULL_REQUEST} == "false" ]]; then mkdir -p $(dirname ${DOCKER_CACHE_FILE}) ; docker save $(docker history -q ${DOCKER_REPOSITORY}:${TRAVIS_COMMIT}  | grep -v '<missing>') | gzip > ${DOCKER_CACHE_FILE}; fi
 
 notifications:
