@@ -11,4 +11,7 @@ cd build-raspi && echo $PWD
 cmake ..
 
 # compile and install
-make -j$(nproc) && make install && ldconfig && cd .. && \
+make -j$(nproc) && make install && ldconfig && cd ..
+echo $PWD
+echo "raspicam ready, continue next step..."
+echo
